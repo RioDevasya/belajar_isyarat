@@ -51,6 +51,8 @@ class KontrolProgress {
   List<int> get nilaiTes => _eProfil.nilaiTes;
   int get progressKuis => _eProfil.progressKuis;
 
+  int ambilSatuNilaiTes(int modul) => _eProfil.nilaiTes[modul - 1];
+
   List<bool> ambilStatusBelajar(int modul) {
     if (!_eProgressBelajar.modul.containsKey(indeksModul(modul))) return []; // contain anti error. bisa dihilangkan sebelum todo nanti1 (agar kesalahan json diketahui)
 
@@ -67,6 +69,24 @@ class KontrolProgress {
     return materiTotal;
   }
 
+  bool ambilStatusMateri(int modul, int materi) {
+    return _eProgressBelajar.modul[indeksModul(modul)]!.status[materi] ?? false;
+  }
+
+  int ambilTotalStatusSemuaMateri() {
+    int materiSelesai = 0;
+    _eProgressBelajar.modul.forEach((m, value) =>
+      value.status.forEach((s, value) {
+        if (value) {
+          materiSelesai++;
+        }
+      })
+    );
+    return materiSelesai;
+  }
+
+  double ambilProgressStatusSemuaMateri() => ambilTotalStatusSemuaMateri() / ambilTotalSemuaMateri();
+
   List<bool> ambilStatusSemuaKuis() {
     return _eProgressKuis.status.values.toList();
   }
@@ -77,23 +97,6 @@ class KontrolProgress {
 
   bool ambilStatusKuis(int kuis) {
    return _eProgressKuis.status[kuis] ?? false; //Jika bagian kiri null → gunakan bagian kanan.
-  }
-
-  bool ambilStatusMateri(int modul, int materi) {
-    return _eProgressBelajar.modul[indeksModul(modul)]!.status[materi] ?? false;
-  }
-
-  double ambilTotalStatusSemuaMateri() {
-    int materiSelesai = 0;
-    _eProgressBelajar.modul.forEach((m, value) =>
-      value.status.forEach((s, value) {
-        if (value) {
-          materiSelesai++;
-        }
-      })
-    );
-
-    return materiSelesai / ambilTotalSemuaMateri();
   }
 
   String indeksModul(int modul) => "modul_$modul";

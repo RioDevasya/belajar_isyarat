@@ -1,4 +1,6 @@
+import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_menu.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
 import 'package:belajar_isyarat/tampilan/soal_model.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_kuis.dart';
@@ -10,85 +12,105 @@ class MenuKuisMenuBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final kProgressProgressKuis = context.select<KontrolProgress, int> (
+      (k) => k.progressKuis
+    );
     final kMenu = context.read<KontrolMenu>();
+    final alat = context.read<AlatApp>();
 
     return Padding (
       padding: const EdgeInsets.all(20),
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+      child: Expanded(
+        child: Container(
+          decoration: BoxDecoration(
+            color: alat.kotakUtama,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          padding: EdgeInsets.all(10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: alat.kotakPutih,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  "Menu Kuis",
+                  style: TextStyle(
+                    fontFamily: alat.judul,
+                    color: alat.teksKuning,
+                    fontSize: 37,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                
+                Text(
+                  "Kuis ini opsional dan tidak akan mempengaruhi progress belajar anda,\n "
+                  "tetapi akan menambah skor kuis anda. Sangat disarankan untuk menguji kemampuan!",
+                  style: TextStyle(
+                    fontFamily: alat.teks,
+                    fontSize: 20,
+                    color: alat.teksHitam
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Skor Anda:   ",
+                      style: TextStyle(
+                        fontFamily: alat.teks,
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        color: alat.teksKuning
+                      ),
+                    ),
+                    alat.bangunTeksGradien(
+                      font: alat.teks,
+                      teks: kProgressProgressKuis.toString(),
+                      ukuranFont: 27,
+                      beratFont: FontWeight.bold,
+                      warna: alat.progress
+                    )
+                  ],
+                ),
+                
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CardStatis(
+                      lebar: 120,
+                      tinggi: 80,
+                      padding: 10,
+                      isiTengah: true,
+                      pemisahGarisLuarUkuran: 7,
+                      judul: "Mulai",
+                      judulUkuran: 32,
+                      judulWarna: alat.teksPutihSedang,
+                      fontJudul: alat.judul,
+                      kotakGradient: alat.terpilih,
+                      tepiRadius: 10,
+                      pakaiKlik: true,
+                      pakaiHover: true,
+                      padaHoverPemisahGarisLuarWarna: alat.kotakUtama,
+                      padaHoverAnimasi: padaHoverAnimasi1,
+                      padaKlikAnimasi: padaKlikAnimasi1,
+                      padaKlik: () {
+                        kMenu.bukaMenu(4);
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10)
+              ]
+            ),
+          ),
         ),
-        child: Center(
-          child: KuisTesMenu(
-            judul: "Menu Kuis",
-            teks: 
-              "Kuis ini opsional dan tidak akan mempengaruhi progress belajar anda,\n "
-              "tetapi akan menambah skor kuis anda. Sangat disarankan untuk menguji kemampuan!",
-            padaMulai: [
-              () => kMenu.bukaMenu(4),
-            ],
-          )
-        )
       )
-    );
-  }
-}
-
-class KuisTesMenu extends StatelessWidget {
-  final String judul;
-  final String teks;
-  final List<VoidCallback> padaMulai;
-
-  const KuisTesMenu({super.key, required this.judul, required this.teks, required this.padaMulai});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          judul,
-          style: TextStyle(
-            fontSize: 37,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 20),
-        
-        Text(
-          teks,
-          style: TextStyle(
-            fontSize: 20,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 20),
-
-        CardStatis(
-          lebar: 120,
-          tinggi: 80,
-          padding: 10,
-          garisLuarUkuran: 7,
-          judul: "Mulai",
-          teksTengah: true,
-          teksWarna: Colors.white54,
-          kotakWarna: Colors.blue,
-          tepiRadius: 10,
-          pakaiKlik: true,
-          pakaiHover: true,
-          padaHoverGarisLuarWarna: Colors.white,
-          padaHoverPakaiBayangan: true,
-          padaHoverAnimasi: padaHoverAnimasi1,
-          padaKlikAnimasi: padaKlikAnimasi1,
-          padaKlik: () {
-            for (var fungsi in padaMulai) {
-              fungsi();
-            }
-          },
-        )
-      ]
     );
   }
 }

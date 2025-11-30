@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,6 +8,7 @@ import '/kontrol/kontrol_database.dart'; // untuk ambilGambar()
 class CardStatis extends StatefulWidget {
   final double? lebar;
   final double? tinggi;
+  final bool kotak;
   final double? padding;
 
   final String? teks;
@@ -31,12 +33,15 @@ class CardStatis extends StatefulWidget {
   final double? jarakKontenUkuran;
 
   final Color teksWarna;
+  final LinearGradient? teksGradient;
   final Color judulWarna;
+  final LinearGradient? judulGradient;
 
   final double tepiRadius;
   final Axis susunGambarTeksBaris;
 
-  final Color kotakWarna;
+  final Color? kotakWarna;
+  final LinearGradient? kotakGradient;
   final Color? padaHoverkotakWarna;
 
   final double garisLuarUkuran;
@@ -88,6 +93,7 @@ class CardStatis extends StatefulWidget {
     super.key,
     this.lebar,
     this.tinggi,
+    this.kotak = false,
     this.padding,
 
     this.teks,
@@ -112,12 +118,15 @@ class CardStatis extends StatefulWidget {
     this.jarakKontenUkuran,
 
     this.teksWarna = Colors.black,
+    this.teksGradient,
     this.judulWarna = Colors.black,
+    this.judulGradient,
 
     this.tepiRadius = 0.0,
     this.susunGambarTeksBaris = Axis.horizontal,
 
-    this.kotakWarna = Colors.white,
+    this.kotakWarna,
+    this.kotakGradient,
     this.garisLuarWarna,
     this.garisLuarUkuran = 0.0,
     this.garisLuarGradient,
@@ -176,6 +185,7 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
   late AnimationController _klikController;
   late AnimationController _masukController;
   late AnimationController _dipilihController;
+  late AlatApp alat;
 
   bool _hover = false;
   //bool _drag = false;
@@ -184,7 +194,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-      _hoverSmooth = AnimationController(
+    alat = context.read<AlatApp>();
+    _hoverSmooth = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
@@ -261,7 +272,6 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
         gradient: pemisahGarisLuarGradient,
         borderRadius: BorderRadius.circular(widget.tepiRadius + widget.pemisahGarisLuarUkuran/2)
       ),
-      alignment: Alignment.center,
       child: child,
     );
   }
@@ -290,12 +300,11 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
           + widget.garisLuarUkuran/2
         )
       ),
-      alignment: Alignment.center,
       child: child,
     );
   }
 
-  Widget _bangunContainerUtama(BuildContext context, Color color, double blurRadius, double width, double height) {
+  Widget _bangunContainerUtama(BuildContext context, Color? color, double blurRadius, double? width, double? height) {
     final kontrolDatabase = context.watch<KontrolDatabase>();
 
     return AnimatedContainer(
@@ -306,8 +315,9 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(widget.tepiRadius),
+        gradient: widget.kotakGradient
       ),
-      child: _isiKonten(kontrolDatabase),
+      child: _isiKonten(kontrolDatabase)
     );
   } 
     @override
@@ -419,8 +429,12 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
           },
           child: LayoutBuilder(
             builder: (context, c) {
-              final lebar = widget.lebar ?? c.maxWidth;
-              final tinggi = widget.tinggi ?? c.maxHeight;
+              double lebar = widget.lebar ?? c.maxWidth;
+              double tinggi = widget.tinggi ?? c.maxHeight;
+              if (widget.kotak) {
+                final terendah = min(lebar, tinggi);
+                lebar = tinggi = terendah;
+              }
 
               Widget inner = _bangunContainerUtama(context, boxColor, bayangan, lebar, tinggi);
 
@@ -486,29 +500,45 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
     }
 
     final teksWidget = widget.teks != null
-        ? Text(
-            widget.teks!,
-            textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
-            style: TextStyle(
-              fontFamily: widget.fontTeks,
-              fontSize: widget.teksUkuran ?? 17, 
-              color: widget.teksWarna
-            ),
-          )
+        ? (widget.teksGradient != null 
+            ? alat.bangunTeksGradien(
+                teks: widget.teks!, 
+                warna: widget.teksGradient!, 
+                font: widget.fontTeks, 
+                ukuranFont: widget.teksUkuran ?? 17
+              )
+            : Text(
+                widget.teks!,
+                textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
+                style: TextStyle(
+                  fontFamily: widget.fontTeks,
+                  fontSize: widget.teksUkuran ?? 17, 
+                  color: widget.teksWarna
+                ),
+              )
+            )
         : null;
 
     final judulWidget = widget.judul != null
-        ? Text(
-            widget.judul!,
-            style: TextStyle(
-              fontFamily: widget.fontJudul,
-              fontSize: widget.judulUkuran ?? 32,
-              fontWeight: FontWeight.bold,
-              color: widget.judulWarna,
-              decoration: widget.garisBawahJudul ? TextDecoration.underline : null,
-              decorationColor: widget.judulWarna,
-            ),
-            textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
+        ? (widget.judulGradient != null 
+            ? alat.bangunTeksGradien(
+                teks: widget.judul!, 
+                warna: widget.judulGradient!, 
+                font: widget.fontJudul, 
+                ukuranFont: widget.judulUkuran ?? 32
+              )
+            : Text(
+              widget.judul!,
+              style: TextStyle(
+                fontFamily: widget.fontJudul,
+                fontSize: widget.judulUkuran ?? 32,
+                fontWeight: FontWeight.bold,
+                color: widget.judulWarna,
+                decoration: widget.garisBawahJudul ? TextDecoration.underline : null,
+                decorationColor: widget.judulWarna,
+              ),
+              textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
+            )
           )
         : null;
 
@@ -540,7 +570,11 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
             ),
           );
         }),
-      if (gambarFinal.isEmpty && gambarWidgets != null) ...gambarWidgets,
+      if (gambarFinal.isEmpty && gambarWidgets != null) 
+       FittedBox(
+        fit: BoxFit.scaleDown,
+        child: gambarWidgets.first,
+       ),
       if (kotakJarakKonten != null) kotakJarakKonten,
       if (judulWidget != null)
         Expanded(
@@ -561,14 +595,12 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
 
     return widget.susunGambarTeksBaris == Axis.horizontal
         ? Row(
-            mainAxisAlignment:
-                MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: kolom,
           )
         : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: kolom,
           );
   }

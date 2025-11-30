@@ -7,6 +7,8 @@ class AlatApp {
   Color get kotakUtama => Color(0xFFf89a1c);
   Color get kotakPutih => Color(0xFFf8f9fb);
   Color get latarBelakang => Color(0xFFf2f2f2);
+  Color get latarBelakangKembali => Color(0xFFd4d1d1);
+  Color get garisLuarKembali => Color(0xFFf8d447);
 
   // warna kotak
   Color get kotak1 => Color(0xFFF9D260);
@@ -48,6 +50,7 @@ class AlatApp {
   // Warna outline benar / salah
   Color get benar => Color(0xFF4caf50); // hijau
   Color get salah => Color(0xFFe53935); // merah
+  Color get tidakAktif => Color.fromARGB(197, 66, 81, 129);
 
   // Gradien
   LinearGradient get teksBiru => LinearGradient(
@@ -120,9 +123,10 @@ class AlatApp {
       ),
     );
   }
-  Widget bangunProgressBar(BuildContext context, double progress, double tinggi) {
+  Widget bangunProgressBar(BuildContext context, double progress, double? tinggi) {
     return LayoutBuilder(builder: (context, c) {
       final width = c.maxWidth;
+      final height = c.maxWidth;
 
       // Convert ke double progress 0.0 - 1.0
       final progressFinal = progress.clamp(0.0, 1.0);
@@ -131,7 +135,7 @@ class AlatApp {
         children: [
           // Background
           Container(
-            height: tinggi,
+            height: tinggi ?? height,
             width: width,
             decoration: BoxDecoration(
               color: Colors.grey[300],

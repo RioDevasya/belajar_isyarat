@@ -45,6 +45,9 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
     final kProgressProgressKuis = context.select<KontrolProgress, int>(
       (k) => k.progressKuis
     );
+    final kProgressProgressMateri = context.select<KontrolProgress, double>(
+      (k) => k.ambilProgressStatusSemuaMateri()
+    );
     final kProgress = context.read<KontrolProgress>();
     final kBelajar = context.read<KontrolBelajar>();
     final kMenu = context.read<KontrolMenu>();
@@ -72,12 +75,12 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 10, top: 10), // jarak antar item
+                        padding: const EdgeInsets.only(bottom: 5, top: 5), // jarak antar item
                         child: CardStatis(
                           lebar: null,
                           tinggi: 90,
                           padding: 5,
-                          tepiRadius: 5,
+                          tepiRadius: 12.5,
                           pemisahGarisLuarUkuran: 3,
                           garisLuarUkuran: 5,
                           judul: items[index].name,
@@ -88,7 +91,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                           gambar: [items[index].iconPath],
                           besarGambar: null,
                           warnaGambarColor: alat.kotakPutih,
-                          tepiRadiusGambar: 5,
+                          tepiRadiusGambar: 10,
                           kotakWarna: alat.kotak1,
                           pakaiKlik: true,
                           pakaiHover: true,
@@ -117,7 +120,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
             child: Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                gradient: alat.terpilih,
+                color: alat.kotakUtama,
                 borderRadius: BorderRadius.circular(12.5)
               ),
               child: Container(
@@ -128,125 +131,154 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                 ),
                 alignment: Alignment.center,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 15),
-
-                    Image.asset("lib/database/gambar/trophy.png", width: 50, height: 50),
-                    const SizedBox(height: 15),
-
-                    Row(
-                      children: [
-                        Text(
-                          "Progress Anda: ",
-                          style: TextStyle(
-                            fontFamily: alat.judul,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: alat.teksKuning
-                          ),
-                        ),
-                        alat.bangunTeksGradien(
-                          teks: kProgressProgressKuis.toString(),
-                          warna: alat.progress, 
-                          font: alat.judul, 
-                          ukuranFont: 16
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Column(
+                          children: [
+                            Image.asset("lib/database/gambar/trophy.png", width: 50, height: 50),
+                            const SizedBox(height: 15),
+                            
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Progress Anda: ",
+                                  style: TextStyle(
+                                    fontFamily: alat.judul,
+                                    fontSize: 27,
+                                    fontWeight: FontWeight.bold,
+                                    color: alat.teksKuning
+                                  ),
+                                ),
+                                alat.bangunTeksGradien(
+                                  teks: kProgressProgressKuis.toString(),
+                                  warna: alat.progress, 
+                                  font: alat.judul, 
+                                  ukuranFont: 27
+                                )
+                              ],
+                            ),
+                          ],
                         )
-                      ],
+                      )
                     ),
+                    SizedBox(height: 20),
                     
-                    if (kProgress.nama != null)
-                      Row(
+                    Expanded(
+                    child: Column(
                         children: [
-                          Text(
-                            "Nama: ",
-                            style: TextStyle(
-                              fontFamily: alat.teks,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: alat.teksHitam
+                          if (kProgress.nama != null)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Nama: ",
+                                  style: TextStyle(
+                                    fontFamily: alat.teks,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: alat.teksHitam
+                                  ),
+                                ),
+                                alat.bangunTeksGradien(
+                                  teks: kProgress.nama!,
+                                  warna: alat.progress, 
+                                  font: alat.judul, 
+                                  ukuranFont: 16
+                                ),
+                              ],
                             ),
-                          ),
-                          alat.bangunTeksGradien(
-                            teks: kProgress.nama!,
-                            warna: alat.progress, 
-                            font: alat.judul, 
-                            ukuranFont: 16
-                          )
-                        ],
-                      ),
-                    
-                    if (kProgress.sekolah != null)
-                      Row(
-                        children: [
-                          Text(
-                            "Sekolah: ",
-                            style: TextStyle(
-                              fontFamily: alat.teks,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: alat.teksHitam
+                            
+                          if (kProgress.sekolah != null)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Sekolah: ",
+                                  style: TextStyle(
+                                    fontFamily: alat.teks,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: alat.teksHitam
+                                  ),
+                                ),
+                                alat.bangunTeksGradien(
+                                  teks: kProgress.sekolah!,
+                                  warna: alat.progress, 
+                                  font: alat.judul, 
+                                  ukuranFont: 16
+                                )
+                              ],
                             ),
-                          ),
-                          alat.bangunTeksGradien(
-                            teks: kProgress.sekolah!,
-                            warna: alat.progress, 
-                            font: alat.judul, 
-                            ukuranFont: 16
-                          )
-                        ],
-                      ),
-                    
-                    if (kProgress.jabatan != null)
-                      Row(
-                        children: [
-                          Text(
-                            "Jabatan: ",
-                            style: TextStyle(
-                              fontFamily: alat.teks,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: alat.teksHitam
+                            
+                          if (kProgress.jabatan != null)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Jabatan: ",
+                                  style: TextStyle(
+                                    fontFamily: alat.teks,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: alat.teksHitam
+                                  ),
+                                ),
+                                alat.bangunTeksGradien(
+                                  teks: kProgress.jabatan!,
+                                  warna: alat.progress, 
+                                  font: alat.judul, 
+                                  ukuranFont: 16
+                                )
+                              ],
                             ),
-                          ),
-                          alat.bangunTeksGradien(
-                            teks: kProgress.jabatan!,
-                            warna: alat.progress, 
-                            font: alat.judul, 
-                            ukuranFont: 16
-                          )
-                        ],
-                      ),
-                    
-                    Text(
-                      "Total progress belajar: ",
-                      style: TextStyle(
-                        fontFamily: alat.judul,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: alat.teksKuning
-                      ),
-                    ),
-
-                    Row(
-                      children: [
-                        Text(
-                          "Jabatan: ",
-                          style: TextStyle(
-                            fontFamily: alat.teks,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: alat.teksHitam
-                          ),
-                        ),
-                        Expanded(
-                          child: alat.bangunProgressBar(
-                            context, 
-                            kProgress.ambilTotalStatusSemuaMateri(),
-                            20
-                          )
+                          ]
                         )
-                      ],
+                      ),
+                    
+                    SizedBox(height: 20),
+                    
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Total progress belajar: ",
+                            style: TextStyle(
+                              fontFamily: alat.judul,
+                              fontSize: 27,
+                              fontWeight: FontWeight.bold,
+                              color: alat.teksKuning
+                            ),
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${kProgressProgressMateri * 100}%",
+                                style: TextStyle(
+                                  fontFamily: alat.teks,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: alat.teksHitam
+                                ),
+                              ),
+                              Expanded(
+                                child: alat.bangunProgressBar(
+                                  context, 
+                                  kProgressProgressMateri,
+                                  20
+                                )
+                              )
+                            ],
+                          ),
+                        ]
+                      ),
                     ),
                   ],
                 ),

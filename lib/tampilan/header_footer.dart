@@ -242,10 +242,11 @@ class _FooterModel1State extends State<FooterModel1>
     );
     final kontrolKuis = context.read<KontrolKuis>();
     final kontrolProgress = context.read<KontrolProgress>();
+    final alat = context.read<AlatApp>();
 
-    final padaJawab = [
-      () => kontrolKuis.ajukanKuis(kontrolProgress)
-    ];
+    final VoidCallback padaJawab = () {
+      kontrolKuis.ajukanKuis(kontrolProgress);
+    };
 
     _scoreAnimation = IntTween(
       begin: kontrolKuisSkorKuis,
@@ -258,6 +259,7 @@ class _FooterModel1State extends State<FooterModel1>
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        gradient: alat.warnaFooter
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -292,37 +294,26 @@ class _FooterModel1State extends State<FooterModel1>
           ),
 
           // Tombol Jawab
-          MouseRegion(
-            onEnter: (_) => setState(() => _hoverJawab = true),
-            onExit: (_) => setState(() => _hoverJawab = false),
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                for (var fungsi in padaJawab) {
-                  fungsi();
-                }
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                decoration: BoxDecoration(
-                  color:
-                      _hoverJawab ? Colors.blue.shade600 : Colors.blue.shade400,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: _hoverJawab
-                      ? [BoxShadow(color: Colors.black26, blurRadius: 6)]
-                      : [],
-                ),
-                child: const Text(
-                  "Jawab",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+          CardStatis(
+            lebar: 100, 
+            tinggi: 40,
+            isiTengah: true,
+            padding: 10,
+            tepiRadius: 10,
+            pemisahGarisLuarUkuran: 3,
+            judul: "Jawab",
+            judulUkuran: 10,
+            fontJudul: alat.judul,
+            judulWarna: alat.teksPutihSedang,
+            kotakGradient: alat.terpilih,
+            pakaiKlik: true,
+            pakaiHover: true,
+            padaHoverAnimasi: padaHoverAnimasi2,
+            padaHoverPemisahGarisLuarGradient: alat.terpilih,
+            padaKlikAnimasi: padaKlikAnimasi1,
+            padaKlik: () {
+              padaJawab();
+            },
           ),
         ],
       ),
@@ -344,9 +335,6 @@ class FooterModel2 extends StatefulWidget {
 }
 
 class _FooterModel2State extends State<FooterModel2> {
-  bool _hoverPrev = false;
-  bool _hoverNext = false;
-
   @override
   Widget build(BuildContext context) {
     final kontrolProgress = context.read<KontrolProgress>();
@@ -354,8 +342,8 @@ class _FooterModel2State extends State<FooterModel2> {
     late int sekarang;
     late int total;
     late double progress;
-    late List<VoidCallback> padaSebelumnya;
-    late List<VoidCallback> padaSelanjutnya;
+    late VoidCallback padaSebelumnya;
+    late VoidCallback padaSelanjutnya;
     late bool akhirSebelumnya;
     late String akhirSelanjutnya;
 
@@ -366,13 +354,13 @@ class _FooterModel2State extends State<FooterModel2> {
       total = kBelajar.totalMateri;
       progress = sekarang / total;
 
-      padaSebelumnya = [() => kBelajar.aturMateriSebelumnya()];
+      padaSebelumnya = () {kBelajar.aturMateriSebelumnya();};
       padaSelanjutnya = sekarang != total 
-        ? [() => kBelajar.aturMateriSelanjutnya(kontrolProgress)]
-        : [
-          () => kBelajar.tutupMenuMateri(),
-          () => kMenu.bukaMenu(1),
-        ];
+        ? () => kBelajar.aturMateriSelanjutnya(kontrolProgress)
+        : () {
+          kBelajar.tutupMenuMateri();
+          kMenu.bukaMenu(1);
+        };
 
       akhirSebelumnya = sekarang == 1 ? true : false;
       akhirSelanjutnya = sekarang == total ? "Keluar" : "Selanjutnya";
@@ -382,41 +370,40 @@ class _FooterModel2State extends State<FooterModel2> {
       total = kTes.totalSoal;
       progress = sekarang / total;
 
-      padaSebelumnya = [() => kTes.aturSoalSebelumnya()];
+      padaSebelumnya = () => kTes.aturSoalSebelumnya();
       padaSelanjutnya = sekarang < total
-          ? [() => kTes.aturSoalSelanjutnya()]
-          : [() => kTes.ajukanTes(kontrolProgress)];
+          ? () => kTes.aturSoalSelanjutnya()
+          : () => kTes.ajukanTes(kontrolProgress);
 
       akhirSebelumnya = sekarang == 1 ? true : false;
       akhirSelanjutnya = sekarang == total ? "Kumpul Tes" : "Selanjutnya";
     }
 
+    final alat = context.read<AlatApp>();
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        gradient: alat.warnaFooter,
       ),
       child: Row(
         children: [
           // Angka progress
           Text(
             "$sekarang/$total",
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontFamily: alat.judul,
+              fontSize: 16, 
+              fontWeight: FontWeight.bold,
+              color: alat.teksPutihSedang,
+            ),
           ),
           const SizedBox(width: 16),
 
           // Progress Bar
           Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: LinearProgressIndicator(
-                value: progress,
-                minHeight: 15,
-                backgroundColor: Colors.grey.shade300,
-                valueColor:
-                    AlwaysStoppedAnimation(Colors.blue.shade400),
-              ),
-            ),
+            child: alat.bangunProgressBar(context, progress, 20)
           ),
           const SizedBox(width: 16),
 
@@ -424,24 +411,22 @@ class _FooterModel2State extends State<FooterModel2> {
           CardStatis(
             lebar: 100, 
             tinggi: 40,
+            isiTengah: true,
             padding: 10,
             tepiRadius: 10,
-            garisLuarUkuran: 3,
+            pemisahGarisLuarUkuran: 3,
             judul: "Sebelumnya",
             judulUkuran: 10,
-            judulWarna: Colors.white54,
-            teksTengah: true,
-            kotakWarna: akhirSebelumnya ? Colors.blueGrey : Colors.blue,
+            fontJudul: alat.judul,
+            judulGradient: alat.terpilih,
+            kotakWarna: akhirSebelumnya ? alat.tidakAktif : alat.kotakPutih,
             pakaiKlik: true,
             pakaiHover: true,
             padaHoverAnimasi: padaHoverAnimasi2,
-            padaHoverGarisLuarWarna: Colors.white,
-            padaHoverPakaiBayangan: true,
+            padaHoverPemisahGarisLuarGradient: alat.terpilih,
             padaKlikAnimasi: padaKlikAnimasi1,
             padaKlik: () {
-              for (var fungsi in padaSebelumnya) {
-                fungsi();
-              }
+              padaSebelumnya();
             },
           ),
           const SizedBox(width: 10),
@@ -450,24 +435,22 @@ class _FooterModel2State extends State<FooterModel2> {
           CardStatis(
             lebar: 100, 
             tinggi: 40,
+            isiTengah: true,
             padding: 10,
             tepiRadius: 10,
-            garisLuarUkuran: 3,
+            pemisahGarisLuarUkuran: 3,
             judul: akhirSelanjutnya,
             judulUkuran: 10,
-            judulWarna: Colors.white54,
-            teksTengah: true,
-            kotakWarna: Colors.blue,
+            fontJudul: alat.judul,
+            judulWarna: alat.teksPutihSedang,
+            kotakGradient: alat.terpilih,
             pakaiKlik: true,
             pakaiHover: true,
             padaHoverAnimasi: padaHoverAnimasi2,
-            padaHoverGarisLuarWarna: Colors.white,
-            padaHoverPakaiBayangan: true,
+            padaHoverPemisahGarisLuarGradient: alat.terpilih,
             padaKlikAnimasi: padaKlikAnimasi1,
             padaKlik: () {
-              for (var fungsi in padaSelanjutnya) {
-                fungsi();
-              }
+              padaSelanjutnya();
             },
           ),
         ],

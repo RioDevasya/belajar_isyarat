@@ -1,3 +1,6 @@
+import 'package:belajar_isyarat/alat/alat_app.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 import 'package:belajar_isyarat/tampilan/menu_kuis_body.dart';
 import 'package:belajar_isyarat/tampilan/soal_model.dart';
@@ -12,7 +15,12 @@ class MenuTesMenuBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final kTes = context.read<KontrolTes>();
+    final kBelajar = context.read<KontrolBelajar>();
     final kMenu = context.read<KontrolMenu>();
+    final alat = context.read<AlatApp>();
+    final kTesNilai = context.select<KontrolProgress, int> (
+      (k) => k.ambilSatuNilaiTes(kBelajar.modulSekarang)
+    );
 
     return Padding (
       padding: const EdgeInsets.all(20),
@@ -20,10 +28,13 @@ class MenuTesMenuBody extends StatelessWidget {
         children: [
           CardStatis(
             lebar: 40,
-            tinggi: double.infinity,
-            teksTengah: true,
-            judul: "<",
-            tepiRadius: 10,
+            tinggi: null,
+            padding: 4,
+            tepiRadius: 5,
+            kotakWarna: alat.latarBelakangKembali,
+            pemisahGarisLuarUkuran: 4,
+            pemisahGarisLuarWarna: alat.garisLuarKembali,
+            teks: "<",
             pakaiKlik: true,
             pakaiHover: true,
             padaHoverAnimasi: padaHoverAnimasi1,
@@ -39,20 +50,94 @@ class MenuTesMenuBody extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
+                color: alat.kotakUtama,
+                borderRadius: BorderRadius.circular(25),
               ),
-              child: Center(
-                child: KuisTesMenu(
-                  judul: "Menu Tes",
-                  teks: 
-                    "Tes adalah langkah terakhir untuk menyelesaikan progress materi.\n"
-                    "Kemampuan anda akan diuji disini, anda dapat mengerjakan tes berulang-kali",
-                  padaMulai: [
-                    () => kMenu.bukaMenu(4),
-                  ],
-                )
-              )
+              padding: EdgeInsets.all(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: alat.kotakPutih,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      "Menu Tes",
+                      style: TextStyle(
+                        fontFamily: alat.judul,
+                        color: alat.teksKuning,
+                        fontSize: 37,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    
+                    Text(
+                      "Tes adalah langkah terakhir untuk menyelesaikan progress materi.\n"
+                      "Kemampuan anda akan diuji disini, anda dapat mengerjakan tes berulang-kali",
+                      style: TextStyle(
+                        fontFamily: alat.teks,
+                        fontSize: 20,
+                        color: alat.teksHitam
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Nilai Anda:   ",
+                          style: TextStyle(
+                            fontFamily: alat.teks,
+                            fontSize: 27,
+                            fontWeight: FontWeight.bold,
+                            color: alat.teksKuning
+                          ),
+                        ),
+                        Text(
+                          kTesNilai.toString(),
+                          style: TextStyle(
+                            fontFamily: alat.teks,
+                            fontSize: 27,
+                            fontWeight: FontWeight.bold,
+                            color: kTesNilai < 80 ? alat.salah : alat.benar
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CardStatis(
+                          lebar: 120,
+                          tinggi: 80,
+                          padding: 10,
+                          isiTengah: true,
+                          pemisahGarisLuarUkuran: 7,
+                          judul: "Mulai",
+                          judulUkuran: 32,
+                          judulWarna: alat.teksPutihSedang,
+                          fontJudul: alat.judul,
+                          kotakGradient: alat.terpilih,
+                          tepiRadius: 10,
+                          pakaiKlik: true,
+                          pakaiHover: true,
+                          padaHoverPemisahGarisLuarWarna: alat.kotakUtama,
+                          padaHoverAnimasi: padaHoverAnimasi1,
+                          padaKlikAnimasi: padaKlikAnimasi1,
+                          padaKlik: () {
+                            kMenu.bukaMenu(4);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10)
+                  ]
+                ),
+              ),
             ),
           )
         ]
@@ -71,6 +156,7 @@ class MenuTesSoalBody extends StatelessWidget {
     );
     final kTes = context.read<KontrolTes>();
     final kMenu = context.read<KontrolMenu>();
+    final alat = context.read<AlatApp>();
 
     final soal = kTes.ambilSoalTes(kTes.modul, kTesSoal);
 
@@ -102,29 +188,29 @@ class MenuTesSoalBody extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
-          Expanded(
-            flex: 1,
-            child: CardStatis(
-              lebar: 40,
-              tinggi: double.infinity,
-              teksTengah: true,
-              judul: "<",
-              tepiRadius: 10,
-              pakaiKlik: true,
-              pakaiHover: true,
-              padaHoverAnimasi: padaHoverAnimasi1,
-              padaHoverPakaiBayangan: true,
-              padaKlikAnimasi: padaKlikAnimasi1,
-              padaKlik: () {
-                kTes.tutupMenuTes();
-                kMenu.bukaMenu(3);
-              }
-            ),
+          CardStatis(
+            lebar: 40,
+            tinggi: null,
+            padding: 4,
+            tepiRadius: 5,
+            kotakWarna: alat.latarBelakangKembali,
+            pemisahGarisLuarUkuran: 4,
+            pemisahGarisLuarWarna: alat.garisLuarKembali,
+            teks: "<",
+            pakaiKlik: true,
+            pakaiHover: true,
+            padaHoverAnimasi: padaHoverAnimasi1,
+            padaHoverPakaiBayangan: true,
+            padaKlikAnimasi: padaKlikAnimasi1,
+            padaKlik: () {
+              kTes.tutupMenuTes();
+              kMenu.bukaMenu(3);
+              return;
+            }
           ),
           SizedBox(width: 10),
 
           Expanded(
-            flex: 14,
             child: body
           )
         ],
