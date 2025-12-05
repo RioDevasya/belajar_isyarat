@@ -163,8 +163,28 @@ class MenuTesSoalBody extends StatelessWidget {
     final kTesSusunanSatu = context.select<KontrolTes, List<String>>(
       (k) => kTes.susunanJawabanListString
     );
-
+    final kTesSusunanDua = context.select<KontrolTes, List<List<String>>>(
+      (k) => kTes.susunanJawabanListListString
+    );
+    
     final soal = kTes.ambilSoalTes(kTes.modul, kTesSoal);
+    final jawabanTersimpan = kTes.simpananJawaban[kTesSoal - 1];
+    
+    soal.gambar.map((e) => e ?. e.toString());
+    List<String> opsi = soal.opsi.map((e) => e.toString()).toList();
+    List<String>? tersimpan = jawabanTersimpan != false && jawabanTersimpan is List ? jawabanTersimpan.map((e) => e.toString()).toList() : null;
+    List<String>? opsiYangTidakAda;
+
+    // Ambil tersimpan! hanya pada posisi dimana gambar == null
+    List<String> dipakai = [];
+    if (tersimpan != null) {
+      for (int i = 0; i < soal.gambar.length; i++) {
+        if (soal.gambar[i] == null && tersimpan[i].isNotEmpty) {
+          dipakai.add(tersimpan[i]);
+        }
+      }
+      opsiYangTidakAda = opsi.where((o) => !dipakai.contains(o)).toList();
+    }
 
     final body = switch (soal.mode.index) {
       0 => SoalModel1(
@@ -172,7 +192,7 @@ class MenuTesSoalBody extends StatelessWidget {
           gambarSoal: soal.gambar,
           gambarOpsi: soal.opsi,
           padaSusun: (susunan) {
-            kTes.aturSusunanJawabanListString(susunan);
+            kTes.aturSusunanJawabanListString(List.from(susunan));
             return;
           },
           susunan: kTesSusunanSatu,
@@ -189,11 +209,28 @@ class MenuTesSoalBody extends StatelessWidget {
         ),
       2 => SoalModel3(
           penjelas: soal.pertanyaan,
-          gambarSoal: soal.gambar,
-          gambarOpsi: soal.opsi,
-          tes: true,
+          susunanSemua: kTesSusunanDua,
+          padaSusun: (susunan) {
+            kTes.aturSusunanJawabanListListString(susunan);
+            return;
+          },
         ),
-      3 => SizedBox.shrink(),
+      3 => SoalModel4(
+        penjelas: soal.pertanyaan, 
+        susunanAwal: soal.gambar.map((e) => e != null ? e.toString() : null), 
+        susunanAtas: jawabanTersimpan != false ? jawabanTersimpan : soal.gambar, 
+        susunanBawah: opsiYangTidakAda ?? opsi,
+        padaSelesaiSusun: (susunan, selesai) {
+          if (selesai) {
+            kTes.aturSusunanJawabanListString(susunan[0].map((isi) => isi.toString()).toList());
+          } else {
+            final bolehRebuild = kTes.susunanJawabanListDynamic.first;
+            if (bolehRebuild != false) {
+              kTes.aturSusunanJawabanKosong();
+            }
+          }
+        },
+      ),
       4 => SoalModel5(
           penjelas: soal.pertanyaan,
           gambarSoal: soal.gambar,

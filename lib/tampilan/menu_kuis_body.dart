@@ -128,6 +128,9 @@ class MenuKuisSoalBody extends StatelessWidget {
     final kKuisSusunanSatu = context.select<KontrolKuis, List<String>>(
       (k) => kKuis.susunanJawabanListString
     );
+    final kKuisSusunanDua = context.select<KontrolKuis, List<List<String>>>(
+      (k) => kKuis.susunanJawabanListListString
+    );
 
     final soal = kKuis.ambilKuis(kKuisSoal);
 
@@ -157,9 +160,11 @@ class MenuKuisSoalBody extends StatelessWidget {
       case 2:
         return SoalModel3(
           penjelas: soal.pertanyaan,
-          gambarSoal: soal.gambar,
-          gambarOpsi: soal.opsi,
-          tes: true,
+          susunanSemua: kKuisSusunanDua,
+          padaSusun: (susunan) {
+            kKuis.aturSusunanJawabanListListString(susunan);
+            return;
+          },
         );
       case 3:
         return SizedBox.shrink();
