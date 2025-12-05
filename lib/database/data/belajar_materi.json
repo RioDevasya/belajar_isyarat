@@ -10,55 +10,55 @@
             "suara": "belajar_1",
             "gambar": ["1"],
             "judul": "angka 1",
-            "penjelasan": "angka 1 adalah angka"
+            "penjelasan": "Jari telunjuk berdiri tegak, sisanya mengepal"
         },
         {
             "suara": "belajar_2",
             "gambar": ["2"],
             "judul": "angka 2",
-            "penjelasan": "angka 2 adalah angka"
+            "penjelasan": "Jari telunjuk dan jari tengah berdiri, jari lain mengepal"
         },
         {
             "suara": "belajar_3",
             "gambar": ["3"],
             "judul": "angka 3",
-            "penjelasan": "angka 3 adalah angka"
+            "penjelasan": "Tiga jari (ibu jari, telunjuk, dan jari tengah) berdiri tegak, sedangkan jari manis dan kelingking menekuk"
         },
         {
             "suara": "belajar_4",
             "gambar": ["4"],
             "judul": "angka 4",
-            "penjelasan": "angka 4 adalah angka"
+            "penjelasan": "Empat jari (telunjuk sampai kelingkin berdiri), ibu jari menekuk ke telapak"
         },
         {
             "suara": "belajar_5",
             "gambar": ["5"],
             "judul": "angka 5",
-            "penjelasan": "angka 5 adalah angka"
+            "penjelasan": "Semua jari (ibu jari sampai kelingking) terbuka lebar"
         },
         {
             "suara": "belajar_6",
             "gambar": ["6"],
             "judul": "angka 6",
-            "penjelasan": "angka 6 adalah angka"
+            "penjelasan": "Telunjuk, jari tengah, dan jari manis berdiri, ibu jari menahan jari kelingking yang ditekuk"
         },
         {
             "suara": "belajar_7",
             "gambar": ["7"],
             "judul": "angka 7",
-            "penjelasan": "angka 7 adalah angka"
+            "penjelasan": "Ibu jari menahan jari manis yang ditekuk, sedangkan telunjuk, jari tengah, dan jari kelingking tegak"
         },
         {
             "suara": "belajar_8",
             "gambar": ["8"],
             "judul": "angka 8",
-            "penjelasan": "angka 8 adalah angka"
+            "penjelasan": "Jari tengah ditekuk dan ditahan oleh ibu jari, untuk sisanya (telunjuk, jari manis, dan kelingking) berdiri ke atas"
         },
         {
             "suara": "belajar_9",
             "gambar": ["9"],
             "judul": "angka 9",
-            "penjelasan": "angka 9 adalah angka"
+            "penjelasan": "Ibu jari dan telunjuk membentuk lingkaran (seperti angka “9”), tiga jari lainnya terbuka ke atas"
         }
     ],
     "modul_2": [
