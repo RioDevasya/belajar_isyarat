@@ -425,8 +425,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
           },
           child: LayoutBuilder(
             builder: (context, c) {
-              double lebar = widget.lebar ?? c.maxWidth;
-              double tinggi = widget.tinggi ?? c.maxHeight;
+              double lebar = (widget.lebar ?? c.maxWidth) - widget.pemisahGarisLuarUkuran - widget.garisLuarUkuran;
+              double tinggi = (widget.tinggi ?? c.maxHeight) - widget.pemisahGarisLuarUkuran - widget.garisLuarUkuran;
               
               if (widget.kotak) {
                 final terendah = min(lebar, tinggi);

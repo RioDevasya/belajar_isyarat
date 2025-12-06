@@ -169,11 +169,7 @@ class MenuKuisSoalBody extends StatelessWidget {
       case 3:
         return SizedBox.shrink();
       case 4:
-        return SoalModel5(
-          penjelas: soal.pertanyaan,
-          gambarSoal: soal.gambar,
-          jumlahOpsi: soal.jawaban[0].toString().length,
-        );
+        return SizedBox.shrink();
       default :
         return SizedBox.shrink();
     }

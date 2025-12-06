@@ -166,25 +166,14 @@ class MenuTesSoalBody extends StatelessWidget {
     final kTesSusunanDua = context.select<KontrolTes, List<List<String>>>(
       (k) => kTes.susunanJawabanListListString
     );
+    final kTesSusunanAtas = context.select<KontrolTes, List<dynamic>>(
+      (k) => kTes.susunanJawabanListDynamic
+    );
+    final kTesSusunanRangkaian = context.select<KontrolTes, List<dynamic>>(
+      (k) => kTes.susunanJawabanListDynamic
+    );
     
     final soal = kTes.ambilSoalTes(kTes.modul, kTesSoal);
-    final jawabanTersimpan = kTes.simpananJawaban[kTesSoal - 1];
-    
-    soal.gambar.map((e) => e ?. e.toString());
-    List<String> opsi = soal.opsi.map((e) => e.toString()).toList();
-    List<String>? tersimpan = jawabanTersimpan != false && jawabanTersimpan is List ? jawabanTersimpan.map((e) => e.toString()).toList() : null;
-    List<String>? opsiYangTidakAda;
-
-    // Ambil tersimpan! hanya pada posisi dimana gambar == null
-    List<String> dipakai = [];
-    if (tersimpan != null) {
-      for (int i = 0; i < soal.gambar.length; i++) {
-        if (soal.gambar[i] == null && tersimpan[i].isNotEmpty) {
-          dipakai.add(tersimpan[i]);
-        }
-      }
-      opsiYangTidakAda = opsi.where((o) => !dipakai.contains(o)).toList();
-    }
 
     final body = switch (soal.mode.index) {
       0 => SoalModel1(
@@ -217,25 +206,20 @@ class MenuTesSoalBody extends StatelessWidget {
         ),
       3 => SoalModel4(
         penjelas: soal.pertanyaan, 
-        susunanAwal: soal.gambar.map((e) => e != null ? e.toString() : null), 
-        susunanAtas: jawabanTersimpan != false ? jawabanTersimpan : soal.gambar, 
-        susunanBawah: opsiYangTidakAda ?? opsi,
-        padaSelesaiSusun: (susunan, selesai) {
-          if (selesai) {
-            kTes.aturSusunanJawabanListString(susunan[0].map((isi) => isi.toString()).toList());
-          } else {
-            final bolehRebuild = kTes.susunanJawabanListDynamic.first;
-            if (bolehRebuild != false) {
-              kTes.aturSusunanJawabanKosong();
-            }
-          }
+        susunanAwal: soal.gambar, 
+        susunanAtas: kTesSusunanAtas, 
+        opsi: soal.opsi,
+        padaSelesaiSusun: (susunan) {
+          kTes.aturSusunanJawabanListDynamic(susunan[0]);
         },
       ),
       4 => SoalModel5(
-          penjelas: soal.pertanyaan,
-          gambarSoal: soal.gambar,
-          jumlahOpsi: soal.jawaban[0].toString().length,
-        ),
+        penjelas: soal.pertanyaan,
+        gambarSoal: soal.gambar, 
+        panjangRangkaian: soal.jawaban.length, 
+        rangkaian: kTesSusunanRangkaian.map((isi) => isi?.toString()).toList(),
+        padaRangkai: (susunan) => kTes.aturSusunanJawabanListDynamic(susunan),
+      ),
       _ => SizedBox.shrink(),
     };
 

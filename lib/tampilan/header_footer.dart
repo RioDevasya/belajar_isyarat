@@ -25,8 +25,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         toolbarHeight: 60,
         elevation: 1,
         titleSpacing: 10,
-        title: Container(
-          height: 60,
+        flexibleSpace: Container(
+          height: double.maxFinite,
           width: double.maxFinite,
           decoration: BoxDecoration(
             gradient: alatApp.warnaHeader,
@@ -62,11 +62,10 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         CardStatis(
                           lebar: 180,
                           tinggi: 40,
-                          padding: 5,
                           tepiRadius: 5,
                           isiTengah: true,
                           judul: "Belajar Isyarat",
-                          judulUkuran: 27,
+                          judulUkuran: 20,
                           judulWarna: kontrolMenu.halaman == 8 ? alatApp.teksKuning : alatApp.teksPutihSedang,
                           fontJudul: alatApp.namaAplikasi,
                           teksTengah: true,
@@ -93,7 +92,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                       CardStatis(
                         lebar: 100,
                         tinggi: 40,
-                        padding: 5,
                         tepiRadius: 5,
                         isiTengah: true,
                         judul: "Belajar",
@@ -122,7 +120,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                       CardStatis(
                         lebar: 100,
                         tinggi: 40,
-                        padding: 5,
                         tepiRadius: 5,
                         isiTengah: true,
                         judul: "Kuis",
@@ -143,7 +140,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                       CardStatis(
                         lebar: 100,
                         tinggi: 40,
-                        padding: 5,
                         tepiRadius: 5,
                         isiTengah: true,
                         judul: "Progress",
@@ -170,7 +166,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                     child: CardStatis(
                         lebar: 100,
                         tinggi: 40,
-                        padding: 5,
                         tepiRadius: 5,
                         isiTengah: true,
                         judul: "Bantuan",
@@ -370,7 +365,7 @@ class _FooterModel2State extends State<FooterModel2> {
       progress = sekarang / total;
 
       padaSebelumnya = () => kTes.aturSoalSebelumnya();
-      padaSelanjutnya = sekarang < total
+      padaSelanjutnya = sekarang <= total
           ? () => kTes.aturSoalSelanjutnya()
           : () => kTes.ajukanTes(kontrolProgress);
 

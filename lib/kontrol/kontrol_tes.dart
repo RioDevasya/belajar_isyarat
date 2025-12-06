@@ -35,6 +35,8 @@ class KontrolTes extends ChangeNotifier {
     _pilihanKotak = 0;
     _susunanJawaban = [false];
     _simpananJawaban = [];
+
+    // isi simpanan jawaban sesuai mode nya
     for (var i=0; i<semuaSoal.length; i++){
       if (semuaSoal[i].mode.name == "susun") {
         _simpananJawaban.add(semuaSoal[i].opsi);
@@ -45,6 +47,19 @@ class KontrolTes extends ChangeNotifier {
         _simpananJawaban.add([semuaSoal[i].opsi, semuaSoal[i].gambar]);
         if (i == 0) {
           _susunanJawaban = [semuaSoal[i].opsi, semuaSoal[i].gambar];
+        }
+      } else if (semuaSoal[i].mode.name == "lengkapi") {
+        _simpananJawaban.add(semuaSoal[i].gambar);
+        if (i == 0) {
+          _susunanJawaban = [semuaSoal[i].gambar];
+        }
+      } else if (semuaSoal[i].mode.name == "artikan") {
+        _simpananJawaban.add([]);
+        for (var j = 0; j < semuaSoal[i].jawaban.length; j++) {
+          _simpananJawaban[i].add(null);
+        }
+        if (i == 0) {
+          _susunanJawaban = _simpananJawaban[i];
         }
       } else {
         _simpananJawaban.add(false);
@@ -187,6 +202,11 @@ class KontrolTes extends ChangeNotifier {
     notifyListeners();
   }
 
+  void aturSusunanJawabanListDynamic(List<dynamic> isi) {
+    _susunanJawaban = isi;
+    notifyListeners();
+  }
+
   void _jawabSoal() {
     final soal = _eTes.modul[indeksModul(_modul)]!.semuaSoal[indeksSoal(_soal)];
     if (soal.mode.name == 'pilih') {
@@ -220,10 +240,10 @@ class KontrolTes extends ChangeNotifier {
   }
 
   void aturSoalSelanjutnya() {
-    if (_soal < _eTes.modul[indeksModul(_modul)]!.semuaSoal.length - 1) {
+    if (_soal < _eTes.modul[indeksModul(_modul)]!.semuaSoal.length) {
       _jawabSoal();
       _soal++;
-      _susunanJawaban = _simpananJawaban[soal - 1] is List ? _simpananJawaban[soal - 1] : [_simpananJawaban[soal - 1]];
+      _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
       notifyListeners();
     }
   }
@@ -232,7 +252,7 @@ class KontrolTes extends ChangeNotifier {
     if (_soal > 1) {
       _jawabSoal();
       _soal--;
-      _susunanJawaban = _simpananJawaban[soal - 1] is List ? _simpananJawaban[soal - 1] : [_simpananJawaban[soal - 1]];
+      _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
       notifyListeners();
     }
   }
