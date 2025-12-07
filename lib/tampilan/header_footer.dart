@@ -60,7 +60,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         SizedBox(width: 10),
 
                         CardStatis(
-                          lebar: 180,
+                          lebar: 200,
                           tinggi: 40,
                           tepiRadius: 5,
                           isiTengah: true,
