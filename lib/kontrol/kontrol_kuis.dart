@@ -38,7 +38,8 @@ class KontrolKuis extends ChangeNotifier {
     }
     notifyListeners();
   }
-  void bukaMenuKuis() {
+  void bukaMenuKuis(KontrolProgress kontrolProgress) {
+    _skorKuis = kontrolProgress.progressKuis;
     _pilihanKotak= 0;
     _susunanJawaban = [false];
     _jawabanBenar = null;
@@ -46,12 +47,21 @@ class KontrolKuis extends ChangeNotifier {
   }
   void _bukaSoalKuis() {
     final soal = _eKuis.semuaSoal[ambilAwalAntrianKuis];
-    switch (soal.mode.name) {
-      case "susun": 
-        _susunanJawaban.clear();
-        _susunanJawaban = soal.opsi;
-        break;
+    if (soal.mode.name == "susun") {
+      _susunanJawaban = soal.opsi;
+    } else if (soal.mode.name == "hubungkan") {
+      _susunanJawaban = [soal.opsi, soal.gambar];
+    } else if (soal.mode.name == "lengkapi") {
+      _susunanJawaban = soal.gambar;
+    } else if (soal.mode.name == "artikan") {
+      _susunanJawaban = [];
+      for (var j = 0; j < soal.jawaban.length; j++) {
+        _susunanJawaban.add(null);
+      }
+    } else {
+      _susunanJawaban = [false];
     }
+    print(_susunanJawaban);
   }
 
   // ==== getter ====
@@ -65,25 +75,48 @@ class KontrolKuis extends ChangeNotifier {
   String get susunanJawabanString => _susunanJawaban.first == false ? "0" : _susunanJawaban.first;
   List<dynamic> get susunanJawabanListDynamic => _susunanJawaban;
   List<String> get susunanJawabanListString {
-    if (_susunanJawaban.first == false) {
+    if (_susunanJawaban.isEmpty || _susunanJawaban.first == false) {
       return ["0"];
     }
-    List<String> susunan = [];
+    List<String> hasil = [];
     for (var isi in _susunanJawaban) {
-      susunan.add(isi.toString());
+      if (isi is String) {
+        hasil.add(isi);
+      } 
+      else if (isi is List) {
+        // flatten list satu level
+        hasil.addAll(isi.map((e) => e.toString()));
+      }
     }
-    return susunan;
+    return hasil;
   }
+
   List<List<String>> get susunanJawabanListListString {
-    if (_susunanJawaban.first == false) {
-      return [["0"], ["0"]];
+    if (_susunanJawaban.isEmpty || _susunanJawaban.first == false) {
+      return [
+        ["0"],
+        ["0"]
+      ];
     }
-    List<List<String>> susunan = [];
+
+    List<List<String>> hasil = [];
+
     for (var isi in _susunanJawaban) {
-      susunan.add(isi);
+      if (isi is String) {
+        hasil.add([isi]);
+      }
+      else if (isi is List<String>) {
+        hasil.add(isi);
+      }
+      else if (isi is List) {
+        // pastikan semua elemen jadi string
+        hasil.add(isi.map((e) => e.toString()).toList());
+      }
     }
-    return susunan;
+
+    return hasil;
   }
+
 
   bool bolehAjukanKuis() => _susunanJawaban.first == false ? false : true;
 
@@ -120,45 +153,122 @@ class KontrolKuis extends ChangeNotifier {
   } // perlu pengembangan, terlalu acak (soal salah bisa ketinggalan). utamakan soal yang belum benar.
 
   bool cekJawaban(dynamic jawaban) {
-    final jawabanBenar = _eKuis.semuaSoal[ambilAwalAntrianKuis].jawaban;
+    final soalSekarang = _eKuis.semuaSoal[ambilAwalAntrianKuis];
+    final jawabanBenar = soalSekarang.mode.name == "artikan" ? soalSekarang.jawaban.map((j) => j.toString().toUpperCase()).toList() : soalSekarang.jawaban;
 
-    return deepEqualsString(jawabanBenar, jawaban);
+    return deepEquals(jawabanBenar, jawaban);
   }
 
-  bool deepEqualsString(dynamic a, dynamic b) { // String | List<String> | List<List<String>>. harusnya di tools.
+  bool deepEquals(dynamic a, dynamic b) {
+    // === 1. Null check ===
     if (a == null && b == null) return true;
-
     if (a == null || b == null) return false;
 
+    // === 2. Primitive check (String, num, bool) ===
     if (a is String && b is String) return a == b;
+    if (a is num && b is num) return a == b;
+    if (a is bool && b is bool) return a == b;
 
+    // === 3. List check (rekursif) ===
     if (a is List && b is List) {
       if (a.length != b.length) return false;
 
       for (int i = 0; i < a.length; i++) {
-        if (!deepEqualsString(a[i], b[i])) return false;
+        if (!deepEquals(a[i], b[i])) return false;
       }
 
       return true;
     }
 
+    // === 4. Jika tipe beda, otomatis false ===
     return false;
   }
-  int _pilihAcak(int total) => _acak.nextInt(total) + 1;
+
+  bool cekListListPasangan(List<List<String>> user, List<List<String>> benar) {
+    // --- Validasi awal ---
+    if (user.length != 2 || benar.length != 2) return false;
+    if (user[0].length != user[1].length) return false;
+    if (benar[0].length != benar[1].length) return false;
+    if (user[0].length != benar[0].length) return false;
+
+    final n = user[0].length;
+
+    // Bentuk set pasangan dari user
+    final Set<String> pasanganUser = {};
+    for (int i = 0; i < n; i++) {
+      pasanganUser.add("${user[0][i]}::${user[1][i]}");
+    }
+
+    // Bentuk set pasangan dari jawaban benar
+    final Set<String> pasanganBenar = {};
+    for (int i = 0; i < n; i++) {
+      pasanganBenar.add("${benar[0][i]}::${benar[1][i]}");
+    }
+
+    // Cocokkan: semua pasangan user harus ada di pasangan benar
+    return pasanganUser.length == pasanganBenar.length &&
+          pasanganUser.every((p) => pasanganBenar.contains(p));
+  }
+
+  List<List<String>> keListListString(List<dynamic> src) {
+    final List<List<String>> hasil = [];
+
+    for (var item in src) {
+      if (item is List) {
+        hasil.add(item.map((e) => e.toString()).toList());
+      } else {
+        hasil.add([item.toString()]);
+      }
+    }
+
+    return hasil;
+  }
+
+  bool cekSatuKuisSelesai() {
+    return _isFilled(_susunanJawaban);
+  }
+
+  bool _isFilled(dynamic value) {
+    if (value == null) return false;
+
+    if (value is bool) {
+      return value; // harus true
+    }
+
+    if (value is String) {
+      return value.isNotEmpty; // kosong dianggap belum terisi
+    }
+
+    if (value is List) {
+      if (value.isEmpty) return false; // list kosong dianggap belum terisi
+      for (var item in value) {
+        if (!_isFilled(item)) return false;
+      }
+      return true;
+    }
+
+    // untuk tipe lain (mis. int, double, Map) anggap terisi jika bukan null
+    return true;
+  }
+
+  int _pilihAcak(int total) => _acak.nextInt(total);
   int indeksSoal(int soal) => soal - 1;
 
   // alat
   int aturPilihanKotak(int pilihan) {
     if (pilihan == _pilihanKotak) {
       _pilihanKotak = 0;
+      _susunanJawaban = [false];
+      notifyListeners();
     } else {
       _pilihanKotak = pilihan;
+      final soal = _eKuis.semuaSoal[ambilAwalAntrianKuis];
+      aturSusunanJawabanString(soal.opsi[pilihan - 1] .toString());
     }
-    notifyListeners();
     return _pilihanKotak;
   }
 
-  void aturSusunanJawabanKosong(String isi) {
+  void aturSusunanJawabanKosong() {
     _susunanJawaban.clear();
     _susunanJawaban.add(false);
     notifyListeners();
@@ -171,29 +281,40 @@ class KontrolKuis extends ChangeNotifier {
   }
 
   void aturSusunanJawabanListString(List<String> isi) {
-    _susunanJawaban.clear();
     _susunanJawaban = isi;
     notifyListeners();
   }
 
   void aturSusunanJawabanListListString(List<List<String>> isi) {
-    _susunanJawaban.clear();
+    _susunanJawaban = isi;
+    notifyListeners();
+  }
+
+  void aturSusunanJawabanListDynamic(List<dynamic> isi) {
     _susunanJawaban = isi;
     notifyListeners();
   }
 
   int ajukanKuis(KontrolProgress kontrolProgress) {
-    final benar = cekJawaban(_eKuis.semuaSoal[ambilAwalAntrianKuis].jawaban);
+    if (!cekSatuKuisSelesai()) {
+      return 0;
+    }
+
+    final soalSekarang = _eKuis.semuaSoal[ambilAwalAntrianKuis];
+    final benar = soalSekarang.mode.name == "hubungkan" 
+      ? cekListListPasangan(keListListString(_susunanJawaban), keListListString(soalSekarang.jawaban)) 
+      : cekJawaban(_susunanJawaban);
     
     kontrolProgress.naikkanProgressKuis(ambilAwalAntrianKuis, benar);
     _skorKuis = kontrolProgress.progressKuis;
-    _jawabanBenar = benar;
+
+    print("$benar");
     notifyListeners();
     return cekNilaiKuis(benar);
   } // TODO: kembangkan pengecekkan soal
 
   void aturSoalSelanjutnya(KontrolProgress kontrolProgress) {
-    if (!_antrianKuis.isNotEmpty) {
+    if (_antrianKuis.isNotEmpty) {
       _antrianKuis.removeAt(0);
     }
     while (_antrianKuis.length < 3) {
@@ -202,7 +323,7 @@ class KontrolKuis extends ChangeNotifier {
         _antrianKuis.add(kandidat);
       }
     }
-    bukaMenuKuis();
+    bukaMenuKuis(kontrolProgress);
     notifyListeners();
   }
 

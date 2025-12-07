@@ -209,6 +209,21 @@ class _FooterModel1State extends State<FooterModel1>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<int> _scoreAnimation;
+  late VoidCallback padaJawab;
+  bool gagal = false;
+  bool animasiSkor = false;
+  int nilaiJawaban = 0;
+
+  void trigger() async {
+    setState(() => gagal = true);
+    await Future.delayed(Duration(milliseconds: 1000));
+    if (mounted) setState(() => gagal = false);
+  }
+  void animasikanSkor() async {
+    setState(() => animasiSkor = true);
+    await Future.delayed(Duration(milliseconds: 1000));
+    if (mounted) setState(() => animasiSkor = false);
+  }
 
   @override
   void initState() {
@@ -228,63 +243,69 @@ class _FooterModel1State extends State<FooterModel1>
 
   @override
   Widget build(BuildContext context) {
-    final kontrolKuisSkorKuis = context.select<KontrolKuis, int>(
+    final kKuisSkorKuis = context.select<KontrolKuis, int>(
       (k) => k.skorKuis
     );
-    final kontrolKuisNilaiJawaban = context.select<KontrolKuis, int>(
-      (k) => k.cekNilaiKuis(true)
+    final kKuisSoalKuis = context.select<KontrolKuis, int>(
+      (k) => k.ambilAwalAntrianKuis
     );
-    final kontrolKuis = context.read<KontrolKuis>();
+    final kKuis = context.read<KontrolKuis>();
     final kontrolProgress = context.read<KontrolProgress>();
     final alat = context.read<AlatApp>();
 
-    final VoidCallback padaJawab = () {
-      kontrolKuis.ajukanKuis(kontrolProgress);
+    padaJawab = () {
+      if (kKuis.cekSatuKuisSelesai()) {
+        nilaiJawaban = kKuis.ajukanKuis(kontrolProgress);
+        animasikanSkor();
+        kKuis.aturSoalSelanjutnya(kontrolProgress);
+        print(kKuis.susunanJawabanListDynamic);
+        print(kKuisSkorKuis);
+      } else {
+        trigger();
+        print(kKuis.susunanJawabanListDynamic);
+        print(kKuisSkorKuis);
+      }
     };
 
     _scoreAnimation = IntTween(
-      begin: kontrolKuisSkorKuis,
-      end: kontrolKuisSkorKuis + kontrolKuisNilaiJawaban,
+      begin: kKuisSkorKuis - nilaiJawaban,
+      end: kKuisSkorKuis,
     ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
-        gradient: alat.warnaFooter
+        gradient: alat.warnaFooter,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Foto + skor animasi
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(width: 16),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              border: Border.all(),
+              borderRadius: BorderRadius.circular(40),
+            ),
+          ),
+          const SizedBox(width: 16),
 
-              // Animasi skor
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return Text(
-                    "Skor: ${_scoreAnimation.value} + $kontrolKuisNilaiJawaban",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
-              ),
-            ],
+          // Animasi skor
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Text(
+                "Skor: ${_scoreAnimation.value}${animasiSkor ? " + $nilaiJawaban" : ""}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
           ),
 
           // Tombol Jawab
@@ -295,6 +316,8 @@ class _FooterModel1State extends State<FooterModel1>
             padding: 10,
             tepiRadius: 10,
             pemisahGarisLuarUkuran: 3,
+            pemisahGarisLuarWarna: gagal ? alat.salah : null,
+            garisLuarUkuran: 10,
             judul: "Jawab",
             judulUkuran: 10,
             fontJudul: alat.judul,
@@ -303,7 +326,8 @@ class _FooterModel1State extends State<FooterModel1>
             pakaiKlik: true,
             pakaiHover: true,
             padaHoverAnimasi: padaHoverAnimasi2,
-            padaHoverPemisahGarisLuarGradient: alat.terpilih,
+            padaHoverPemisahGarisLuarWarna: gagal ? null : alat.garisLuarHoverAbu,
+            padaHoverGarisLuarWarna: gagal ? alat.garisLuarHoverAbu : null,
             padaKlikAnimasi: padaKlikAnimasi1,
             padaKlik: () {
               padaJawab();
@@ -329,6 +353,14 @@ class FooterModel2 extends StatefulWidget {
 }
 
 class _FooterModel2State extends State<FooterModel2> {
+  bool gagal = false;
+
+  void trigger() async {
+    setState(() => gagal = true);
+    await Future.delayed(Duration(milliseconds: 1000));
+    if (mounted) setState(() => gagal = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final kontrolProgress = context.read<KontrolProgress>();
@@ -339,7 +371,8 @@ class _FooterModel2State extends State<FooterModel2> {
     late VoidCallback padaSebelumnya;
     late VoidCallback padaSelanjutnya;
     late bool akhirSebelumnya;
-    late String akhirSelanjutnya;
+    late bool akhirSelanjutnya;
+    late String teksAkhirSelanjutnya;
 
     if (widget.belajar) {
       final kBelajar = context.read<KontrolBelajar>();
@@ -349,28 +382,52 @@ class _FooterModel2State extends State<FooterModel2> {
       progress = sekarang / total;
 
       padaSebelumnya = () {kBelajar.aturMateriSebelumnya();};
-      padaSelanjutnya = sekarang != total 
-        ? () => kBelajar.aturMateriSelanjutnya(kontrolProgress)
-        : () {
+      padaSelanjutnya = () {
+        if (sekarang == total) {
           kBelajar.tutupMenuMateri();
           kMenu.bukaMenu(1);
-        };
+          return;
+        }
+        kBelajar.aturMateriSelanjutnya(kontrolProgress);
+      };
 
       akhirSebelumnya = sekarang == 1 ? true : false;
-      akhirSelanjutnya = sekarang == total ? "Keluar" : "Selanjutnya";
+      akhirSelanjutnya = sekarang == 0 ? true : false;
+      teksAkhirSelanjutnya = sekarang == total ? "Keluar" : "Selanjutnya";
     } else {
       final kTes = context.read<KontrolTes>();
       sekarang = context.select<KontrolTes, int>((k) => k.soal);
       total = kTes.totalSoal;
       progress = sekarang / total;
 
-      padaSebelumnya = () => kTes.aturSoalSebelumnya();
-      padaSelanjutnya = sekarang <= total
-          ? () => kTes.aturSoalSelanjutnya()
-          : () => kTes.ajukanTes(kontrolProgress);
+      padaSebelumnya = () {
+        if (sekarang == total && kTes.menuSelesai) {
+          kTes.keluarMenuSelesai();
+          return;
+        }
+        kTes.aturSoalSebelumnya();
+      };
+      padaSelanjutnya = () {
+        if (!kTes.tesSelesai && sekarang == total) {
+          kTes.jawabSoal(notify: true);
+          if (kTes.cekSemuaTesSelesai()) {
+            kTes.ajukanTes(kontrolProgress);
+            return;
+          } else {
+            trigger();
+            return;
+          }
+        }
+        if (sekarang == total) {
+          kTes.masukMenuSelesai();
+          return;
+        }
+        kTes.aturSoalSelanjutnya();
+      };
 
       akhirSebelumnya = sekarang == 1 ? true : false;
-      akhirSelanjutnya = sekarang == total ? "Kumpul Tes" : "Selanjutnya";
+      akhirSelanjutnya = sekarang > total ? true : false;
+      teksAkhirSelanjutnya = sekarang >= total ? "Kumpul Tes" : "Selanjutnya";
     }
 
     final alat = context.read<AlatApp>();
@@ -421,7 +478,7 @@ class _FooterModel2State extends State<FooterModel2> {
             pakaiKlik: true,
             pakaiHover: true,
             padaHoverAnimasi: padaHoverAnimasi2,
-            padaHoverPemisahGarisLuarGradient: alat.terpilih,
+            padaHoverPemisahGarisLuarWarna: akhirSebelumnya ? null : alat.garisLuarHoverAbu,
             padaKlikAnimasi: padaKlikAnimasi1,
             padaKlik: () {
               padaSebelumnya();
@@ -437,15 +494,18 @@ class _FooterModel2State extends State<FooterModel2> {
             padding: 10,
             tepiRadius: 10,
             pemisahGarisLuarUkuran: 3,
-            judul: akhirSelanjutnya,
+            pemisahGarisLuarWarna: gagal ? alat.salah : null,
+            judul: teksAkhirSelanjutnya,
             judulUkuran: 10,
             fontJudul: alat.judul,
             judulWarna: alat.teksPutihSedang,
-            kotakGradient: alat.terpilih,
+            kotakWarna: akhirSelanjutnya ? alat.tidakAktif : null,
+            kotakGradient: akhirSelanjutnya ? null : alat.terpilih,
             pakaiKlik: true,
             pakaiHover: true,
             padaHoverAnimasi: padaHoverAnimasi2,
-            padaHoverPemisahGarisLuarGradient: alat.terpilih,
+            padaHoverPemisahGarisLuarWarna: gagal ? null : (akhirSelanjutnya ? null : alat.garisLuarHoverAbu),
+            padaHoverGarisLuarWarna: gagal ? alat.garisLuarHoverAbu : null,
             padaKlikAnimasi: padaKlikAnimasi1,
             padaKlik: () {
               padaSelanjutnya();

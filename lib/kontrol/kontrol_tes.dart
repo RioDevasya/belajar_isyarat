@@ -8,6 +8,9 @@ import 'kontrol_database.dart';
 class KontrolTes extends ChangeNotifier {
   int _modul = 0; // 1 sampai n. 0 artinya tidak aktif
   int _soal = 0; // 1 sampai n
+  bool _tesSelesai = false;
+  bool _menuSelesai = false;
+  int _nilaiTes = 0;
   
   int _jawabanBenar = 0;
   int _totalSoal = 0;
@@ -26,7 +29,7 @@ class KontrolTes extends ChangeNotifier {
     return true;
   }
 
-  void bukaMenuTes(int modul) {
+  void bukaMenuTes(int modul, KontrolProgress kontrolProgress) {
     final semuaSoal = _eTes.modul[indeksModul(modul)]!.semuaSoal;
     _modul = modul;
     _soal = 1;
@@ -35,6 +38,9 @@ class KontrolTes extends ChangeNotifier {
     _pilihanKotak = 0;
     _susunanJawaban = [false];
     _simpananJawaban = [];
+    _nilaiTes = kontrolProgress.nilaiTes[modul - 1];
+    _menuSelesai = false;
+    _tesSelesai = false;
 
     // isi simpanan jawaban sesuai mode nya
     for (var i=0; i<semuaSoal.length; i++){
@@ -71,8 +77,11 @@ class KontrolTes extends ChangeNotifier {
   // ==== getter ====
   int get modul => _modul;
   int get soal => _soal;
+  bool get tesSelesai => _tesSelesai;
   int get jawabanBenar => _jawabanBenar;
   int get totalSoal => _totalSoal;
+  bool get menuSelesai => _menuSelesai;
+  int get nilaiTes => _nilaiTes;
 
   int get pilihanKotak => _pilihanKotak;
   String get susunanJawabanString => _susunanJawaban.first == false ? "0" : _susunanJawaban.first;
@@ -122,11 +131,43 @@ class KontrolTes extends ChangeNotifier {
 
   List<dynamic> get simpananJawaban => _simpananJawaban;
 
-  bool bolehAjukanTes() {
+  // rekursif: cek apakah satu nilai (String | bool | List | nested List) sudah "terisi"
+  bool _isFilled(dynamic value) {
+    if (value == null) return false;
+
+    if (value is bool) {
+      return value; // harus true
+    }
+
+    if (value is String) {
+      return value.isNotEmpty; // kosong dianggap belum terisi
+    }
+
+    if (value is List) {
+      if (value.isEmpty) return false; // list kosong dianggap belum terisi
+      for (var item in value) {
+        if (!_isFilled(item)) return false;
+      }
+      return true;
+    }
+
+    // untuk tipe lain (mis. int, double, Map) anggap terisi jika bukan null
+    return true;
+  }
+
+  // cek apakah SEMUA soal pada _simpananJawaban sudah terisi (tidak ada null/false/empty)
+  bool cekSemuaTesSelesai() {
     for (var isi in _simpananJawaban) {
-      if (isi == false) {return false;}
+      if (!_isFilled(isi)) return false;
     }
     return true;
+  }
+
+  // cek apakah SATU soal (nomor soal 1-based) sudah terisi
+  bool cekSatuTesSelesai(int soal) {
+    final idx = soal - 1;
+    if (idx < 0 || idx >= _simpananJawaban.length) return false;
+    return _isFilled(_simpananJawaban[idx]);
   }
 
   ESoalTes ambilSoalTes(int modul, int soal) {
@@ -137,35 +178,82 @@ class KontrolTes extends ChangeNotifier {
   }
 
   double cekHasilNilai() {
-    double hasil = _jawabanBenar / _totalSoal;
+    double hasil = _jawabanBenar / _totalSoal * 100;
     return hasil;
   }
 
   bool cekJawaban(int modul, int soal, dynamic jawaban) {
-    final jawabanBenar = _eTes.modul[indeksModul(modul)]!.semuaSoal[indeksSoal(soal)].jawaban;
+    final soalSekarang = _eTes.modul[indeksModul(modul)]!.semuaSoal[indeksSoal(soal)];
+    final jawabanBenar = soalSekarang.mode.name == "artikan" ? soalSekarang.jawaban.map((j) => j.toString().toUpperCase()).toList() : soalSekarang.jawaban;
 
-    return deepEqualsString(jawabanBenar, jawaban);
+    return deepEquals(jawabanBenar, jawaban);
   }
 
-  bool deepEqualsString(dynamic a, dynamic b) { // String | List<String> | List<List<String>>. harusnya di tools.
+  bool deepEquals(dynamic a, dynamic b) {
+    // === 1. Null check ===
     if (a == null && b == null) return true;
-
     if (a == null || b == null) return false;
 
+    // === 2. Primitive check (String, num, bool) ===
     if (a is String && b is String) return a == b;
+    if (a is num && b is num) return a == b;
+    if (a is bool && b is bool) return a == b;
 
+    // === 3. List check (rekursif) ===
     if (a is List && b is List) {
       if (a.length != b.length) return false;
 
       for (int i = 0; i < a.length; i++) {
-        if (!deepEqualsString(a[i], b[i])) return false;
+        if (!deepEquals(a[i], b[i])) return false;
       }
 
       return true;
     }
 
+    // === 4. Jika tipe beda, otomatis false ===
     return false;
   }
+
+  bool cekListListPasangan(List<List<String>> user, List<List<String>> benar) {
+    // --- Validasi awal ---
+    if (user.length != 2 || benar.length != 2) return false;
+    if (user[0].length != user[1].length) return false;
+    if (benar[0].length != benar[1].length) return false;
+    if (user[0].length != benar[0].length) return false;
+
+    final n = user[0].length;
+
+    // Bentuk set pasangan dari user
+    final Set<String> pasanganUser = {};
+    for (int i = 0; i < n; i++) {
+      pasanganUser.add("${user[0][i]}::${user[1][i]}");
+    }
+
+    // Bentuk set pasangan dari jawaban benar
+    final Set<String> pasanganBenar = {};
+    for (int i = 0; i < n; i++) {
+      pasanganBenar.add("${benar[0][i]}::${benar[1][i]}");
+    }
+
+    // Cocokkan: semua pasangan user harus ada di pasangan benar
+    return pasanganUser.length == pasanganBenar.length &&
+          pasanganUser.every((p) => pasanganBenar.contains(p));
+  }
+
+  List<List<String>> keListListString(List<dynamic> src) {
+    final List<List<String>> hasil = [];
+
+    for (var item in src) {
+      if (item is List) {
+        hasil.add(item.map((e) => e.toString()).toList());
+      } else {
+        hasil.add([item.toString()]);
+      }
+    }
+
+    return hasil;
+  }
+
   String indeksModul(int modul) => "modul_$modul";
   int indeksSoal(int soal) => soal - 1;
 
@@ -207,7 +295,7 @@ class KontrolTes extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _jawabSoal() {
+  void jawabSoal({bool? notify}) {
     final soal = _eTes.modul[indeksModul(_modul)]!.semuaSoal[indeksSoal(_soal)];
     if (soal.mode.name == 'pilih') {
       if (pilihanKotak == 0) {
@@ -219,29 +307,47 @@ class KontrolTes extends ChangeNotifier {
     }
     if (_susunanJawaban != _simpananJawaban[indeksSoal(_soal)]) {
       if (soal.mode.name == "pilih") {
-        _simpananJawaban[indeksSoal(_soal)] = _susunanJawaban.map((j) => j);
+        _simpananJawaban[indeksSoal(_soal)] = _susunanJawaban[0] != false ? [_susunanJawaban[0]] : false;
       } else {
         _simpananJawaban[indeksSoal(_soal)] = _susunanJawaban;
       }
     }
-  }
-
-  void ajukanTes(KontrolProgress kontrolProgress) {
-    if (bolehAjukanTes()) {
-      final semuaSoal = _eTes.modul[indeksModul(modul)]!.semuaSoal;
-      for (var i = 0; i < semuaSoal.length; i++) {
-        if (deepEqualsString(_simpananJawaban[i], semuaSoal[i].jawaban)) {
-         _jawabanBenar++;
-        }
-      }
-      kontrolProgress.naikkanNilaiTes(_modul, cekHasilNilai().round()); // salah, harusnya nilaiTes double.
+    if (notify != null) {
+      _menuSelesai = true;
       notifyListeners();
     }
   }
 
+  void ajukanTes(KontrolProgress kontrolProgress) {
+    if (!cekSemuaTesSelesai()) {
+      return;
+    }
+    _tesSelesai = true;
+    final semuaSoal = _eTes.modul[indeksModul(_modul)]!.semuaSoal;
+
+    for (var i = 0; i < semuaSoal.length; i++) {
+      final jawabanUser = _simpananJawaban[i];
+      final benar = semuaSoal[i].mode.name == "hubungkan" 
+        ? cekListListPasangan(keListListString(jawabanUser), keListListString(semuaSoal[i].jawaban)) 
+        : cekJawaban(_modul, i + 1, jawabanUser);
+
+      if (benar) {
+        _jawabanBenar++;
+      }
+    }
+    final nilai = cekHasilNilai().round();
+    _nilaiTes = nilai;
+    kontrolProgress.naikkanNilaiTes(_modul, nilai);
+    print("${kontrolProgress.nilaiTes}");
+    print("$jawabanBenar");
+    _menuSelesai = true;
+    notifyListeners();
+  }
+
   void aturSoalSelanjutnya() {
+    print("$_susunanJawaban || $_simpananJawaban");
     if (_soal < _eTes.modul[indeksModul(_modul)]!.semuaSoal.length) {
-      _jawabSoal();
+      jawabSoal();
       _soal++;
       _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
       notifyListeners();
@@ -250,17 +356,29 @@ class KontrolTes extends ChangeNotifier {
 
   void aturSoalSebelumnya() {
     if (_soal > 1) {
-      _jawabSoal();
+      jawabSoal();
       _soal--;
       _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
       notifyListeners();
     }
   }
 
+  void masukMenuSelesai() {
+    _menuSelesai = true;
+    notifyListeners();
+  }
+
+  void keluarMenuSelesai() {
+    _menuSelesai = false;
+    notifyListeners();
+  }
+
   // tutup apk || tutup menu
   void tutupMenuTes() {
     _modul = 0;
     _soal = 0;
+    _tesSelesai = false;
+    _menuSelesai = false;
     _jawabanBenar = 0;
     _totalSoal = 0;
     _susunanJawaban = [false];

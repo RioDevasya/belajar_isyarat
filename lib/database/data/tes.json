@@ -32,7 +32,7 @@
             "gambar": ["i", null, "u"],
             "pertanyaan": "isi huruf yang kosong agar menjadi kata 'ibu'!",
             "opsi": ["a", "b", "c"],
-            "jawaban": ["b"],
+            "jawaban": ["i", "b", "u"],
             "mode": "lengkapi"
         },
         {
@@ -55,22 +55,6 @@
                 ["a", "b", "c"]
             ],
             "mode": "hubungkan"
-        },
-        {
-            "suara": "tes_4",
-            "gambar": ["i", null, "u"],
-            "pertanyaan": "isi huruf yang kosong agar menjadi kata 'ibu'!",
-            "opsi": ["a", "b", "c"],
-            "jawaban": ["b"],
-            "mode": "lengkapi"
-        },
-        {
-            "suara": "tes_5",
-            "gambar": ["n", "u", "l", "l"],
-            "pertanyaan": "apa arti kata tersebut?",
-            "opsi": [],
-            "jawaban": ["null"],
-            "mode": "artikan"
         }
     ]
 }

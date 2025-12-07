@@ -251,12 +251,12 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
   }
 
   Widget _bangunPemisahGarisLuar(Widget child) {
-    final pemisahGarisLuarColor = widget.dipilih 
+    final pemisahGarisLuarColor = widget.dipilih && widget.padaDipilihWarnaPemisahGarisLuar != null
         ? widget.padaDipilihWarnaPemisahGarisLuar
         : _hover && widget.pakaiHover
         ? (widget.padaHoverPemisahGarisLuarWarna ?? widget.pemisahGarisLuarWarna)
         : widget.pemisahGarisLuarWarna;
-    final pemisahGarisLuarGradient = widget.dipilih 
+    final pemisahGarisLuarGradient = widget.dipilih && widget.padaDipilihGradientPemisahGarisLuar != null
         ? widget.padaDipilihGradientPemisahGarisLuar
         : _hover && widget.pakaiHover
         ? (widget.padaHoverPemisahGarisLuarGradient ?? widget.pemisahGarisLuarGradient)
@@ -275,12 +275,12 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
   }
 
   Widget _bangunGarisLuar(Widget child) {
-    final garisLuarColor = widget.dipilih 
+    final garisLuarColor = widget.dipilih && widget.padaDipilihWarnaGarisLuar != null
         ? widget.padaDipilihWarnaGarisLuar
         : _hover && widget.pakaiHover
         ? (widget.padaHoverGarisLuarWarna ?? widget.garisLuarWarna)
         : widget.garisLuarWarna;
-    final garisLuarGradient = widget.dipilih 
+    final garisLuarGradient = widget.dipilih && widget.padaDipilihGradientGarisLuar != null
         ? widget.padaDipilihGradientGarisLuar
         : _hover && widget.pakaiHover
         ? (widget.padaHoverGarisLuarGradient ?? widget.garisLuarGradient)
@@ -415,12 +415,13 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
 
             return /*Transform.translate(
               offset: dragOffset,
-              child: */Transform(
+              child: */Transform.scale(
                 alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..scale(finalScale)
-                  ..rotateZ(finalRotate),
-                child: child,
+                scale: finalScale,
+                child: Transform.rotate(
+                  angle: finalRotate,
+                  child: child,
+                ),
               );
           },
           child: LayoutBuilder(

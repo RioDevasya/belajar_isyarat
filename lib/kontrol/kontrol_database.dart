@@ -59,25 +59,34 @@ class KontrolDatabase {
   }
 
 
-  // Simpan profil, progress.
-  Future<dynamic> simpanJson(String namaFile, Map<String, dynamic> file) async {
+  // Simpan profil, progress, atau log (boleh MAP atau LIST)
+  Future<dynamic> simpanJson(String namaFile, dynamic data) async {
     try {
       final pathFile = "lib/database/data/$namaFile.json";
-
       final targetFile = File(pathFile);
 
-      // Pastikan folder ada
+      // Pastikan folder tersedia
       await targetFile.parent.create(recursive: true);
 
-      // Encode dan simpan (overwrite)
+      // Hanya boleh menyimpan Map atau List
+      if (data is! Map && data is! List) {
+        throw FlutterError(
+          "simpanJson hanya menerima Map<String, dynamic> atau List. "
+          "Ditemukan tipe: ${data.runtimeType}",
+        );
+      }
+
+      // encode dan simpan
       await targetFile.writeAsString(
-        jsonEncode(file),
+        jsonEncode(data),
         flush: true,
       );
 
       return true;
     } catch (e) {
+      debugPrint("Gagal simpan JSON $namaFile: $e");
       return e;
     }
   }
+
 }

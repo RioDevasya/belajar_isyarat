@@ -10,7 +10,7 @@ class Lingkaran extends StatelessWidget {
   final Color? warnaGarisLuar;
   final LinearGradient? gradienGarisLuar;
 
-  final bool? benar;       // null = mode angka saja (jika ada angka)
+  final int? benarSalahNetral;       // null = mode angka saja (jika ada angka)
   final int? angka;        // angka ditampilkan jika ada
 
   const Lingkaran({
@@ -24,7 +24,7 @@ class Lingkaran extends StatelessWidget {
     this.warnaGarisLuar,
     this.gradienGarisLuar,
 
-    this.benar,
+    this.benarSalahNetral,
     this.angka,
   });
   
@@ -48,18 +48,30 @@ class Lingkaran extends StatelessWidget {
     Icon? simbol;
 
     // Prioritas warna
-    if (benar == true) {
-      simbol = Icon(
-        Icons.check,
-        color: warnaSimbolAngka,
-        size: besar * 0.55,
-      );
-    } else if (benar == false) {
-      simbol = Icon(
-        Icons.close,
-        color: warnaSimbolAngka,
-        size: besar * 0.55,
-      );
+    switch (benarSalahNetral) {
+      case 1: 
+        simbol = Icon(
+          Icons.check,
+          color: warnaSimbolAngka,
+          size: besar * 0.55,
+        );
+        break;
+
+      case 2: 
+        simbol = Icon(
+          Icons.close,
+          color: warnaSimbolAngka,
+          size: besar * 0.55,
+        );
+        break;
+      
+      case 3: 
+        simbol = Icon(
+          Icons.minimize,
+          color: warnaSimbolAngka,
+          size: besar * 0.55,
+        );
+        break;
     }
 
     Widget? isi;

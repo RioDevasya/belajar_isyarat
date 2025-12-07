@@ -12,10 +12,12 @@ class MenuKuisMenuBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final kProgressProgressKuis = context.select<KontrolProgress, int> (
-      (k) => k.progressKuis
+    final kKuisProgressKuis = context.select<KontrolKuis, int> (
+      (k) => k.skorKuis
     );
+    final kProgress = context.read<KontrolProgress>();
     final kMenu = context.read<KontrolMenu>();
+    final kKuis = context.read<KontrolKuis>();
     final alat = context.read<AlatApp>();
 
     return Padding (
@@ -70,7 +72,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                     ),
                     alat.bangunTeksGradien(
                       font: alat.teks,
-                      teks: kProgressProgressKuis.toString(),
+                      teks: kKuisProgressKuis.toString(),
                       ukuranFont: 27,
                       beratFont: FontWeight.bold,
                       warna: alat.progress
@@ -99,7 +101,8 @@ class MenuKuisMenuBody extends StatelessWidget {
                       padaHoverAnimasi: padaHoverAnimasi1,
                       padaKlikAnimasi: padaKlikAnimasi1,
                       padaKlik: () {
-                        kMenu.bukaMenu(4);
+                        kKuis.bukaMenuKuis(kProgress);
+                        kMenu.bukaMenu(6);
                       },
                     ),
                   ),
@@ -123,7 +126,7 @@ class MenuKuisSoalBody extends StatelessWidget {
       (k) => k.ambilAwalAntrianKuis
     );
     final kKuisPilihanKotak = context.select<KontrolKuis, int>(
-      (k) => k.pilihanKotak
+      (k) => kKuis.pilihanKotak
     );
     final kKuisSusunanSatu = context.select<KontrolKuis, List<String>>(
       (k) => kKuis.susunanJawabanListString
@@ -131,8 +134,14 @@ class MenuKuisSoalBody extends StatelessWidget {
     final kKuisSusunanDua = context.select<KontrolKuis, List<List<String>>>(
       (k) => kKuis.susunanJawabanListListString
     );
+    final kKuisSusunanAtas = context.select<KontrolKuis, List<dynamic>>(
+      (k) => kKuis.susunanJawabanListDynamic
+    );
+    final kKuisSusunanRangkaian = context.select<KontrolKuis, List<dynamic>>(
+      (k) => kKuis.susunanJawabanListDynamic
+    );
 
-    final soal = kKuis.ambilKuis(kKuisSoal);
+    final soal = kKuis.ambilKuis(kKuisSoal + 1);
 
     switch (soal.mode.index) {
       case 0:
@@ -141,7 +150,7 @@ class MenuKuisSoalBody extends StatelessWidget {
           gambarSoal: soal.gambar,
           gambarOpsi: soal.opsi,
           padaSusun: (susunan) {
-            kKuis.aturSusunanJawabanListString(susunan);
+            kKuis.aturSusunanJawabanListString(List.from(susunan));
             return;
           },
           susunan: kKuisSusunanSatu,
@@ -167,9 +176,23 @@ class MenuKuisSoalBody extends StatelessWidget {
           },
         );
       case 3:
-        return SizedBox.shrink();
+        return SoalModel4(
+          penjelas: soal.pertanyaan, 
+          susunanAwal: soal.gambar, 
+          susunanAtas: kKuisSusunanAtas, 
+          opsi: soal.opsi,
+          padaSelesaiSusun: (susunan) {
+            kKuis.aturSusunanJawabanListDynamic(susunan[0]);
+          }
+        );
       case 4:
-        return SizedBox.shrink();
+        return SoalModel5(
+            penjelas: soal.pertanyaan,
+            gambarSoal: soal.gambar, 
+            panjangRangkaian: soal.jawaban.length, 
+            rangkaian: kKuisSusunanRangkaian.map((isi) => isi?.toString()).toList(),
+            padaRangkai: (susunan) => kKuis.aturSusunanJawabanListDynamic(susunan),
+          );
       default :
         return SizedBox.shrink();
     }

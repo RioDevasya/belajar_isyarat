@@ -18,28 +18,15 @@ class MenuTesMenuBody extends StatelessWidget {
     final kBelajar = context.read<KontrolBelajar>();
     final kMenu = context.read<KontrolMenu>();
     final alat = context.read<AlatApp>();
-    final kTesNilai = context.select<KontrolProgress, int> (
-      (k) => k.ambilSatuNilaiTes(kBelajar.modulSekarang)
+    final kTesNilai = context.select<KontrolTes, int> (
+      (k) => k.nilaiTes
     );
 
-    return Padding (
-      padding: const EdgeInsets.all(20),
+    return SizedBox.expand(
       child: Row(
         children: [
-          CardStatis(
-            lebar: 40,
-            tinggi: null,
-            padding: 4,
-            tepiRadius: 5,
-            kotakGradient: alat.gradientKembali,
-            pemisahGarisLuarUkuran: 4,
-            teks: "<",
-            pakaiKlik: true,
-            pakaiHover: true,
-            padaHoverAnimasi: padaHoverAnimasi1,
-            padaHoverPemisahGarisLuarWarna: alat.garisLuarHoverAbu,
-            padaKlikAnimasi: padaKlikAnimasi1,
-            padaKlik: () {
+          alat.bangunTombolKembali(
+            () {
               kTes.tutupMenuTes();
               kMenu.bukaMenu(1);
             }
@@ -148,6 +135,15 @@ class MenuTesMenuBody extends StatelessWidget {
 class MenuTesSoalBody extends StatelessWidget {
   const MenuTesSoalBody({super.key});
 
+  Widget blokPointer(Widget child, bool selesai) {
+    if (selesai) {
+      return IgnorePointer(
+        child: child,
+      );
+    }
+    return child;
+  }
+
   @override
   Widget build(BuildContext context) {
     final kTesSoal = context.select<KontrolTes, int>(
@@ -172,74 +168,70 @@ class MenuTesSoalBody extends StatelessWidget {
     final kTesSusunanRangkaian = context.select<KontrolTes, List<dynamic>>(
       (k) => kTes.susunanJawabanListDynamic
     );
+    final kTesSelesai = context.select<KontrolTes, bool>(
+      (k) => kTes.tesSelesai
+    );
+    final kTesMenuSelesai = context.select<KontrolTes, bool>(
+      (k) => kTes.menuSelesai
+    );
     
     final soal = kTes.ambilSoalTes(kTes.modul, kTesSoal);
 
-    final body = switch (soal.mode.index) {
-      0 => SoalModel1(
-          penjelas: soal.pertanyaan,
-          gambarSoal: soal.gambar,
-          gambarOpsi: soal.opsi,
-          padaSusun: (susunan) {
-            kTes.aturSusunanJawabanListString(List.from(susunan));
-            return;
-          },
-          susunan: kTesSusunanSatu,
-        ),
-      1 => SoalModel2(
-          penjelas: soal.pertanyaan,
-          gambarSoal: soal.gambar,
-          gambarOpsi: soal.opsi,
-          padaKlik: (index) {
-            final pilihan = kTes.aturPilihanKotak(index);
-            return pilihan;
-          },
-          pilihan: kTesPilihanKotak,
-        ),
-      2 => SoalModel3(
-          penjelas: soal.pertanyaan,
-          susunanSemua: kTesSusunanDua,
-          padaSusun: (susunan) {
-            kTes.aturSusunanJawabanListListString(susunan);
-            return;
-          },
-        ),
-      3 => SoalModel4(
-        penjelas: soal.pertanyaan, 
-        susunanAwal: soal.gambar, 
-        susunanAtas: kTesSusunanAtas, 
-        opsi: soal.opsi,
-        padaSelesaiSusun: (susunan) {
-          kTes.aturSusunanJawabanListDynamic(susunan[0]);
-        },
-      ),
-      4 => SoalModel5(
-        penjelas: soal.pertanyaan,
-        gambarSoal: soal.gambar, 
-        panjangRangkaian: soal.jawaban.length, 
-        rangkaian: kTesSusunanRangkaian.map((isi) => isi?.toString()).toList(),
-        padaRangkai: (susunan) => kTes.aturSusunanJawabanListDynamic(susunan),
-      ),
-      _ => SizedBox.shrink(),
-    };
+
+      final body = !kTesMenuSelesai
+      ? switch (soal.mode.index) {
+          0 => SoalModel1(
+              penjelas: soal.pertanyaan,
+              gambarSoal: soal.gambar,
+              gambarOpsi: soal.opsi,
+              padaSusun: (susunan) {
+                kTes.aturSusunanJawabanListString(List.from(susunan));
+                return;
+              },
+              susunan: kTesSusunanSatu,
+            ),
+          1 => SoalModel2(
+              penjelas: soal.pertanyaan,
+              gambarSoal: soal.gambar,
+              gambarOpsi: soal.opsi,
+              padaKlik: (index) {
+                final pilihan = kTes.aturPilihanKotak(index);
+                return pilihan;
+              },
+              pilihan: kTesPilihanKotak,
+            ),
+          2 => SoalModel3(
+              penjelas: soal.pertanyaan,
+              susunanSemua: kTesSusunanDua,
+              padaSusun: (susunan) {
+                kTes.aturSusunanJawabanListListString(susunan);
+                return;
+              },
+            ),
+          3 => SoalModel4(
+            penjelas: soal.pertanyaan, 
+            susunanAwal: soal.gambar, 
+            susunanAtas: kTesSusunanAtas, 
+            opsi: soal.opsi,
+            padaSelesaiSusun: (susunan) {
+              kTes.aturSusunanJawabanListDynamic(susunan[0]);
+            },
+          ),
+          4 => SoalModel5(
+            penjelas: soal.pertanyaan,
+            gambarSoal: soal.gambar, 
+            panjangRangkaian: soal.jawaban.length, 
+            rangkaian: kTesSusunanRangkaian.map((isi) => isi?.toString()).toList(),
+            padaRangkai: (susunan) => kTes.aturSusunanJawabanListDynamic(susunan),
+          ),
+          _ => SizedBox.shrink(),
+        }
+      : MenuTesSelesaiBody();
 
     final bodyAkhir = Row(
       children: [
-        CardStatis(
-          lebar: 40,
-          tinggi: null,
-          padding: 4,
-          tepiRadius: 5,
-          kotakGradient: alat.gradientKembali,
-          pemisahGarisLuarUkuran: 4,
-          teks: "<",
-          pakaiKlik: true,
-          pakaiHover: true,
-          padaHoverAnimasi: padaHoverAnimasi1,
-          padaHoverPemisahGarisLuarWarna: alat.garisLuarHoverAbu,
-          padaKlikAnimasi: padaKlikAnimasi1,
-          padaKlik: () {
-            kTes.tutupMenuTes();
+        alat.bangunTombolKembali(
+          () {
             kMenu.bukaMenu(3);
             return;
           }
@@ -247,11 +239,122 @@ class MenuTesSoalBody extends StatelessWidget {
         SizedBox(width: 10),
 
         Expanded(
-          child: body
+          child: kTesMenuSelesai ? body : blokPointer(body, kTesSelesai),
         )
       ],
     );
 
     return bodyAkhir;
+  }
+}
+
+
+class MenuTesSelesaiBody extends StatelessWidget {
+  const MenuTesSelesaiBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final kTes = context.read<KontrolTes>();
+    final kProgress = context.read<KontrolProgress>();
+    final kMenu = context.read<KontrolMenu>();
+    final alat = context.read<AlatApp>();
+    final kTesNilai = context.select<KontrolTes, int> (
+      (k) => k.nilaiTes
+    );
+
+    return Container(
+      height: double.maxFinite,
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: alat.kotakUtama,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: alat.kotakPutih,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Text(
+              "Menu Tes",
+              style: TextStyle(
+                fontFamily: alat.judul,
+                color: alat.teksKuning,
+                fontSize: 37,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            
+            Text(
+              "Tes adalah langkah terakhir untuk menyelesaikan progress materi.\n"
+              "Kemampuan anda akan diuji disini, anda dapat mengerjakan tes berulang-kali",
+              style: TextStyle(
+                fontFamily: alat.teks,
+                fontSize: 20,
+                color: alat.teksHitam
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Nilai Anda:   ",
+                  style: TextStyle(
+                    fontFamily: alat.teks,
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: alat.teksKuning
+                  ),
+                ),
+                Text(
+                  kTesNilai.toString(),
+                  style: TextStyle(
+                    fontFamily: alat.teks,
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: kTesNilai < 80 ? alat.salah : alat.benar
+                  ),
+                ),
+              ],
+            ),
+            
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: CardStatis(
+                  lebar: 120,
+                  tinggi: 80,
+                  padding: 10,
+                  isiTengah: true,
+                  pemisahGarisLuarUkuran: 7,
+                  judul: "Ulangi",
+                  judulUkuran: 32,
+                  judulWarna: alat.teksPutihSedang,
+                  fontJudul: alat.judul,
+                  kotakGradient: alat.terpilih,
+                  tepiRadius: 10,
+                  pakaiKlik: true,
+                  pakaiHover: true,
+                  padaHoverPemisahGarisLuarWarna: alat.kotakUtama,
+                  padaHoverAnimasi: padaHoverAnimasi1,
+                  padaKlikAnimasi: padaKlikAnimasi1,
+                  padaKlik: () {
+                    kTes.tutupMenuTes();
+                    kMenu.bukaMenu(3);
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 10)
+          ]
+        ),
+      ),
+    );
   }
 }

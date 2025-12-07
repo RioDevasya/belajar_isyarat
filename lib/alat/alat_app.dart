@@ -65,7 +65,7 @@ class AlatApp {
   // Warna outline benar / salah
   Color get benar => Color(0xFF4caf50); // hijau
   Color get salah => Color(0xFFe53935); // merah
-  Color get tidakAktif => Color.fromARGB(255, 66, 81, 129);
+  Color get tidakAktif => Color.fromARGB(255, 202, 214, 255);
 
   // Gradien Lain
   LinearGradient get teksBiru => LinearGradient(
@@ -133,6 +133,26 @@ class AlatApp {
   String get namaAplikasi => "Quicksand";
 
   // ==== alat =====
+  Widget bangunTombolKembali(VoidCallback fungsi) {
+    return  CardStatis(
+      lebar: 40,
+      tinggi: null,
+      isiTengah: true,
+      padding: 4,
+      tepiRadius: 25,
+      kotakGradient: gradientKembali,
+      pemisahGarisLuarUkuran: 4,
+      judul: "<",
+      judulWarna: teksPutihSedang,
+      fontJudul: judul,
+      pakaiKlik: true,
+      pakaiHover: true,
+      padaHoverAnimasi: padaHoverAnimasi1,
+      padaHoverPemisahGarisLuarWarna: garisLuarHoverAbu,
+      padaKlikAnimasi: padaKlikAnimasi1,
+      padaKlik: fungsi
+    );
+  }
   Widget bangunTeksGradien({
     required String teks, 
     required LinearGradient warna, 
