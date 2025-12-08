@@ -111,7 +111,7 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                                   Row(
                                     children: [
                                       Text(
-                                        "$kBelajarProgressMateri / $totalMateri",
+                                        "${kBelajarProgressMateri * totalMateri} / $totalMateri",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
