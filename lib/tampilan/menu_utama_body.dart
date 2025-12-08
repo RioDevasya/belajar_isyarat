@@ -260,7 +260,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "${kProgressProgressMateri * 100}%",
+                                "${(kProgressProgressMateri * 100).toStringAsFixed(2)}%",
                                 style: TextStyle(
                                   fontFamily: alat.teks,
                                   fontSize: 16,
