@@ -1,5 +1,4 @@
 import 'package:belajar_isyarat/alat/alat_app.dart';
-import 'package:belajar_isyarat/kontrol/inisialisasi_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_database.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_kuis.dart';
@@ -7,7 +6,6 @@ import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../kontrol/kontrol_log.dart';
 
 class MenuPengaturanBody extends StatefulWidget {
   final Function(bool bahasaInggris) refresh;
@@ -57,10 +55,11 @@ class _MenuPengaturanBodyState extends State<MenuPengaturanBody> {
 
   void _simpanProfil() {
     if (!_profilValid) return;
-
-    kProgress.aturNama(cNama.text.isEmpty ? null : cNama.text);
-    kProgress.aturSekolah(cSekolah.text.isEmpty ? null : cSekolah.text);
-    kProgress.aturJabatan(cJabatan.text.isEmpty ? null : cJabatan.text);
+    kProgress.aturNamaSekolahJabatan(
+      cNama.text.isEmpty ? null : cNama.text,
+      cSekolah.text.isEmpty ? null : cSekolah.text, 
+      cJabatan.text.isEmpty ? null : cJabatan.text, 
+      kDatabase);
 
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(kProgress.bahasaInggris ? "Profile updated!" : "Profil diperbarui!")));
@@ -173,6 +172,7 @@ class _MenuPengaturanBodyState extends State<MenuPengaturanBody> {
                     backgroundColor:
                         _profilValid ? alat.netral : alat.tidakAktif,
                     padding: const EdgeInsets.symmetric(vertical: 12),
+                    shadowColor: alat.kotakHitam
                   ),
                   child: _profilKosong 
                     ? Text(

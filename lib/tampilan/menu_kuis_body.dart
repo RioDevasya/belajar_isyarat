@@ -128,6 +128,7 @@ class MenuKuisSoalBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final kKuis = context.read<KontrolKuis>();
+    final alat = context.read<AlatApp>();
     final kKuisSoal = context.select<KontrolKuis, int>(
       (k) => k.ambilAwalAntrianKuis
     );
@@ -150,9 +151,8 @@ class MenuKuisSoalBody extends StatelessWidget {
 
     final soal = kKuis.ambilKuis(kKuisSoal + 1);
 
-    switch (soal.mode.index) {
-      case 0:
-        return SoalModel1(
+    final body = switch (soal.mode.index) {
+      0 => SoalModel1(
           key: key,
           penjelas: soal.pertanyaan,
           gambarSoal: soal.gambar,
@@ -162,9 +162,9 @@ class MenuKuisSoalBody extends StatelessWidget {
             return;
           },
           susunan: kKuisSusunanSatu,
-        );
-      case 1:
-        return SoalModel2(
+          selesai: false,
+        ),
+      1 => SoalModel2(
           key: key,
           penjelas: soal.pertanyaan,
           gambarSoal: soal.gambar,
@@ -174,9 +174,8 @@ class MenuKuisSoalBody extends StatelessWidget {
             return pilihan;
           },
           pilihan: kKuisPilihanKotak,
-        );
-      case 2:
-        return SoalModel3(
+        ),
+      2 => SoalModel3(
           key: key,
           penjelas: soal.pertanyaan,
           susunanSemua: kKuisSusunanDua,
@@ -184,9 +183,8 @@ class MenuKuisSoalBody extends StatelessWidget {
             kKuis.aturSusunanJawabanListListString(susunan);
             return;
           },
-        );
-      case 3:
-        return SoalModel4(
+        ),
+      3 => SoalModel4(
           key: key,
           penjelas: soal.pertanyaan, 
           susunanAwal: soal.gambar, 
@@ -194,19 +192,19 @@ class MenuKuisSoalBody extends StatelessWidget {
           opsi: soal.opsi,
           padaSelesaiSusun: (susunan) {
             kKuis.aturSusunanJawabanListDynamic(susunan[0]);
-          }
-        );
-      case 4:
-        return SoalModel5(
+          },
+        ),
+      4 => SoalModel5(
             key: key,
             penjelas: soal.pertanyaan,
             gambarSoal: soal.gambar, 
             panjangRangkaian: soal.jawaban.length, 
             rangkaian: kKuisSusunanRangkaian.map((isi) => isi?.toString()).toList(),
             padaRangkai: (susunan) => kKuis.aturSusunanJawabanListDynamic(susunan),
-          );
-      default :
-        return SizedBox.shrink();
-    }
+          ),
+      _ => SizedBox.shrink()
+    };
+
+    return alat.bangunAnimasi(child: body, key: key);
   }
 }

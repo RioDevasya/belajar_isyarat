@@ -44,6 +44,11 @@ class KontrolLog {
       _eLog = ELog(list: []);
     }
 
+    if (_eLog.list.length > 900) {
+      final list = _eLog.list.sublist(301);
+      _eLog.list = list;
+      kontrolDatabase.simpanJson(namaFile, _eLog.toJson());
+    }
     return true;
   }
 

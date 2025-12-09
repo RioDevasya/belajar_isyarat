@@ -43,7 +43,7 @@ class EProfil {
       'nama': nama,
       'sekolah': sekolah,
       'jabatan': jabatan,
-      'bahasaInggris': bahasaInggris,
+      'bahasa_inggris': bahasaInggris,
       'progress_belajar_indo': progressBelajarIndo,
       'nilai_tes_modul_indo': nilaiTesIndo,
       'progress_kuis_indo': progressKuisIndo,

@@ -18,8 +18,8 @@ class MenuTesMenuBody extends StatelessWidget {
     final kProgress = context.read<KontrolProgress>();
     final kMenu = context.read<KontrolMenu>();
     final alat = context.read<AlatApp>();
-    final kTesNilai = context.select<KontrolTes, int> (
-      (k) => k.nilaiTes
+    final kTesNilai =  context.select<KontrolTes, List<int>> (
+      (k) => k.semuaNilaiTes(kProgress)
     );
 
     return SizedBox.expand(
@@ -89,12 +89,12 @@ class MenuTesMenuBody extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          kTesNilai.toString(),
+                          kTesNilai[kBelajar.modulSekarang - 1].toString(),
                           style: TextStyle(
                             fontFamily: alat.teks,
                             fontSize: 27,
                             fontWeight: FontWeight.bold,
-                            color: kTesNilai < 80 ? alat.salah : alat.benar,
+                            color: kTesNilai[kBelajar.modulSekarang - 1] < 80 ? alat.salah : alat.benar,
                             shadows: alat.teksShadow
                           ),
                         ),
@@ -204,6 +204,8 @@ class MenuTesSoalBody extends StatelessWidget {
                 return;
               },
               susunan: kTesSusunanSatu,
+              selesai: kTesSelesai,
+              benar: kTesSelesai ? kTes.cekJawaban(kTes.modul, kTesSoal, kTesSusunanSatu) : false,
             ),
           1 => SoalModel2(
               key: key,
@@ -215,6 +217,8 @@ class MenuTesSoalBody extends StatelessWidget {
                 return pilihan;
               },
               pilihan: kTesPilihanKotak,
+              selesai: kTesSelesai,
+              benar: kTesSelesai ? kTes.cekJawaban(kTes.modul, kTesSoal, soal.opsi.indexOf(kTesPilihanKotak - 1)) : false,
             ),
           2 => SoalModel3(
               key: key,
@@ -224,6 +228,8 @@ class MenuTesSoalBody extends StatelessWidget {
                 kTes.aturSusunanJawabanListListString(susunan);
                 return;
               },
+              selesai: kTesSelesai,
+              benar: kTesSelesai ? kTes.cekJawaban(kTes.modul, kTesSoal, kTesSusunanDua) : false,
             ),
           3 => SoalModel4(
               key: key,
@@ -234,6 +240,8 @@ class MenuTesSoalBody extends StatelessWidget {
               padaSelesaiSusun: (susunan) {
                 kTes.aturSusunanJawabanListDynamic(susunan[0]);
               },
+              selesai: kTesSelesai,
+              benar: kTesSelesai ? kTes.cekJawaban(kTes.modul, kTesSoal, kTesSusunanAtas) : false,
           ),
           4 => SoalModel5(
               key: key,
@@ -242,6 +250,8 @@ class MenuTesSoalBody extends StatelessWidget {
               panjangRangkaian: soal.jawaban.length, 
               rangkaian: kTesSusunanRangkaian.map((isi) => isi?.toString()).toList(),
               padaRangkai: (susunan) => kTes.aturSusunanJawabanListDynamic(susunan),
+              selesai: kTesSelesai,
+              benar: kTesSelesai ? kTes.cekJawaban(kTes.modul, kTesSoal, kTesSusunanRangkaian) : false,
           ),
           _ => SizedBox.shrink(),
         }
@@ -258,7 +268,7 @@ class MenuTesSoalBody extends StatelessWidget {
         SizedBox(width: 10),
 
         Expanded(
-          child: kTesMenuSelesai ? body : blokPointer(body, kTesSelesai),
+          child: kTesMenuSelesai ? alat.bangunAnimasi(child: body, key: key) : alat.bangunAnimasi(child:blokPointer(body, kTesSelesai), key: key ) ,
         )
       ],
     );
@@ -333,6 +343,32 @@ class MenuTesSelesaiBody extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "${alat.teksTesSelesaiJawabanBenar(kProgress)}:   ",
+                  style: TextStyle(
+                    fontFamily: alat.teks,
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: alat.teksKuning,
+                    shadows: alat.teksShadow
+                  ),
+                ),
+                Text(
+                  kTes.jawabanBenar.toString(),
+                  style: TextStyle(
+                    fontFamily: alat.teks,
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: kTesNilai < 80 ? alat.salah : alat.benar,
+                    shadows: alat.teksShadow
+                  ),
+                ),
+              ],
+            ),
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

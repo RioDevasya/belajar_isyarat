@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,7 +16,7 @@ class PembukaanAplikasi extends StatefulWidget {
 }
 
 class _PembukaanAplikasiState extends State<PembukaanAplikasi> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
 
   bool _videoDone = false;
   bool _initDone = false;
@@ -31,32 +32,45 @@ class _PembukaanAplikasiState extends State<PembukaanAplikasi> {
   // -------------------- VIDEO --------------------
   Future<void> _initVideo() async {
     try {
-      _videoDone = true;
-      _tryNavigate();
+      bool bahasaInggris = jsonDecode(await rootBundle.loadString('lib/database/data/profil.json'))["bahasa_inggris"];
       _controller = VideoPlayerController.asset(
-        "lib/database/video/opening_app.mp4",
+        bahasaInggris ? "lib/database/video/opening_app_english.mp4" : "lib/database/video/opening_app_indo.mp4",
       )
         ..setLooping(false);
 
+      if (_controller == null) {
+        debugPrint("VIDEO tidak ditemukan");
+        _videoDone = true;
+        _tryNavigate();
+        return;
+      }
+
       // Wajib gunakan timeout agar tidak freeze di web
-      await _controller.initialize().timeout(
+      await _controller!.initialize().timeout(
         const Duration(seconds: 5),
         onTimeout: () {
-          throw "Video initialization timeout";
+          debugPrint("TIMEOUT: Video gagal initialize");
+          _videoDone = true;
+          _tryNavigate();
+          return;
         },
-      );
+      ).catchError((err) {
+        debugPrint("ERROR: $err");
+        _videoDone = true;
+        _tryNavigate();
+      });
 
       if (!mounted) return;
 
       setState(() {});
 
       // Jika play gagal (bisa terjadi di Web)
-      _controller.play().catchError((_) {
+      _controller!.play().catchError((_) {
         _videoDone = true;
         _tryNavigate();
       });
 
-      _controller.addListener(_videoListener);
+      _controller!.addListener(_videoListener);
     } catch (e) {
       // Semua error masuk sini
       debugPrint("VIDEO ERROR: $e");
@@ -66,16 +80,16 @@ class _PembukaanAplikasiState extends State<PembukaanAplikasi> {
   }
 
   void _videoListener() {
-    if (!_controller.value.isInitialized) return;
+    if (_controller == null) return;
 
-    final duration = _controller.value.duration;
-    final pos = _controller.value.position;
+    final duration = _controller!.value.duration;
+    final pos = _controller!.value.position;
 
     if (duration == Duration.zero) return;
 
     if (pos >= duration - const Duration(milliseconds: 100)) {
       if (!_videoDone) {
-        print("video selesai");
+        debugPrint("video selesai");
         _videoDone = true;
         _tryNavigate();
       }
@@ -133,31 +147,35 @@ class _PembukaanAplikasiState extends State<PembukaanAplikasi> {
 
   @override
   void dispose() {
-    _controller.removeListener(_videoListener);
-    _controller.dispose();
+    _controller?.removeListener(_videoListener);
+    _controller?.dispose();
     super.dispose();
   }
 
   // -------------------- UI --------------------
   @override
   Widget build(BuildContext context) {
-    if (!_controller.value.isInitialized) {
-      return const Scaffold(
-        body: ColoredBox(color: Colors.black),
-      );
+
+    // Jika controller belum dibuat → tampilkan loading
+    if (_controller == null) {
+      return const Scaffold(body: ColoredBox(color: Colors.black));
     }
 
-    // Jika video selesai tapi inis masih berjalan
+    // Kalau controller ada tapi belum initialized → tunggu
+    if (!_controller!.value.isInitialized) {
+      return const Scaffold(body: ColoredBox(color: Colors.black));
+    }
+
+    // Jika video selesai tapi app belum selesai init
     if (_videoDone && !_initDone) {
       return const LoadingPembukaan();
     }
 
-    // Normal: tampilkan video
     return Scaffold(
       body: Center(
         child: AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
+          aspectRatio: _controller!.value.aspectRatio,
+          child: VideoPlayer(_controller!),
         ),
       ),
     );

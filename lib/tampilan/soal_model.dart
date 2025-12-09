@@ -10,8 +10,12 @@ class SoalModel2 extends StatefulWidget {
   final String penjelas;
   final List<dynamic> gambarSoal;
   final List<dynamic> gambarOpsi;
+  final bool benar;
+
   final int Function(int index)? padaKlik;
   final int pilihan;
+  final bool selesai;
+
 
   const SoalModel2({
     super.key,
@@ -20,6 +24,7 @@ class SoalModel2 extends StatefulWidget {
     required this.gambarOpsi,
     this.padaKlik,
     this.pilihan = 0,
+    this.selesai = false,this.benar = false
   });
 
   @override
@@ -49,7 +54,7 @@ class _SoalModel2State extends State<SoalModel2> {
     
     return Column(
       children: [
-        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas),
+        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas, widget.selesai, widget.benar),
 
         const SizedBox(height: 10),
 
@@ -73,6 +78,7 @@ class _SoalModel2State extends State<SoalModel2> {
                     widget.gambarOpsi.length,
                     (i) {
                       final bukanGambar = widget.gambarOpsi.isNotEmpty ? widget.gambarOpsi.every((g) => g.startsWith("an") || g.startsWith("hu")) : false;
+
                       return CardStatis(
                         isiTengah: true,
                         lebar: side,
@@ -94,7 +100,7 @@ class _SoalModel2State extends State<SoalModel2> {
                           gambarWidget: FittedBox(
                             child: alat.bangunTeksGradien(
                               teks: widget.gambarOpsi[i].toString().split("_").last.toUpperCase(), 
-                              warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                              warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                             )
                           ),
                           tanpaProvider: true,
@@ -133,8 +139,11 @@ class SoalModel1 extends StatefulWidget {
   final String penjelas;
   final List<dynamic> gambarSoal;
   final List<dynamic> gambarOpsi;
+  final bool benar;
   final Function(List<String> susunan)? padaSusun;
   final List<String> susunan;
+  final bool selesai;
+  
 
   const SoalModel1({
     super.key,
@@ -142,7 +151,7 @@ class SoalModel1 extends StatefulWidget {
     required this.gambarSoal,
     required this.gambarOpsi,
     this.padaSusun,
-    required this.susunan
+    required this.susunan,this.selesai = false,this.benar = false
   });
 
   @override
@@ -197,7 +206,7 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas),
+        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas , widget.selesai, widget.benar),
         const SizedBox(height: 30),
 
         // ============================
@@ -283,7 +292,7 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
                                         gambarWidget: FittedBox(
                                           child: alat.bangunTeksGradien(
                                             teks: gambarJawaban[i].split("_").last.toUpperCase(), 
-                                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                           )
                                         ),
                                         tanpaProvider: true,
@@ -292,6 +301,7 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
                                       gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(gambarJawaban[i])],
                                       tanpaProvider: true,
                                       bayanganPemisahGarisLuar: alat.boxShadowHover,
+                                      susunGambarTeksBaris: Axis.vertical,
                                     ),
                                   ),
                                 ),
@@ -316,13 +326,14 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
                                       gambarWidget: FittedBox(
                                       child: alat.bangunTeksGradien(
                                         teks: gambarJawaban[i].split("_").last.toUpperCase(), 
-                                        warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                        warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                       ),
                                     ),
                                     bayanganKotak: alat.boxShadow,
                                   ) : null,
                                   gambar: bukanGambar ? null : [gambarJawaban[i]],
                                   bayanganPemisahGarisLuar: alat.boxShadow,
+                                  susunGambarTeksBaris: Axis.vertical,
                                 ),
                               ),
                               child: CardStatis(
@@ -344,7 +355,7 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
                                   gambarWidget: FittedBox(
                                     child: alat.bangunTeksGradien(
                                       teks: gambarJawaban[i].split("_").last.toUpperCase(), 
-                                      warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                      warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                     )
                                   ),
                                   bayanganKotak: alat.boxShadow,
@@ -355,6 +366,7 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
                                 padaHoverGarisLuarGradient: alat.terpilih,
                                 padaHoverBayanganGarisLuar: alat.boxShadowHover,
                                 bayanganPemisahGarisLuar: alat.boxShadow,
+                                susunGambarTeksBaris: Axis.vertical,
                               ),
                             )
                           );
@@ -377,12 +389,16 @@ class SoalModel3 extends StatefulWidget {
 
   final Function(List<List<String>> susunan)? padaSusun;
   final List<List<String>> susunanSemua;
+  final bool selesai;
+  final bool benar;
+  
+  
 
   const SoalModel3({
     super.key,
     required this.penjelas,
     required this.padaSusun,
-    required this.susunanSemua
+    required this.susunanSemua,this.selesai = false,this.benar = false
   });
 
   @override
@@ -571,7 +587,7 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
                                             gambarWidget: bukanGambar ? FittedBox(
                                               child: alat.bangunTeksGradien(
                                                 teks: susunan[i].split("_").last.toUpperCase(), 
-                                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                               )
                                             ) : null,
                                             gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(susunan[i])],
@@ -612,7 +628,7 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
                                         gambarWidget: bukanGambar ? FittedBox(
                                           child: alat.bangunTeksGradien(
                                             teks: susunan[i].split("_").last.toUpperCase(), 
-                                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                           )
                                         ) : null,
                                         gambar: bukanGambar ? null : [susunan[i]],
@@ -621,6 +637,7 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
                                       ) 
                                     ),
                                     bayanganPemisahGarisLuar: alat.boxShadow,
+                                    susunGambarTeksBaris: Axis.vertical,
                                   ),
                                 ),
                                 child: CardStatis(
@@ -644,7 +661,7 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
                                       gambarWidget:  bukanGambar ? FittedBox(
                                         child: alat.bangunTeksGradien(
                                           teks: susunan[i].split("_").last.toUpperCase(), 
-                                          warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                          warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                         )
                                       ) : null,
                                       gambar: bukanGambar ? null : [susunan[i]],
@@ -657,6 +674,7 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
                                   padaHoverGarisLuarGradient: alat.terpilih,
                                   padaHoverBayanganGarisLuar: alat.boxShadowHover,
                                   bayanganPemisahGarisLuar: alat.boxShadow,
+                                  susunGambarTeksBaris: Axis.vertical,
                                 ),
                               )
                             );
@@ -676,11 +694,11 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        alat.bangunMenuAtasSoal([], widget.penjelas),
+        alat.bangunMenuAtasSoal([], widget.penjelas, widget.selesai, widget.benar),
         const SizedBox(height: 10),
 
         Expanded(
-          flex: 24,
+          flex: widget.selesai ? 15 :24,
           child: Row(
             children: [
               bangunSusunan(susunan: susunanSemua[0], indexSusunan: 0),
@@ -703,7 +721,11 @@ class SoalModel4 extends StatefulWidget {
   final List<dynamic> susunanAwal;
   final List<dynamic> susunanAtas;
   final List<dynamic> opsi;
+  final bool benar;
+  
   final Function(List<List<dynamic>> atas)? padaSelesaiSusun;
+  final bool selesai;
+  
 
   const SoalModel4({
     super.key,
@@ -711,7 +733,7 @@ class SoalModel4 extends StatefulWidget {
     required this.susunanAwal,
     required this.susunanAtas,
     required this.opsi,
-    this.padaSelesaiSusun,
+    this.padaSelesaiSusun,this.selesai = false,this.benar = false
   });
 
   @override
@@ -852,7 +874,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                         gambarWidget: FittedBox(
                           child: alat.bangunTeksGradien(
                             teks: item.split("_").last.toUpperCase(), 
-                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                           )
                         ),
                         tanpaProvider: true,
@@ -861,6 +883,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                       gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(item)],
                       tanpaProvider: true,
                       bayanganPemisahGarisLuar: alat.boxShadow,
+                      susunGambarTeksBaris: Axis.vertical,
                     );
                   }
                   
@@ -914,7 +937,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                                 gambarWidget: FittedBox(
                                   child: alat.bangunTeksGradien(
                                     teks: item.split("_").last, 
-                                    warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                    warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                                   )
                                 ),
                                 tanpaProvider: true,
@@ -926,6 +949,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                               padaHoverGarisLuarGradient: alat.terpilih,
                               tanpaProvider: true,
                               bayanganGarisLuar: alat.boxShadowHover,
+                              susunGambarTeksBaris: Axis.vertical,
                             ),
                           ),
                         ),
@@ -950,7 +974,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                             gambarWidget: FittedBox(
                               child: alat.bangunTeksGradien(
                                 teks: item.split("_").last.toUpperCase(), 
-                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                               )
                             ),
                             tanpaProvider: true,
@@ -958,6 +982,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                           )  : null,
                           gambar: bukanGambar ? null : [item],
                           bayanganPemisahGarisLuar: alat.boxShadow,
+                          susunGambarTeksBaris: Axis.vertical,
                         ),
                       ),
                       child: DragTarget<Map<String, dynamic>>(
@@ -1028,7 +1053,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                             gambarWidget: FittedBox(
                               child: alat.bangunTeksGradien(
                                 teks: item.split("_").last.toUpperCase(), 
-                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10, beratFont: FontWeight.bold
                               )
                             ),
                             tanpaProvider: true,
@@ -1040,6 +1065,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                           padaHoverGarisLuarGradient: alat.terpilih,
                           padaHoverBayanganGarisLuar: alat.boxShadowHover,
                           bayanganPemisahGarisLuar: alat.boxShadow,
+                          susunGambarTeksBaris: Axis.vertical,
                         ),
                       ),
                     )
@@ -1141,9 +1167,13 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
 class SoalModel5 extends StatefulWidget {
   final String penjelas;
   final List<dynamic> gambarSoal;
+  final bool benar;
+  
   final int panjangRangkaian;
   final Function(List<String?> susunan)? padaRangkai;
   final List<String?> rangkaian;
+  final bool selesai;
+  
 
   const SoalModel5({
     super.key,
@@ -1151,7 +1181,7 @@ class SoalModel5 extends StatefulWidget {
     required this.gambarSoal,
     required this.panjangRangkaian,
     this.padaRangkai,
-    required this.rangkaian
+    required this.rangkaian,this.selesai = false,this.benar = false
   });
 
   @override
@@ -1226,7 +1256,7 @@ class _SoalModel5State extends State<SoalModel5> {
 
     return Column(
       children: [
-        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas),
+        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas, widget.selesai, widget.benar),
         const SizedBox(height: 30),
 
         Expanded(

@@ -6,8 +6,6 @@ import 'package:belajar_isyarat/kontrol/kontrol_database.dart'; // jangan masukk
 import 'package:belajar_isyarat/kontrol/kontrol_kuis.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 
-import 'package:flutter/foundation.dart'; // TODO: persentase. total tes, total belajar.
-
 class KontrolProgress {
   late EProgressBelajar _eProgressBelajar; //.modul<String, status>.status<int, bool>
   late EProgressKuis _eProgressKuis; //.status<int, bool>
@@ -38,13 +36,11 @@ class KontrolProgress {
       final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress_inggris');
       _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
       _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
-      print("objek 2");
     } else {
       final dataProgressBelajar = await kontrolDatabase.ambilJson('belajar_progress_indo');
       final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress_indo');
       _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
       _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
-      print("objek 1");
     }
 
     return true;
@@ -127,24 +123,34 @@ class KontrolProgress {
   String indeksModul(int modul) => "modul_$modul";
 
   // alat
-  void naikkanProgressBelajar(int modul, int materi) {
+  void naikkanProgressBelajar(int modul, int materi, KontrolDatabase kontrolDatabase) {
     if (!ambilStatusMateri(modul, materi)) {
       _eProgressBelajar.modul[indeksModul(modul)]!.status[materi] = true;
       _eProfil.bahasaInggris ? _eProfil.progressBelajarInggris[modul - 1]++ : _eProfil.progressBelajarIndo[modul - 1]++;
+      simpanBelajarSimpan(kontrolDatabase);
+      simpanProfil(kontrolDatabase);
     }
   }
 
-  void naikkanProgressKuis(int kuis, bool benar) {
+  void naikkanProgressKuis(int kuis, bool benar, KontrolDatabase kontrolDatabase) {
     if (benar) {
       _eProgressKuis.status[kuis] = true;
       _eProfil.bahasaInggris ? _eProfil.progressKuisInggris += 100 : _eProfil.progressKuisIndo += 100;
+      simpanKuisSimpan(kontrolDatabase);
     } else {
       _eProfil.bahasaInggris ? _eProfil.progressKuisInggris += 25 : _eProfil.progressKuisIndo += 25;
     }
+    
+    simpanProfil(kontrolDatabase);
   }
 
-  void naikkanNilaiTes(int nomorTes, int nilai) {
-    _eProfil.bahasaInggris ? _eProfil.nilaiTesInggris[nomorTes - 1] = nilai : _eProfil.nilaiTesIndo[nomorTes - 1] = nilai;
+  void naikkanNilaiTes(int nomorTes, int nilai, KontrolDatabase kontrolDatabase) {
+    final nilaiTes = _eProfil.bahasaInggris ? _eProfil.nilaiTesInggris[nomorTes - 1] : _eProfil.nilaiTesIndo[nomorTes - 1];
+
+    if (nilaiTes < nilai) {
+      _eProfil.bahasaInggris ? _eProfil.nilaiTesInggris[nomorTes - 1] = nilai : _eProfil.nilaiTesIndo[nomorTes - 1] = nilai;
+      simpanProfil(kontrolDatabase);
+    }
   }
 
   void aturNama(String? nama) {
@@ -157,6 +163,13 @@ class KontrolProgress {
 
   void aturJabatan(String? jabatan) {
     _eProfil.jabatan = jabatan;
+  }
+
+  void aturNamaSekolahJabatan(String? nama, String? sekolah, String? jabatan, KontrolDatabase kontrolDatabase) {
+    _eProfil.nama = nama;
+    _eProfil.sekolah = sekolah;
+    _eProfil.jabatan = jabatan;
+    simpanProfil(kontrolDatabase);
   }
 
   Future<bool> aturBahasa(
@@ -177,6 +190,7 @@ class KontrolProgress {
       kDatabase, 
       kProgress
     );
+    simpanProfil(kDatabase);
     return true;
   }
 
@@ -184,11 +198,32 @@ class KontrolProgress {
 
   // tutup APK
   void simpanPerubahan(KontrolDatabase kontrolDatabase) {
-    kontrolDatabase.simpanJson("belajar_progress", _eProgressBelajar.toJson());
-    kontrolDatabase.simpanJson("kuis_progress", _eProgressKuis.toJson());
+    if (_eProfil.bahasaInggris) {
+      kontrolDatabase.simpanJson("belajar_progress_inggris", _eProgressBelajar.toJson());
+      kontrolDatabase.simpanJson("kuis_progress_inggris", _eProgressKuis.toJson());
+    } else {
+      kontrolDatabase.simpanJson("belajar_progress_indo", _eProgressBelajar.toJson());
+      kontrolDatabase.simpanJson("kuis_progress_indo", _eProgressKuis.toJson());
+    }
     kontrolDatabase.simpanJson("profil", _eProfil.toJson());
   }
   void simpanProfil(KontrolDatabase kontrolDatabase) {
     kontrolDatabase.simpanJson("profil", _eProfil.toJson());
+  }
+  void simpanBelajarSimpan(KontrolDatabase kontrolDatabase) {
+    if (_eProfil.bahasaInggris) {
+      kontrolDatabase.simpanJson("belajar_progress_inggris", _eProgressBelajar.toJson());
+      return;
+    }
+    kontrolDatabase.simpanJson("belajar_progress_indo", _eProgressBelajar.toJson());
+  }
+  void simpanKuisSimpan(KontrolDatabase kontrolDatabase) {
+    if (_eProfil.bahasaInggris) {
+      kontrolDatabase.simpanJson("kuis_progress_inggris", _eProgressKuis.toJson());
+      simpanProfil(kontrolDatabase);
+      return;
+    }
+    kontrolDatabase.simpanJson("kuis_progress_indo", _eProgressKuis.toJson());
+    simpanProfil(kontrolDatabase);
   }
 }

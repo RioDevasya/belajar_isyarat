@@ -190,8 +190,12 @@ class KontrolTes extends ChangeNotifier {
 
   bool cekJawaban(int modul, int soal, dynamic jawaban) {
     final soalSekarang = _eTes.modul[indeksModul(modul)]!.semuaSoal[indeksSoal(soal)];
-    final jawabanBenar = soalSekarang.mode.name == "artikan" ? soalSekarang.jawaban.map((j) => j.toString().toUpperCase()).toList() : soalSekarang.jawaban;
 
+    if (soalSekarang.mode.name == "hubungkan") {
+      return cekListListPasangan(keListListString(jawaban), keListListString(soalSekarang.jawaban));
+    }
+
+    final jawabanBenar = soalSekarang.mode.name == "artikan" ? soalSekarang.jawaban.map((j) => j.toString().toUpperCase()).toList() : soalSekarang.jawaban;
     return deepEquals(jawabanBenar, jawaban);
   }
 
@@ -348,7 +352,7 @@ class KontrolTes extends ChangeNotifier {
     }
   }
 
-  void ajukanTes(KontrolProgress kontrolProgress, KontrolLog kontrolLog) {
+  void ajukanTes(KontrolProgress kontrolProgress, KontrolLog kontrolLog, KontrolDatabase kontrolDatabase) {
     if (!cekSemuaTesSelesai()) {
       return;
     }
@@ -367,7 +371,7 @@ class KontrolTes extends ChangeNotifier {
     }
     final nilai = cekHasilNilai().round();
     _nilaiTes = nilai;
-    kontrolProgress.naikkanNilaiTes(_modul, nilai);
+    kontrolProgress.naikkanNilaiTes(_modul, nilai, kontrolDatabase);
     kontrolLog.catatLogTes(modul: _modul, skor: nilai);
     _menuSelesai = true;
     notifyListeners();
@@ -381,7 +385,6 @@ class KontrolTes extends ChangeNotifier {
       _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
       _pilihanKotak = soal.mode.name == "pilih" ? (_susunanJawaban[0] != false ? soal.opsi.indexOf(_susunanJawaban[0]) + 1 : 0) : 0;
       notifyListeners();
-      print("$_susunanJawaban || $_simpananJawaban || $_pilihanKotak");
     }
   }
 
@@ -393,7 +396,6 @@ class KontrolTes extends ChangeNotifier {
       _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
       _pilihanKotak = soal.mode.name == "pilih" ? (_susunanJawaban[0] != false ? soal.opsi.indexOf(_susunanJawaban[0]) + 1 : 0) : 0;
       notifyListeners();
-      print("$_susunanJawaban || $_simpananJawaban || $_pilihanKotak");
     }
   }
 

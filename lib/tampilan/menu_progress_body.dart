@@ -84,12 +84,13 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
               // ============================================================
               Row(
                 children: [
-                  Expanded(child: _statCard(Icons.book, totalMateri, alat.teksProgresMateri(kProgress))),
+                  Expanded(child: _statCard(Icons.book, totalMateri, alat.teksProgresMateri(kProgress), total: kBelajar.totalSemuaMateri())),
                   const SizedBox(width: 10),
                   Expanded(child: _statCard(
                     Icons.check_circle, 
                     totalTesSelesai, 
-                    alat.teksProgresTes(kProgress)
+                    alat.teksProgresTes(kProgress),
+                    total: kTes.semuaNilaiTes(kProgress).length
                   )),
                   const SizedBox(width: 10),
                   Expanded(child: _statCard(Icons.star, totalSkor, alat.teksProgresSkor(kProgress))),
@@ -145,7 +146,7 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
   // ============================================================
   //                       STAT CARD
   // ============================================================
-  Widget _statCard(IconData icon, int value, String label) {
+  Widget _statCard(IconData icon, int value, String label, {int? total}) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -161,7 +162,7 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
           Expanded(
            child: Column(
             children: [
-              Text(value.toString(),
+              Text("${value.toString()}${total != null ? " / $total" : ""}",
                   style: TextStyle(
                     fontSize: 20, 
                     fontWeight: FontWeight.bold,
@@ -421,7 +422,7 @@ class _ModuleCard extends StatelessWidget {
           const SizedBox(height: 8),
           alat.bangunProgressBar(context: context, progresss: progress, tinggi: 12, garisLuar: 3.5),
           const SizedBox(height: 6),
-          Text("${(progress * 100).toStringAsFixed(1)}%", style: TextStyle(fontWeight: FontWeight.bold, color: alat.teksKuning, fontSize: 20, fontFamily: alat.judul, shadows: alat.teksShadow)),
+          Text("${(progress * 100).toStringAsFixed(0)}%", style: TextStyle(fontWeight: FontWeight.bold, color: alat.teksKuning, fontSize: 20, fontFamily: alat.judul, shadows: alat.teksShadow)),
         ],
       ),
     );

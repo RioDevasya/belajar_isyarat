@@ -493,8 +493,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
                   inner,
                   if (widget.tanda != null)
                     Positioned(
-                      top: -20, // naik ke atas
-                      right: -20, 
+                      top: -10, // naik ke atas
+                      right: -10, 
                       child: widget.tanda!,
                     ),
                 ],
@@ -697,8 +697,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
             children: bangunIsi(),
           )
         : Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: widget.isiTengah ? MainAxisAlignment.center : MainAxisAlignment.start,
+            crossAxisAlignment: widget.isiTengah ? CrossAxisAlignment.center : CrossAxisAlignment.start,
             children: bangunIsi(),
           );
   }

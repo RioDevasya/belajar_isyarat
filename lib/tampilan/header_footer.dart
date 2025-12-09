@@ -6,6 +6,7 @@ import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
+import 'package:belajar_isyarat/tampilan/lingkaran.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../kontrol/kontrol_menu.dart';
@@ -19,6 +20,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     final kontrolDatabase = context.read<KontrolDatabase>();
     final alatApp = context.read<AlatApp>();
     final kProgress = context.read<KontrolProgress>();
+    final kBelajar = context.read<KontrolBelajar>();
+    final kTes = context.read<KontrolTes>();
 
     final menuTentang = kontrolMenu.halaman == 8;
     final menuBelajar = kontrolMenu.halaman == 0 
@@ -220,12 +223,11 @@ class FooterModel1 extends StatefulWidget {
 
 class _FooterModel1State extends State<FooterModel1>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<int> _scoreAnimation;
   late VoidCallback padaJawab;
   bool gagal = false;
   bool animasiSkor = false;
   int nilaiJawaban = 0;
+  bool jawabanBenar = false;
 
   void trigger() async {
     setState(() => gagal = true);
@@ -234,33 +236,25 @@ class _FooterModel1State extends State<FooterModel1>
   }
   void animasikanSkor() async {
     setState(() => animasiSkor = true);
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 1500));
     if (mounted) setState(() => animasiSkor = false);
   }
 
   @override
   void initState() {
     super.initState();
-
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
-
-    _controller.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
     final kKuisSkorKuis = context.select<KontrolKuis, int>(
       (k) => k.skorKuis
-    );
-    final kKuisSoalKuis = context.select<KontrolKuis, int>(
-      (k) => k.ambilAwalAntrianKuis
     );
     final kLog = context.read<KontrolLog>();
     final kKuis = context.read<KontrolKuis>();
@@ -270,24 +264,14 @@ class _FooterModel1State extends State<FooterModel1>
 
     padaJawab = () {
       if (kKuis.cekSatuKuisSelesai()) {
-        nilaiJawaban = kKuis.ajukanKuis(kProgress, kLog);
+        nilaiJawaban = kKuis.ajukanKuis(kProgress, kLog, kDatabase);
+        jawabanBenar = kKuis.cekJawaban(kKuis.susunanJawabanListDynamic);
         animasikanSkor();
         kKuis.aturSoalSelanjutnya(kProgress);
-        print(kKuis.susunanJawabanListDynamic);
-        print(kKuisSkorKuis);
       } else {
         trigger();
-        print(kKuis.susunanJawabanListDynamic);
-        print(kKuisSkorKuis);
       }
     };
-
-    _scoreAnimation = IntTween(
-      begin: kKuisSkorKuis - nilaiJawaban,
-      end: kKuisSkorKuis,
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
 
     return Container(
       height: alat.ukuranFooter,
@@ -317,33 +301,43 @@ class _FooterModel1State extends State<FooterModel1>
                 ),
                 const SizedBox(width: 16),
 
-                // Animasi skorr
-                AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Row(
-                      children: [
-                        Text(
-                          "${alat.teksFooterSkor(kProgress)}: ",
-                          style: TextStyle(
-                            color: alat.teksPutihSedang,
-                            fontSize: 27,
-                            fontWeight: FontWeight.bold,
-                            shadows: alat.judulShadow,
-                            fontFamily: alat.judul
-                          ),
+                alat.bangunAnimasi(
+                  key: ValueKey("$kKuisSkorKuis$animasiSkor"),
+                  child: Row(
+                    children: [
+                      Text(
+                        "${alat.teksFooterSkor(kProgress)}: ",
+                        style: TextStyle(
+                          color: alat.teksPutihSedang,
+                          fontSize: 27,
+                          fontWeight: FontWeight.bold,
+                          shadows: alat.judulShadow,
+                          fontFamily: alat.judul
                         ),
-                        alat.bangunTeksGradien(
-                          teks: "${_scoreAnimation.value}${animasiSkor ? " + $nilaiJawaban" : ""}", 
-                          warna: alat.progress, 
-                          font: alat.judul, 
-                          ukuranFont: 27,
-                          beratFont: FontWeight.bold
-                        )
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                      alat.bangunTeksGradien(
+                        teks: "$kKuisSkorKuis${animasiSkor ? " + $nilaiJawaban" : ""}", 
+                        warna: alat.progress, 
+                        font: alat.judul, 
+                        ukuranFont: 27,
+                        beratFont: FontWeight.bold
+                      ),
+                      SizedBox(width: 30,),
+                      if (animasiSkor)
+                        alat.bangunAnimasi(
+                          key: ValueKey("$kKuisSkorKuis$animasiSkor"),
+                            child: Lingkaran(
+                            besar: 40, 
+                            besarGarisLuar: 7, 
+                            warnaGarisLuar: alat.kotakPutih, 
+                            benarSalahNetral: jawabanBenar ? 1 : 2, 
+                            warnaLingkaran: jawabanBenar ? alat.benar : alat.salah, 
+                            warnaSimbolAngka: alat.teksPutihSedang,
+                            )
+                          )
+                    ],
+                  ),
+                )
               ]
             )
           ),
@@ -413,6 +407,7 @@ class _FooterModel2State extends State<FooterModel2> {
     final kProgress = context.read<KontrolProgress>();
     final alat = context.read<AlatApp>();
     final kTes = context.read<KontrolTes>();
+    final kDatabase = context.read<KontrolDatabase>();
 
     late int sekarang;
     late int total;
@@ -422,27 +417,30 @@ class _FooterModel2State extends State<FooterModel2> {
     late bool akhirSebelumnya;
     late bool akhirSelanjutnya;
     late String teksAkhirSelanjutnya;
+    late bool menuSelesai;
 
     if (widget.belajar) {
       sekarang = context.select<KontrolBelajar, int>((k) => k.materiSekarang);
       total = kBelajar.totalMateriSekarang;
       progress = sekarang / total;
 
-      padaSebelumnya = () {kBelajar.aturMateriSebelumnya();};
+      padaSebelumnya = () {kBelajar.aturMateriSebelumnya(kProgress, kLog, kDatabase);};
       padaSelanjutnya = () {
         if (sekarang == total) {
           kBelajar.tutupMenuMateri();
           kMenu.bukaMenu(1);
           return;
         }
-        kBelajar.aturMateriSelanjutnya(kProgress, kLog);
+        kBelajar.aturMateriSelanjutnya(kProgress, kLog, kDatabase);
       };
 
       akhirSebelumnya = sekarang == 1 ? true : false;
       akhirSelanjutnya = sekarang == 0 ? true : false;
       teksAkhirSelanjutnya = sekarang == total ? alat.teksFooterKeluar(kProgress) : alat.teksFooterSelanjutnya(kProgress);
+      menuSelesai = false;
     } else {
       sekarang = context.select<KontrolTes, int>((k) => k.soal);
+      menuSelesai = context.select<KontrolTes, bool>((k) => k.menuSelesai);
       total = kTes.totalSoal;
       progress = sekarang / total;
 
@@ -457,7 +455,7 @@ class _FooterModel2State extends State<FooterModel2> {
         if (!kTes.tesSelesai && sekarang == total) {
           kTes.jawabSoal(notify: true);
           if (kTes.cekSemuaTesSelesai()) {
-            kTes.ajukanTes(kProgress, kLog);
+            kTes.ajukanTes(kProgress, kLog, kDatabase);
             return;
           } else {
             trigger();
@@ -470,9 +468,8 @@ class _FooterModel2State extends State<FooterModel2> {
         }
         kTes.aturSoalSelanjutnya();
       };
-
       akhirSebelumnya = sekarang == 1 ? true : false;
-      akhirSelanjutnya = sekarang > total ? true : false;
+      akhirSelanjutnya = sekarang == total && kTes.menuSelesai ? true : false;
       teksAkhirSelanjutnya = sekarang >= total ? alat.teksFooterKumpul(kProgress) : alat.teksFooterSelanjutnya(kProgress);
     }
 
@@ -547,7 +544,7 @@ class _FooterModel2State extends State<FooterModel2> {
             judul: teksAkhirSelanjutnya,
             judulUkuran: 10,
             fontJudul: alat.judul,
-            judulWarna: alat.teksPutihSedang,
+            judulWarna: akhirSelanjutnya ? alat.teksHitam : alat.teksPutihSedang,
             kotakWarna: akhirSelanjutnya ? alat.tidakAktif : null,
             kotakGradient: akhirSelanjutnya ? null : alat.terpilih,
             pakaiKlik: true,

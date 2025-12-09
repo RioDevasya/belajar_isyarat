@@ -66,7 +66,6 @@ class KontrolKuis extends ChangeNotifier {
     } else {
       _susunanJawaban = [false];
     }
-    print(_susunanJawaban);
   }
 
   // ==== getter ====
@@ -159,6 +158,11 @@ class KontrolKuis extends ChangeNotifier {
 
   bool cekJawaban(dynamic jawaban) {
     final soalSekarang = _eKuis.semuaSoal[ambilAwalAntrianKuis];
+
+    if (soalSekarang.mode.name == "hubungkan") {
+      return cekListListPasangan(keListListString(jawaban), keListListString(soalSekarang.jawaban));
+    }
+    
     final jawabanBenar = soalSekarang.mode.name == "artikan" ? soalSekarang.jawaban.map((j) => j.toString().toUpperCase()).toList() : soalSekarang.jawaban;
 
     return deepEquals(jawabanBenar, jawaban);
@@ -300,7 +304,7 @@ class KontrolKuis extends ChangeNotifier {
     notifyListeners();
   }
 
-  int ajukanKuis(KontrolProgress kontrolProgress, KontrolLog kontrolLog) {
+  int ajukanKuis(KontrolProgress kontrolProgress, KontrolLog kontrolLog, KontrolDatabase kontrolDatabase) {
     if (!cekSatuKuisSelesai()) {
       return 0;
     }
@@ -311,11 +315,9 @@ class KontrolKuis extends ChangeNotifier {
       : cekJawaban(_susunanJawaban);
     
     kontrolLog.catatLogKuis(idKuis: ambilAwalAntrianKuis, jawabanBenar: benar);
-    kontrolProgress.naikkanProgressKuis(ambilAwalAntrianKuis, benar);
+    kontrolProgress.naikkanProgressKuis(ambilAwalAntrianKuis, benar, kontrolDatabase);
     _skorKuis = kontrolProgress.progressKuis;
 
-    print("$benar");
-    print(ambilAntrianKuis);
     notifyListeners();
     return cekNilaiKuis(benar);
   } // TODO: kembangkan pengecekkan soal

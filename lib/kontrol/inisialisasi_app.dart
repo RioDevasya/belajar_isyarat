@@ -30,7 +30,6 @@ class InisialisasiApp with ChangeNotifier {
   }
 
   Future<bool> inis() async {
-    print("Masuk inisialisasi");
     kontrolDatabase = KontrolDatabase();
     kontrolProgress = KontrolProgress();
     kontrolLog = KontrolLog();
@@ -39,28 +38,21 @@ class InisialisasiApp with ChangeNotifier {
     kontrolKuis = KontrolKuis();
     kontrolMenu = KontrolMenu();
     alatApp = AlatApp();
-    print("Masuk inisialisasi 2: init");
 
     bool ok1 = await kontrolLog.inis(kontrolDatabase);
     _update("siap Log...");
-    print("Masuk inisialisasi log selesai");
 
     bool ok2 = await kontrolProgress.inis(kontrolDatabase);
     _update("siap Progress...");
 
-    print("Masuk inisialisasi progress selesai");
     bool ok3 = await kontrolBelajar.inis(kontrolDatabase, kontrolProgress);
- 
- 
-    print("Masuk inisialisasi belajar selesai");
+    _update("siap Belajar...");
 
     bool ok4 = await kontrolTes.inis(kontrolDatabase, kontrolProgress);
-    _update("siap Progress...");
-    print("Masuk inisialisasi tes selesai");
+    _update("siap Tes...");
 
     bool ok5 = await kontrolKuis.inis(kontrolDatabase, kontrolProgress);
-    _update("siap Progress...");
-    print("Masuk inisialisasi kuis selesai");
+    _update("siap Kuis...");
 
   return ok1 && ok2 && ok3 && ok4 && ok5;
   }

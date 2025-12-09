@@ -1,15 +1,28 @@
 {
-    "nama": "Rio",
-    "sekolah": "Universitas",
-    "jabatan": "guru",
-    "bahasa_inggris": false,
-    "progress_belajar_indo": [0, 0, 0],
-    "progress_kuis_indo": 0,
-    "nilai_tes_modul_indo": [0, 0, 0],
-    "progress_belajar_inggris": [0, 0, 0],
-    "progress_kuis_inggris": 0,
-    "nilai_tes_modul_inggris": [0, 0, 0],
-    "pengaturan": [
-        "nilai"
-    ]
+  "nama": null,
+  "sekolah": null,
+  "jabatan": null,
+  "bahasa_inggris": false,
+  "progress_belajar_indo": [
+    0,
+    0,
+    0
+  ],
+  "nilai_tes_modul_indo": [
+    0,
+    0,
+    0
+  ],
+  "progress_kuis_indo": 0,
+  "progress_belajar_inggris": [
+    0,
+    0,
+    0
+  ],
+  "nilai_tes_modul_inggris": [
+    0,
+    0,
+    0
+  ],
+  "progress_kuis_inggris": 0
 }

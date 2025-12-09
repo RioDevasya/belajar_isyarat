@@ -1,4 +1,6 @@
+import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Lingkaran extends StatelessWidget {
   final double besar;
@@ -12,6 +14,7 @@ class Lingkaran extends StatelessWidget {
 
   final int? benarSalahNetral;       // null = mode angka saja (jika ada angka)
   final int? angka;        // angka ditampilkan jika ada
+  final double? padding;
 
   const Lingkaran({
     super.key,
@@ -26,15 +29,17 @@ class Lingkaran extends StatelessWidget {
 
     this.benarSalahNetral,
     this.angka,
+    this.padding
   });
   
-  Widget _bangunGarisLuar(Widget child) {
+  Widget _bangunGarisLuar(Widget child, List<BoxShadow>? shadow) {
     return Container(
       width: besar + besarGarisLuar,
       height: besar + besarGarisLuar,
       decoration: BoxDecoration(
-        color: warnaLingkaran,
+        color: warnaGarisLuar,
         shape: BoxShape.circle,
+        boxShadow: shadow
       ),
       alignment: Alignment.center,
       child: child,
@@ -45,7 +50,8 @@ class Lingkaran extends StatelessWidget {
   Widget build(BuildContext context) {
     // Tentukan warna dasar
 
-    Icon? simbol;
+    Widget? simbol;
+    final alat = context.read<AlatApp>();
 
     // Prioritas warna
     switch (benarSalahNetral) {
@@ -53,7 +59,7 @@ class Lingkaran extends StatelessWidget {
         simbol = Icon(
           Icons.check,
           color: warnaSimbolAngka,
-          size: besar * 0.55,
+          size: besar * 0.85 - (padding ?? 0),
         );
         break;
 
@@ -61,7 +67,7 @@ class Lingkaran extends StatelessWidget {
         simbol = Icon(
           Icons.close,
           color: warnaSimbolAngka,
-          size: besar * 0.55,
+          size: besar * 0.85 - (padding ?? 0),
         );
         break;
       
@@ -69,7 +75,15 @@ class Lingkaran extends StatelessWidget {
         simbol = Icon(
           Icons.minimize,
           color: warnaSimbolAngka,
-          size: besar * 0.55,
+          size: besar * 0.85 - (padding ?? 0),
+        );
+        break;
+
+      case 4: 
+        simbol = Icon(
+          Icons.priority_high,
+          color: warnaSimbolAngka,
+          size: besar * 0.85 - (padding ?? 0),
         );
         break;
     }
@@ -83,8 +97,9 @@ class Lingkaran extends StatelessWidget {
         angka.toString(),
         style: TextStyle(
           color: warnaSimbolAngka,
-          fontSize: besar * 0.45,
-          fontWeight: FontWeight.w300,
+          fontSize: besar * 0.55 - (padding ?? 0),
+          fontWeight: FontWeight.bold,
+          fontFamily: alat.teks,
         ),
       );
     }
@@ -97,6 +112,7 @@ class Lingkaran extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
+      padding: padding != null ? EdgeInsets.all(padding!) : null,
       child: simbol ?? isi ?? Icon(
         Icons.question_mark,
         color: warnaSimbolAngka,
@@ -105,7 +121,7 @@ class Lingkaran extends StatelessWidget {
     );
 
     if (besarGarisLuar > 0.0) {
-      return _bangunGarisLuar(widgetUtama);
+      return _bangunGarisLuar(widgetUtama, null);
     } else {
       return widgetUtama;
     }

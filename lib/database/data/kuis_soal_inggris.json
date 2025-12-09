@@ -212,12 +212,12 @@
     {
         "id": 23,
         "suara": "tes_23",
-        "gambar": ["k", "a", "n", "a"],
+        "gambar": ["k", "a", "n"],
         "pertanyaan": "Match the signs with the correct letters!",
-        "opsi": ["huruf_a", "huruf_k", "huruf_n", "huruf_a"],
+        "opsi": ["huruf_a", "huruf_k", "huruf_n"],
         "jawaban": [
-            ["huruf_a", "huruf_n", "huruf_a", "huruf_k"],
-            ["a", "n", "a", "k"]
+            ["huruf_n", "huruf_a", "huruf_k"],
+            ["n", "a", "k"]
         ],
         "mode": "hubungkan"
     },

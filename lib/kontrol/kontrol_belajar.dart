@@ -47,6 +47,10 @@ class KontrolBelajar extends ChangeNotifier {
     return totalMateriSelesai;
   }
 
+  List<bool> ambilListMateriSelesai(KontrolProgress kontrolProgress) {
+    return kontrolProgress.ambilStatusBelajar(_modul);
+  }
+
   int semuaMateriSelesai(int modul, KontrolProgress kontrolProgress) {
     final statusBelajar = kontrolProgress.progressBelajar;
     return statusBelajar[modul - 1];
@@ -73,24 +77,27 @@ class KontrolBelajar extends ChangeNotifier {
     notifyListeners();
   }
 
-  void aturMateriSekarang(KontrolProgress kontrolProgress, int materi) {
+  void aturMateriSekarang(KontrolProgress kontrolProgress, int materi, KontrolLog kontrolLog, KontrolDatabase kontrolDatabase) {
     _materi = materi;
-    kontrolProgress.naikkanProgressBelajar(_modul, _materi);
+    kontrolProgress.naikkanProgressBelajar(_modul, _materi, kontrolDatabase);
+    kontrolLog.catatLogBelajar(modul: _modul, materi: _materi);
     notifyListeners();
   }
 
-  void aturMateriSelanjutnya(KontrolProgress kontrolProgress, KontrolLog kontrolLog) {
+  void aturMateriSelanjutnya(KontrolProgress kontrolProgress, KontrolLog kontrolLog, KontrolDatabase kontrolDatabase) {
     if (_materi < _eBelajar.modul[indeksModul(_modul)]!.materi.length) {
       _materi++;
-      kontrolProgress.naikkanProgressBelajar(_modul, _materi);
+      kontrolProgress.naikkanProgressBelajar(_modul, _materi, kontrolDatabase);
       kontrolLog.catatLogBelajar(modul: _modul, materi: _materi);
       notifyListeners();
     }
   }
 
-  void aturMateriSebelumnya() {
+  void aturMateriSebelumnya(KontrolProgress kontrolProgress, KontrolLog kontrolLog, KontrolDatabase kontrolDatabase) {
     if (_materi > 1) {
       _materi--;
+      kontrolProgress.naikkanProgressBelajar(_modul, _materi, kontrolDatabase);
+      kontrolLog.catatLogBelajar(modul: _modul, materi: _materi);
       notifyListeners();
     }
   }

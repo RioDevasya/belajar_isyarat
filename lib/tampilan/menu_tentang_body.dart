@@ -1,10 +1,9 @@
 import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
-import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
-import 'package:belajar_isyarat/kontrol/sistem_saran.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
+import 'package:belajar_isyarat/tampilan/lingkaran.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +24,9 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
 
     Widget bangunHalaman(nomorHalaman) {
       if (nomorHalaman == 2) {
-        return Container(
+        return alat.bangunAnimasi(
+          key: ValueKey(2),
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
@@ -52,8 +53,7 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
               SizedBox(height: 10),
 
               Text(
-                "Aplikasi Belajar Isyarat ini dibuat untuk membantu pengguna mempelajari bahasa isyarat\n dengan cara yang interaktif dan menyenangkan.\n "
-                "Dengan berbagai modul pembelajaran, kuis, dan fitur pelacakan progres, \npengguna dapat belajar sesuai kecepatan mereka sendiri.",
+                alat.teksTentangAplikasi(kProgress),
                 style: TextStyle(
                   fontSize: 17,
                   color: alat.teksHitam,
@@ -109,31 +109,36 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
               ),
             ],
           ),
-        );
+        ));
       } else {
-        final kLog = context.read<KontrolLog>();
-        final kTes = context.read<KontrolTes>();
         final kProgress = context.read<KontrolProgress>();
         final kBelajar = context.read<KontrolBelajar>();
-        final saran = SistemSaran(
-          logList: kLog.ambilListLogSync(), 
-          nilaiTes: kTes.semuaNilaiTes(kProgress), 
-          statusBelajar: kProgress.eProgressBelajar, 
-          totalMateri: kBelajar.totalSemuaMateri(), 
-          totalMateriSelesai: kBelajar.totalSemuaMateriSelesai(kProgress)
+
+        final kBelajarProgress = context.select<KontrolBelajar, int>(
+          (k) => k.totalSemuaMateriSelesai(kProgress)
         );
-        final hasil = saran.hasilAkhir();
-        final konklusi = kBelajar.totalSemuaMateriSelesai(kProgress) != kBelajar.totalSemuaMateri()
+        final kTesNilai = context.select<KontrolTes, List<int>>(
+          (k) => k.semuaNilaiTes(kProgress)
+        );
+        final konklusi = kBelajarProgress != kBelajar.totalSemuaMateri()
           ? "belajar"
-          : kTes.semuaNilaiTes(kProgress).every((e) => e > 99)
-          ? "tes"
-          : "kuis";
+          : !kTesNilai.every((e) => e > 99)
+            ? "tes"
+            : "kuis";
         final pesanSaran = konklusi == "belajar"
           ? alat.teksSaranBelajar(kProgress)
           : konklusi == "tes"
-          ? alat.teksSaranTes(kProgress)
-          : alat.teksSaranKuis(kProgress);
-        return Container(
+            ? alat.teksSaranTes(kProgress)
+            : alat.teksSaranKuis(kProgress);
+
+        final judulSaran = konklusi == "belajar"
+          ? alat.teksSaranBelajarJudul(kProgress)
+          : konklusi == "tes"
+            ? alat.teksSaranTesJudul(kProgress)
+            : alat.teksSaranKuisJudul(kProgress);
+        return alat.bangunAnimasi(
+          key: ValueKey(1),
+          child: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
@@ -146,11 +151,37 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
             boxShadow: alat.boxShadow
           ),
           padding: EdgeInsets.all(30),
-          child: Center(
-            child: Text(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lingkaran(
+                    besar: 70,
+                    warnaLingkaran: konklusi == "belajar" ? alat.salah : konklusi == "tes" ? alat.netral : alat.benar,
+                    warnaSimbolAngka: alat.teksPutihSedang,
+                    benarSalahNetral: konklusi == "belajar" ? 2 : konklusi == "tes" ? 4 : 1,
+                  ),
+                  SizedBox(width: 30,),
+                  Text(
+                    judulSaran,
+                    style:  TextStyle(
+                      color: konklusi == "belajar" ? alat.salah : konklusi == "tes" ? alat.netral : alat.benar,
+                      fontSize: 60,
+                      fontFamily: alat.judul,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              SizedBox(height: 80,),
+              Text(
               pesanSaran,
               style:  TextStyle(
-                color: konklusi == "belajar" || konklusi == "tes" ? alat.netral : alat.benar,
+                color: konklusi == "belajar" ? alat.salah : konklusi == "tes" ? alat.netral : alat.benar,
                 fontSize: 30,
                 fontFamily: alat.judul,
                 fontWeight: FontWeight.bold,
@@ -158,8 +189,9 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
               ),
               textAlign: TextAlign.center,
             ),
+            ]
           )
-        );
+        ));
       }
     }
     
@@ -171,9 +203,9 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CardStatis(
-                  lebar: 90,
-                  tinggi: 40,
-                  tepiRadius: 5,
+                  lebar: 140,
+                  tinggi: 55,
+                  tepiRadius: 25,
                   isiTengah: true,
                   judul: alat.teksTentangTombol1(kProgress),
                   judulWarna: alat.teksTerangKuning,
@@ -195,11 +227,11 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
                   padaHoverBayanganKotak: nomorHalaman == 1 ? null : alat.boxShadowHover,
                   padaHoverBayanganPemisahGarisLuar: nomorHalaman == 1 ? alat.boxShadowHover : null,
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 30),
                 CardStatis(
-                  lebar: 90,
-                  tinggi: 40,
-                  tepiRadius: 5,
+                  lebar: 140,
+                  tinggi: 55,
+                  tepiRadius: 25,
                   isiTengah: true,
                   judul: alat.teksTentangTombol2(kProgress),
                   judulWarna: alat.teksTerangKuning,
@@ -231,134 +263,4 @@ class _MenuTentangBodyState extends State<MenuTentangBody> {
         ]
     );
   }
-}
-
-Widget buildSaranCard(Map<String, dynamic> hasil) {
-  final tipe = hasil["tipe"]; // "kelebihan" atau "kekurangan"
-  final kategori = hasil["kategori"];
-  final poin = hasil["poin"];
-  final pesan = hasil["pesan"];
-  final rekomendasi = hasil["rekomendasi"];
-
-  // warna tematik
-  final bool isKelebihan = tipe == "kelebihan";
-  final Color warnaUtama = isKelebihan ? Colors.green.shade600 : Colors.orange.shade700;
-  final Color warnaLatar = isKelebihan ? Colors.green.shade50 : Colors.orange.shade50;
-
-  return Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: warnaLatar,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 8,
-          offset: const Offset(0, 3),
-        )
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: warnaUtama,
-              radius: 18,
-              child: Icon(
-                isKelebihan ? Icons.check_circle : Icons.warning_amber_rounded,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              isKelebihan ? "Kelebihan Kamu" : "Yang Perlu Ditingkatkan",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: warnaUtama,
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 16),
-
-        // Pesan Utama
-        Text(
-          pesan,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Detail poin
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: warnaUtama.withOpacity(0.3)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Rincian Poin:", 
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: warnaUtama,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Belajar:", style: TextStyle(fontSize: 14)),
-                  Text("${poin["belajar"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Tes:", style: TextStyle(fontSize: 14)),
-                  Text("${poin["tes"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Kuis:", style: TextStyle(fontSize: 14)),
-                  Text("${poin["kuis"]}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        // Rekomendasi (khusus kekurangan)
-        if (!isKelebihan && rekomendasi != null) ...[
-          const SizedBox(height: 16),
-          Text(
-            "Rekomendasi:",
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: warnaUtama,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            rekomendasi,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ]
-      ],
-    ),
-  );
 }

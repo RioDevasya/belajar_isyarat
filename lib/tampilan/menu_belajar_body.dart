@@ -1,9 +1,12 @@
 import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_database.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_menu.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
+import 'package:belajar_isyarat/tampilan/lingkaran.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,12 +40,20 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
     final kontrolMenu = context.read<KontrolMenu>();
     final kLog = context.read<KontrolLog>();
     final alat = context.read<AlatApp>();
+    final kDatabase = context.read<KontrolDatabase>();
 
     final kBelajarProgressMateri = context.select<KontrolBelajar, int> (
       (k) => k.semuaMateriSelesai(kBelajar.modulSekarang, kProgress)
     );
+    final kTesNilai = context.select<KontrolTes, List<int>>(
+      (k) => k.semuaNilaiTes(kProgress)
+    );
+    final kBelajarMateriSelesai = context.select<KontrolBelajar, List<bool>>(
+      (k) => k.ambilListMateriSelesai(kProgress)
+    );
 
     final totalMateri = kBelajar.totalMateriSekarang;
+    final nilai = kTesNilai[kBelajar.modulSekarang - 1];
 
     return Row(
         children: [
@@ -71,7 +82,7 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: alat.kotakPutih,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(25),
                           boxShadow: alat.boxShadow,
                         ),
                         child: Row(
@@ -130,7 +141,10 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                                   padding: 10,
                                   kotakWarna: alat.kotakUtama,
                                   isiTengah: true,
-                                  pemisahGarisLuarUkuran: 7,
+                                  pemisahGarisLuarUkuran: 5,
+                                  pemisahGarisLuarWarna: nilai > 0 ? alat.teksPutihSedang : null,
+                                  garisLuarUkuran: nilai > 0 ? 7 : 0,
+                                  garisLuarWarna: nilai > 0 ? (nilai > 75 ? alat.benar : alat.netral) : null,
                                   tepiRadius: 10,
                                   judul: "${alat.teksBelajarTes(kProgress)} ${kBelajar.modulSekarang}",
                                   judulUkuran: 17,
@@ -144,8 +158,18 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                                   padaKlik: () {
                                     kontrolMenu.bukaMenu(3);
                                   },
-                                  padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
-                                  bayanganKotak: alat.boxShadow,
+                                  padaHoverBayanganPemisahGarisLuar: nilai > 0 ? null : alat.boxShadowHover,
+                                  bayanganKotak: nilai > 0 ? null : alat.boxShadow,
+                                  bayanganGarisLuar: nilai > 0 ? alat.boxShadow : null,
+                                  padaHoverBayanganGarisLuar: nilai > 0 ? alat.boxShadowHover : null,
+                                  tanda: nilai > 0 ? Lingkaran(
+                                    besar: 30,
+                                    warnaLingkaran: nilai > 75 ? alat.benar : alat.netral,
+                                    warnaSimbolAngka: alat.teksPutihSedang,
+                                    angka: nilai,
+                                    besarGarisLuar: 7,
+                                    warnaGarisLuar: alat.kotakPutih,
+                                  ) : null
                                 )
                               ),
                             ),
@@ -153,7 +177,7 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                         )
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
 
                     // === KOLOM BAWAH: List modul ===
                     Center(
@@ -164,16 +188,19 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                         children: List.generate(kBelajar.totalMateriSekarang, (i) {
                           final materi = kBelajar.ambilMateri(kBelajar.modulSekarang, i + 1);
                           final panjang = materi.gambar.length > 1;
-                          final warnaKotak = alat.warnaWarnaKotak[i % 5];
+                          final warnaKotak = alat.warnaWarnaKotak[i % 3];
+                          final selesai = kBelajarMateriSelesai[i];
 
                           return CardStatis(
-                            lebar: panjang ? 440 : 180,
-                            tinggi: panjang ? 220 : 200,
+                            lebar: panjang ? 440 : 200,
+                            tinggi: panjang ? 220 : 220,
                             padding: 8,
                             tepiRadius: 30,
                             kotakWarna: warnaKotak,
-                            pemisahGarisLuarUkuran: 3,
-                            garisLuarUkuran: 4,
+                            pemisahGarisLuarUkuran: 4,
+                            pemisahGarisLuarWarna: selesai ? alat.kotakPutih : null,
+                            garisLuarUkuran: 6,
+                            garisLuarWarna: selesai ? alat.benar : null,
                             gambar: materi.gambar,
                             paddingGambar: 10,
                             tepiRadiusGambar: panjang ? 150 : 20,
@@ -192,22 +219,31 @@ class _MenuBelajarMenuBodyState extends State<MenuBelajarMenuBody> {
                             pakaiHover: true,
                             pakaiKlik: true,
                             padaHoverAnimasi: padaHoverAnimasi1,
-                            padaHoverPemisahGarisLuarWarna: alat.kotakPutih,
-                            padaHoverGarisLuarGradient: alat.terpilih,
+                            padaHoverPemisahGarisLuarWarna: selesai ? null : alat.kotakPutih,
+                            padaHoverPemisahGarisLuarGradient: selesai ? alat.terpilih : null,
+                            padaHoverGarisLuarGradient: selesai ? null : alat.terpilih,
                             padaKlikAnimasi: padaKlikAnimasi1,
                             susunGambarTeksBaris: Axis.vertical,
                             padaKlik: () {
-                              kBelajar.aturMateriSekarang(kProgress, i + 1);
+                              kBelajar.aturMateriSekarang(kProgress, i + 1, kLog, kDatabase);
                               kLog.catatLogBelajar(modul: kBelajar.modulSekarang, materi: i + 1);
                               kontrolMenu.bukaMenu(2);
                             },
                             padaHoverBayanganGarisLuar: alat.boxShadowHover,
                             bayanganKotak: alat.boxShadow,
+                            tanda: selesai ? Lingkaran(
+                              besar: 40, 
+                              besarGarisLuar: 7, 
+                              warnaGarisLuar: alat.kotakPutih, 
+                              benarSalahNetral: 1, 
+                              warnaLingkaran: alat.benar, 
+                              warnaSimbolAngka: alat.teksPutihSedang,
+                            ):null,
                           );
                         })
                       )
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 40),
                   ],
                 ),
               )
@@ -231,7 +267,11 @@ class MenuBelajarMateriBody extends StatelessWidget {
       : kBelajar.ambilMateri(kBelajar.modulSekarang, kBelajar.materiSekarang);
     final alat = context.read<AlatApp>();
 
-    return Row(
+    final panjang = materi.gambar.length > 1;
+
+    return alat.bangunAnimasi(
+          key: ValueKey(kBelajar.materiSekarang) ,
+          child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         alat.bangunTombolKembali(
@@ -253,14 +293,20 @@ class MenuBelajarMateriBody extends StatelessWidget {
                   tinggi: null,
                   kotak: true,
                   padding: 20,
-                  tepiRadius: 30,
+                  tepiRadius: 35,
                   kotakGradient: alat.warnaHeader,
                   gambar: materi.gambar,
                   besarGambar: null,
                   warnaGambarColor: alat.kotakPutih,
-                  tepiRadiusGambar: 10,
+                  tepiRadiusGambar: panjang ? 150 : 20,
                   susunGambarTeksBaris: Axis.vertical,
                   bayanganKotak: alat.boxShadow,
+                  pemisahGambar: Icon(
+                    Icons.double_arrow_rounded,
+                    color: alat.teksHitam,
+                  ),
+                  jarakGambarPemisah: 10,
+                  besarPemisahGambar: 250,
                 ),
 
                 SizedBox(width: 10),
@@ -320,6 +366,7 @@ class MenuBelajarMateriBody extends StatelessWidget {
                               false
                             ],
                             teksRataKiriKanan: true,
+                            
                           ),
                         )
                       )
@@ -331,6 +378,6 @@ class MenuBelajarMateriBody extends StatelessWidget {
           )
         )
       ],
-    );
+    ));
   }
 }

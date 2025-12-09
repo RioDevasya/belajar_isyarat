@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
+import 'package:belajar_isyarat/tampilan/lingkaran.dart';
 import 'package:flutter/material.dart';
 
 class AlatApp {
@@ -136,8 +137,8 @@ class AlatApp {
     kotak1,
     kotak3,
     kotak4,
-    kotak2,
-    kotak5,
+    kotak3,
+    kotak1
   ];
 
   List<Color> get warnaWarnaOutline => [
@@ -207,12 +208,13 @@ class AlatApp {
   String teksTesSelesaiPenjelas4(KontrolProgress kProgress) => kProgress.bahasaInggris 
     ? "Amazing! You did a great job! Keep up the good work!"
     : "Luar biasa! Kamu mengerjakannya dengan sangat baik! Teruskan prestasimu!";
+  String teksTesSelesaiJawabanBenar(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Total Correct Answer to Questions" : "Jawaban Benar Pada Soal";
 
   String teksTombolMulai(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Start" : "Mulai";
   String teksTombolUlang(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Restart" : "Ulang";
 
   String teksProgresMateri(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Material Studied" : "Materi Dipelajari";
-  String teksProgresTes(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Test Completed" : "Tes Selesai";
+  String teksProgresTes(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Test Completed/Passed" : "Tes Selesai/Lulus";
   String teksProgresSkor(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Total Quizez Score" : "Total Skor Kuis";
   String teksProgresLogAktivitas(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Activity Log" : "Log Aktivitas";
   String teksProgresModul(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Module" : "Modul";
@@ -225,6 +227,11 @@ class AlatApp {
   String teksTentangJudul3(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Application Version" : "Versi Aplikasi";
   String teksTentangTombol1(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Suggestion" : "Saran";
   String teksTentangTombol2(KontrolProgress kProgress) => kProgress.bahasaInggris ? "About" : "Tentang";
+  String teksTentangAplikasi(KontrolProgress kProgress) => kProgress.bahasaInggris 
+    ? "This Sign Language Learning app was created to help users learn sign language in an interactive and fun way.\n "
+      "With various learning modules, quizzes, and progress tracking features, users can learn at their own pace." 
+    : "Aplikasi Belajar Isyarat ini dibuat untuk membantu pengguna mempelajari bahasa isyarat\n dengan cara yang interaktif dan menyenangkan.\n "
+      "Dengan berbagai modul pembelajaran, kuis, dan fitur pelacakan progres, \npengguna dapat belajar sesuai kecepatan mereka sendiri.";
 
   String teksAturanProfil(KontrolProgress kProgress) => kProgress.bahasaInggris ? "User Profile" : "Profil Pengguna";
   String teksAturanSimpanAnonim(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Save As Anonymous" : "Simpan Sebagai Anonim";
@@ -242,6 +249,18 @@ class AlatApp {
   String teksSaranKuis(KontrolProgress kProgress) => kProgress.bahasaInggris
     ? "You have completed the Learning and Material Test, you have passed, and that's great! Answering the Quiz is highly recommended to hone your skills, good luck!"
     : "Anda telah menyelesaikan Pembelajaran dan Tes Materi, anda telah lulus dan itu sangat bagus!. Menjawab Kuis sangat direkomendasikan untuk mengasah kemampuan ada, semoga sukses!";
+
+  String teksSaranBelajarJudul(KontrolProgress kProgress) => kProgress.bahasaInggris
+    ? "Learning Is Not Finished!"
+    : "Belajar Belum Tuntas!";
+
+  String teksSaranTesJudul(KontrolProgress kProgress) => kProgress.bahasaInggris
+    ? "Perfect Your Test!"
+    : "Sempurnakan Tes Anda!";
+
+  String teksSaranKuisJudul(KontrolProgress kProgress) => kProgress.bahasaInggris
+    ? "Sharpen Your Skills!"
+    : "Asah Kemampuan!";
 
   List<Pelajaran> itemBelajar(KontrolProgress kProgress) => [
     Pelajaran(kProgress.bahasaInggris ? "Numbers" : "Angka", "numbers"),
@@ -401,348 +420,124 @@ class AlatApp {
           fontWeight: beratFont,
           fontFamily: font,
           color: Colors.white,
-          shadows: teksShadow
         ),
       ),
     );
   }
 
   Widget bangunProgressBar({
-  required BuildContext context,
-  required double progresss,
-  double? tinggi,
-  double? garisLuar,
-}) {
-  // warna dan shadow bisa disesuaikan
-
-  return LayoutBuilder(builder: (context, c) {
-    final width = c.maxWidth.isFinite ? c.maxWidth : 0.0;
-    final height = tinggi ?? c.maxHeight;
-    final progressFinal = progresss.clamp(0.0, 1.0);
-
-    // --- 1) Lapisan terluar gelap (membentuk tepi cekung) ---
-    Widget base =  ClipRRect(
-  borderRadius: BorderRadius.circular(15),   // radius sama!
-  child: Container(
-      padding: EdgeInsets.all(garisLuar ?? 4),
-      decoration: BoxDecoration(
-        color: Colors.black, // TEPI DALAM GELAP
-        borderRadius: BorderRadius.circular(15),
-      ),
-
-      // --- 2) Lapisan dalam terang dengan SHADOW putih keluar ---
-      child: Container(
-        decoration: BoxDecoration(
-          color: latarBelakangProgressAbu,
-          borderRadius: BorderRadius.circular(13),
-
-          // Shadow putih keluar → tampak seperti inner shadow
-          boxShadow: [
-            BoxShadow(
-              color: latarBelakangProgressAbu,
-              blurRadius: 14,
-              spreadRadius: 2,
-              offset: Offset(1.2, 1.2)
-            ),
-            BoxShadow(
-              color: latarBelakangProgressAbu.withValues(alpha: 0.96),
-              blurRadius: 5,
-              spreadRadius: 7,
-              offset: Offset(1.2, 1.2)
-            ),
-            BoxShadow(
-              color: latarBelakangProgressAbu,
-              blurRadius: 1,
-              spreadRadius: 3,
-              offset: Offset(3, 3)
-            ),
-          ],
-        ),
-
-        // --- 3) ISI STACK PROGRESS BAR ---
-        child: Stack(
-          children: [
-            // Background track
-            Container(
-              height: height,
-              width: width,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-
-            // Fill
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              width: width * progressFinal,
-              height: height,
-              decoration: BoxDecoration(
-                gradient: progress,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 1,
-                    spreadRadius: 0.2,
-                    offset: Offset(2.5, 2)
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 7,
-                    spreadRadius: 0,
-                    offset: Offset(2.5, 2)
-                  ),
-                ]
-              ),
-            ),
-          ],
-        ),
-      ),
-    )
-    );
-
-    return base;
-  });
-}
-
-  Widget bangunKetupat({
-    required double ukuran,
-    required Widget? isi,
-    double segiEnam = 0,
-    double tepiRadius = 0,
-
-    // kotak inti
-    Color? warnaKotak,
-    LinearGradient? gradientKotak,
-
-    double ukuranGarisLuar1 = 0, // Layer 3 → 2 → 1
-    Color? warnaGarisLuar1,
-    LinearGradient? gradienGarisLuar1,
-
-    double ukuranGarisLuar2 = 0,
-    Color? warnaGarisLuar2,
-    LinearGradient? gradienGarisLuar2,
-
-    double ukuranGarisLuar3 = 0,
-    Color? warnaGarisLuar3,
-    LinearGradient? gradienGarisLuar3,
-  }) {
-    Widget buildLayer({
-      required double padding,
-      required Color? color,
-      required LinearGradient? gradient,
-      required Widget child,
-      BorderRadius? borderRadius
-    }) {
-      if (padding == 0) return child;
-
-      return AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeInOut,
-        padding: EdgeInsets.all(padding),
-        decoration: BoxDecoration(
-          color: gradient == null ? color : null,
-          gradient: gradient,
-          borderRadius: borderRadius
-        ),
-        child: child,
-      );
-    }
-
-    Widget shapeWrapper(Widget child) {
-      return ClipPath(
-        clipper: segiEnam > 0 ? HexagonClipper() : DiamondClipper(),
-        child: child,
-      );
-    }
-
-    Widget innerBox = shapeWrapper(
-      AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeInOut,
-        width: ukuran,
-        height: ukuran,
-        decoration: BoxDecoration(
-          color: gradientKotak == null ? warnaKotak : null,
-          gradient: gradientKotak,
-          borderRadius: BorderRadius.circular(tepiRadius)
-        ),
-        alignment: Alignment.center,
-        child: isi,
-      ),
-    );
-
-    Widget layer3 = buildLayer(
-      padding: ukuranGarisLuar3,
-      color: warnaGarisLuar3,
-      gradient: gradienGarisLuar3,
-      child: innerBox,
-      borderRadius: BorderRadius.circular(tepiRadius + ukuranGarisLuar3 / 2)
-    );
-
-    Widget layer2 = buildLayer(
-      padding: ukuranGarisLuar2,
-      color: warnaGarisLuar2,
-      gradient: gradienGarisLuar2,
-      child: layer3,
-      borderRadius: BorderRadius.circular(tepiRadius + ukuranGarisLuar3 / 2 + ukuranGarisLuar2/2)
-    );
-
-    Widget layer1 = buildLayer(
-      padding: ukuranGarisLuar1,
-      color: warnaGarisLuar1,
-      gradient: gradienGarisLuar1,
-      child: layer2,
-      borderRadius: BorderRadius.circular(tepiRadius + ukuranGarisLuar3 / 2 + ukuranGarisLuar2/2 + ukuranGarisLuar1/2)
-    );
-
-    return layer1;
-  }
-
-  Widget bangunProgressBarPoin({
     required BuildContext context,
-    double? lebar,
+    required double progresss,
     double? tinggi,
-
-    required int nomorSekarang,
-
-    List<String>? isi,
-    required List<bool> isiSelesai,
-    TextStyle? styleIsi,
-    double? jarakIsi,
-
-    bool benarSalah = false,
-
-    required double tinggiProgressBar,
-    required double ukuranGarisLuarProgressBar,
-
-    Function(int index)? padaKlik,
+    double? garisLuar,
   }) {
-    final total = isiSelesai.length;
+    // warna dan shadow bisa disesuaikan
 
-    return LayoutBuilder(
-      builder: (context, c) {
-        final maxWidth = lebar ?? c.maxWidth;
-        final maxHeight = tinggi ?? c.maxHeight;
-        final ukuranKetupat = maxHeight;
+    return LayoutBuilder(builder: (context, c) {
+      final width = c.maxWidth.isFinite ? c.maxWidth : 0.0;
+      final height = tinggi ?? c.maxHeight;
+      final progressFinal = progresss.clamp(0.0, 1.0);
 
-        // Padding global untuk border ketupat
-        const double g1 = 1;
-        const double g2 = 2;
-        const double g3 = 1;
-        final totalGaris = g1 + g2 + g3;
+      // --- 1) Lapisan terluar gelap (membentuk tepi cekung) ---
+      Widget base =  ClipRRect(
+    borderRadius: BorderRadius.circular(15),   // radius sama!
+    child: Container(
+        padding: EdgeInsets.all(garisLuar ?? 4),
+        decoration: BoxDecoration(
+          color: Colors.black, // TEPI DALAM GELAP
+          borderRadius: BorderRadius.circular(15),
+        ),
 
-        // Hitung ruang
-        final totalLebarKetupat = (ukuranKetupat + totalGaris) * total;
-        final ruangTersisa = maxWidth - totalLebarKetupat;
+        // --- 2) Lapisan dalam terang dengan SHADOW putih keluar ---
+        child: Container(
+          decoration: BoxDecoration(
+            color: latarBelakangProgressAbu,
+            borderRadius: BorderRadius.circular(13),
 
-        final spacing = jarakIsi ?? (ruangTersisa / (total - 1)).clamp(0, 9999);
+            // Shadow putih keluar → tampak seperti inner shadow
+            boxShadow: [
+              BoxShadow(
+                color: latarBelakangProgressAbu,
+                blurRadius: 14,
+                spreadRadius: 2,
+                offset: Offset(1.2, 1.2)
+              ),
+              BoxShadow(
+                color: latarBelakangProgressAbu.withValues(alpha: 0.96),
+                blurRadius: 5,
+                spreadRadius: 7,
+                offset: Offset(1.2, 1.2)
+              ),
+              BoxShadow(
+                color: latarBelakangProgressAbu,
+                blurRadius: 1,
+                spreadRadius: 3,
+                offset: Offset(3, 3)
+              ),
+            ],
+          ),
 
-        // Hitung posisi progress bar:
-        // Lebar progress harus berhenti di tengah ketupat nomorSekarang
-        double lebarProgress = 0;
+          // --- 3) ISI STACK PROGRESS BAR ---
+          child: Stack(
+            children: [
+              // Background track
+              Container(
+                height: height,
+                width: width,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
 
-        // progress = semua ketupat sebelum + setengah ketupat saat ini
-        if (nomorSekarang <= 1) {
-          lebarProgress = (ukuranKetupat + totalGaris) / 2;
-        } else {
-          lebarProgress =
-              (ukuranKetupat + totalGaris) * (nomorSekarang - 1) +
-              spacing * (nomorSekarang - 1) +
-              (ukuranKetupat + totalGaris) / 2;
-        }
-
-        // Ketupat builder
-        final listKetupat = List.generate(total, (i) {
-          final isNow = (i == nomorSekarang - 1);
-          final isDone = isiSelesai[i];
-
-          final warnaText = benarSalah
-              ? teksPutihSedang
-              : (isDone ? teksPutihSedang : teksProgressBelum);
-
-          final kotak = benarSalah
-              ? (isDone ? benar : salah)
-              : (isDone ? null : kotakPutih);
-
-          final gradientKotak = benarSalah
-              ? null
-              : (isDone ? progress : null);
-
-          // Border logika
-          final garis1 = latarBelakangProgressAbu;
-          final garis2 = isNow
-              ? (benarSalah
-                  ? (isDone ? benar : salah)
-                  : null)
-              : null; // warna border 2 jika kotak sekarang
-          final gradien2 = isNow ? (!benarSalah ? progress : null) : null;
-
-          return GestureDetector(
-            onTap: () => padaKlik?.call(i),
-            child: bangunKetupat(
-              ukuran: ukuranKetupat,
-              isi: Text(
-                isi != null ? isi[i] : (i + 1).toString(),
-                style: styleIsi?.copyWith(color: warnaText) ??
-                    TextStyle(
-                      color: warnaText,
-                      fontFamily: judul,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
+              // Fill
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                width: width * progressFinal,
+                height: height,
+                decoration: BoxDecoration(
+                  gradient: progress,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 1,
+                      spreadRadius: 0.2,
+                      offset: Offset(2.5, 2)
                     ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 7,
+                      spreadRadius: 0,
+                      offset: Offset(2.5, 2)
+                    ),
+                  ]
+                ),
               ),
-              tepiRadius: 4,
-              warnaKotak: kotak,
-              gradientKotak: gradientKotak,
-              ukuranGarisLuar3: g3,
-              warnaGarisLuar3: kotakPutih,
-              ukuranGarisLuar2: g2,
-              warnaGarisLuar2: garis2,
-              gradienGarisLuar2: gradien2,
-              ukuranGarisLuar1: g1,
-              warnaGarisLuar1: garis1,
-            )
-          );
-        });
+            ],
+          ),
+        ),
+      )
+      );
 
-        final arranged = <Widget>[];
-        for (int i = 0; i < total; i++) {
-          arranged.add(listKetupat[i]);
-          if (i < total - 1) arranged.add(SizedBox(width: spacing));
-        }
-
-        return Stack(
-          alignment: Alignment.centerLeft,
-          children: [
-            // Progress Bar di belakang
-            Positioned(
-              left: 0,
-              child: bangunProgressBar(
-                context: context,
-                progresss: lebarProgress,
-                tinggi: tinggiProgressBar,
-                garisLuar: ukuranGarisLuarProgressBar,
-              ),
-            ),
-
-            // Ketupat di depan
-            Positioned.fill(
-              child: IgnorePointer(
-                child: Row(children: arranged),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+      return base;
+    });
   }
 
-  Widget bangunMenuAtasSoal(List<String> gambarSoal, String penjelas) {
+  Widget bangunMenuAtasSoal(List<String> gambarSoal, String penjelas, bool selesai, bool jawabanBenar) {
     final bukanGambar = gambarSoal.isNotEmpty ? gambarSoal.every((g) => g.startsWith("an") || g.startsWith("hu")) : false;
     final layout = gambarSoal.length > 1 ? Axis.vertical : Axis.horizontal;
+    final soalBenar = selesai && jawabanBenar;
+    final tanda = selesai ? Lingkaran(
+      besar: 40, 
+      besarGarisLuar: 7, 
+      warnaGarisLuar: kotakPutih, 
+      benarSalahNetral: soalBenar ? 1 : 2, 
+      warnaLingkaran: soalBenar ? benar : salah, 
+      warnaSimbolAngka: teksPutihSedang,
+    ):null;
+
     return Expanded(
       flex: gambarSoal.length > 1 ? 8 : 3,
       child: CardStatis(
@@ -817,45 +612,47 @@ class AlatApp {
         susunGambarTeksBaris: layout,
         bayanganKotak: boxShadow,
         bayanganJudul: judulShadow,
+
+        tanda: tanda,
+        pemisahGarisLuarUkuran: selesai ? 3 : 0,
+        pemisahGarisLuarWarna: selesai ? kotakPutih : null,
+        garisLuarUkuran: selesai ? 5 : 0,
+        garisLuarWarna: selesai ? (soalBenar ? benar : salah) : null,
       ),
     );
   }
-}
 
-class DiamondClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size s) {
-    final w = s.width;
-    final h = s.height;
-    return Path()
-      ..moveTo(w / 2, 0)
-      ..lineTo(w, h / 2)
-      ..lineTo(w / 2, h)
-      ..lineTo(0, h / 2)
-      ..close();
+  Widget bangunAnimasi({required Widget child, required ValueKey key}) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      switchInCurve: Curves.easeOut,      // masuk → lambat di akhir
+      switchOutCurve: Curves.easeInOut,   // keluar → smooth awal-akhir
+      layoutBuilder: (currentChild, previousChildren) {
+        return Stack(
+          children: [
+            ...previousChildren,
+            if (currentChild != null) currentChild,
+          ],
+        );
+      },
+      transitionBuilder: (child, anim) {
+        final opacityAnim = Tween<double>(
+          begin: 0.0,
+          end: 1.0,
+        ).animate(anim);
+
+
+        return FadeTransition(
+          opacity: opacityAnim,
+          child: child,
+        );
+      },
+      child: KeyedSubtree(
+        key: key,
+        child: child
+      )
+    );
   }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
-}
-
-class HexagonClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size s) {
-    final w = s.width;
-    final h = s.height;
-    return Path()
-      ..moveTo(w * 0.25, 0)
-      ..lineTo(w * 0.75, 0)
-      ..lineTo(w, h * 0.5)
-      ..lineTo(w * 0.75, h)
-      ..lineTo(w * 0.25, h)
-      ..lineTo(0, h * 0.5)
-      ..close();
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 
 class Pelajaran {
