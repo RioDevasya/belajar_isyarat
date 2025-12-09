@@ -43,6 +43,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                     color: alat.teksKuning,
                     fontSize: 37,
                     fontWeight: FontWeight.bold,
+                    shadows: alat.teksShadow
                   ),
                 ),
                 SizedBox(height: 20),
@@ -52,7 +53,8 @@ class MenuKuisMenuBody extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: alat.teks,
                     fontSize: 20,
-                    color: alat.teksHitam
+                    color: alat.teksHitam,
+                    shadows: alat.teksShadow
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -67,7 +69,8 @@ class MenuKuisMenuBody extends StatelessWidget {
                         fontFamily: alat.teks,
                         fontSize: 27,
                         fontWeight: FontWeight.bold,
-                        color: alat.teksKuning
+                        color: alat.teksKuning,
+                        shadows: alat.teksShadow
                       ),
                     ),
                     alat.bangunTeksGradien(
@@ -75,7 +78,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                       teks: kKuisProgressKuis.toString(),
                       ukuranFont: 27,
                       beratFont: FontWeight.bold,
-                      warna: alat.progress
+                      warna: alat.progress,
                     )
                   ],
                 ),
@@ -91,6 +94,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                       isiTengah: true,
                       pemisahGarisLuarUkuran: 7,
                       judul: alat.teksTombolMulai(kProgress),
+                      bayanganJudul: alat.teksShadow,
                       judulUkuran: 32,
                       judulWarna: alat.teksPutihSedang,
                       fontJudul: alat.judul,

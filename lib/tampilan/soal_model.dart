@@ -1111,7 +1111,7 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                         fontFamily: alat.judul,
                         fontSize: 27,
                         fontWeight: FontWeight.bold,
-                        shadows: alat.teksShadow
+                        shadows: alat.judulShadow
                       ),
                     ),
                   ),

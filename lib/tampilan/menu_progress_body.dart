@@ -68,74 +68,77 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
       }
     }
 
-    return Scrollbar(
+    return ScrollFade(
       controller: _scrollController,
-      thumbVisibility: true,
-      child: SingleChildScrollView(
+      child: Scrollbar(
         controller: _scrollController,
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
 
-            // ============================================================
-            //                     BAGIAN STATISTIK
-            // ============================================================
-            Row(
-              children: [
-                Expanded(child: _statCard(Icons.book, totalMateri, alat.teksProgresMateri(kProgress))),
-                const SizedBox(width: 10),
-                Expanded(child: _statCard(
-                  Icons.check_circle, 
-                  totalTesSelesai, 
-                  alat.teksProgresTes(kProgress)
-                )),
-                const SizedBox(width: 10),
-                Expanded(child: _statCard(Icons.star, totalSkor, alat.teksProgresSkor(kProgress))),
-              ],
-            ),
+              // ============================================================
+              //                     BAGIAN STATISTIK
+              // ============================================================
+              Row(
+                children: [
+                  Expanded(child: _statCard(Icons.book, totalMateri, alat.teksProgresMateri(kProgress))),
+                  const SizedBox(width: 10),
+                  Expanded(child: _statCard(
+                    Icons.check_circle, 
+                    totalTesSelesai, 
+                    alat.teksProgresTes(kProgress)
+                  )),
+                  const SizedBox(width: 10),
+                  Expanded(child: _statCard(Icons.star, totalSkor, alat.teksProgresSkor(kProgress))),
+                ],
+              ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // ============================================================
-            //      BAGIAN CHART: TES (BAR) DAN KUIS (LINE)
-            // ============================================================
-            Row(
-              children: [
-                Expanded(child: _chartBarTes()),
-                const SizedBox(width: 10),
-                Expanded(child: _chartLineKuis()),
-              ],
-            ),
+              // ============================================================
+              //      BAGIAN CHART: TES (BAR) DAN KUIS (LINE)
+              // ============================================================
+              Row(
+                children: [
+                  Expanded(child: _chartBarTes()),
+                  const SizedBox(width: 10),
+                  Expanded(child: _chartLineKuis()),
+                ],
+              ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // ============================================================
-            //                         LIST LOG
-            // ============================================================
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 3, child: _logListFixed(360)),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 7,
-                  child: Column(
-                    children: [
-                      _ModuleCard("${alat.teksProgresModul(kProgress)} 1", totalMateri1 / kBelajar.totalMateri(1)),
-                      SizedBox(height: 8),
-                      _ModuleCard("${alat.teksProgresModul(kProgress)} 2", totalMateri2 / kBelajar.totalMateri(2)),
-                      SizedBox(height: 8),
-                      _ModuleCard("${alat.teksProgresModul(kProgress)} 3", totalMateri3 / kBelajar.totalMateri(3)),
-                    ],
+              // ============================================================
+              //                         LIST LOG
+              // ============================================================
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 3, child: _logListFixed(360)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 7,
+                    child: Column(
+                      children: [
+                        _ModuleCard("${alat.teksProgresModul(kProgress)} 1", totalMateri1 / kBelajar.totalMateri(1)),
+                        SizedBox(height: 8),
+                        _ModuleCard("${alat.teksProgresModul(kProgress)} 2", totalMateri2 / kBelajar.totalMateri(2)),
+                        SizedBox(height: 8),
+                        _ModuleCard("${alat.teksProgresModul(kProgress)} 3", totalMateri3 / kBelajar.totalMateri(3)),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 
@@ -150,15 +153,34 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 28, color: Colors.blue),
-          const SizedBox(height: 6),
-          Text(value.toString(),
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Text(label, textAlign: TextAlign.center),
-        ],
-      ),
+          SizedBox(width: 10,),
+          Icon(icon, size: 50, color: Colors.blue),
+          Expanded(
+           child: Column(
+            children: [
+              Text(value.toString(),
+                  style: TextStyle(
+                    fontSize: 20, 
+                    fontWeight: FontWeight.bold,
+                    fontFamily: alat.judul,
+                    color: alat.teksHitam,
+                    shadows: alat.teksShadow
+                    )
+                  ),
+              Text(label, textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: alat.teks,
+                  color: alat.teksHitam,
+                  shadows: alat.teksShadow
+                ),
+              ),
+            ],
+          ),)
+        ]
+      )
     );
   }
 
@@ -179,7 +201,7 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
         children: [
           Text(
             alat.teksProgresLogAktivitas(kProgress),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: alat.judul, shadows: alat.teksShadow),
           ),
           const SizedBox(height: 10),
 
@@ -187,20 +209,23 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
             height: height,
             child: logs.isEmpty
                 ? Center(child: Text(alat.teksProgresBelumLog(kProgress)))
-                : Scrollbar(
+                : ScrollFade(
                     controller: _logScrollController,
-                    thumbVisibility: true,
-                    child: ListView.separated(
+                      child: Scrollbar(
                       controller: _logScrollController,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: logs.length,
-                      separatorBuilder: (_, __) => const Divider(height: 8),
-                      itemBuilder: (_, i) => Text(
-                        logs[i],
-                        style: const TextStyle(fontSize: 13),
+                      thumbVisibility: true,
+                      child: ListView.separated(
+                        controller: _logScrollController,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: logs.length,
+                        separatorBuilder: (_, __) => const Divider(height: 8),
+                        itemBuilder: (_, i) => Text(
+                          logs[i],
+                          style: TextStyle(fontSize: 13, fontFamily: alat.teks, shadows: alat.teksShadow),
+                        ),
                       ),
                     ),
-                  ),
+                )
           ),
         ],
       ),
@@ -217,7 +242,22 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
 
     if (totalTes.isEmpty) return _chartEmpty(alat.teksProgresBelumTes(kProgress));
 
-    return Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          child: Text(
+          "Statistik Skor Kuis",
+          style: TextStyle(
+            fontSize: 27,
+            fontWeight: FontWeight.bold,
+            fontFamily: alat.judul,
+            color: alat.teksHitam,
+          ),
+        ),
+        ),
+        const SizedBox(height: 8),
+      Container(
       height: 260,
       padding: const EdgeInsets.all(12),
       decoration: _chartDeco(),
@@ -232,7 +272,7 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
           }),
         ),
       ),
-    );
+    )]);
   }
 
   Widget _chartLineKuis() {
@@ -249,40 +289,56 @@ class _MenuProgressBodyState extends State<MenuProgressBody> {
       (i) => FlSpot(i.toDouble(), data[i].value.toDouble()),
     );
 
-    return Container(
-      height: 260,
-      padding: const EdgeInsets.all(12),
-      decoration: _chartDeco(),
-      child: LineChart(
-            LineChartData(
-              minY: 0,
-              maxY: hitungMaxY(data),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: spots,
-                  isCurved: true,
-                  barWidth: 3,
-                  dotData: FlDotData(show: true),
-                )
-              ],
-              titlesData: FlTitlesData(
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (v, meta) {
-                      final idx = v.toInt();
-                      if (idx < 0 || idx >= data.length) return const SizedBox();
-                      return Text(
-                        data[idx].label.split("-").sublist(1).join("-"), // MM-DD
-                        style: const TextStyle(fontSize: 10, letterSpacing: 0),
-                      );
-                    },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+            child:Text(
+            "Statistik Nilai Tes",
+            style: TextStyle(
+              fontSize: 27,
+              fontWeight: FontWeight.bold,
+              fontFamily: alat.judul,
+              color: alat.teksHitam,
+            ),
+          ), 
+        ),
+        
+        const SizedBox(height: 8),
+        Container(
+          height: 260,
+          padding: const EdgeInsets.all(12),
+          decoration: _chartDeco(),
+          child: LineChart(
+                LineChartData(
+                  minY: 0,
+                  maxY: hitungMaxY(data),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      barWidth: 3,
+                      dotData: FlDotData(show: true),
+                    )
+                  ],
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (v, meta) {
+                          final idx = v.toInt();
+                          if (idx < 0 || idx >= data.length) return const SizedBox();
+                          return Text(
+                            data[idx].label.split("-").sublist(1).join("-"), // MM-DD
+                            style: const TextStyle(fontSize: 10, letterSpacing: 0),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          )
-    );
+              )
+        )]);
   }
 
   List<ChartPoint> _hitungSkorHarian(List<ELogDetail> semua) {
@@ -349,6 +405,8 @@ class _ModuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final alat = context.read<AlatApp>();
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -359,11 +417,11 @@ class _ModuleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: alat.teksHitam, fontSize: 24, fontFamily: alat.judul, shadows: alat.teksShadow)),
           const SizedBox(height: 8),
-          LinearProgressIndicator(value: progress, minHeight: 10),
+          alat.bangunProgressBar(context: context, progresss: progress, tinggi: 12, garisLuar: 3.5),
           const SizedBox(height: 6),
-          Text("${(progress * 100).toStringAsFixed(1)}%"),
+          Text("${(progress * 100).toStringAsFixed(1)}%", style: TextStyle(fontWeight: FontWeight.bold, color: alat.teksKuning, fontSize: 20, fontFamily: alat.judul, shadows: alat.teksShadow)),
         ],
       ),
     );

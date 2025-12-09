@@ -63,6 +63,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                     controller: controller,
                     itemCount: alat.itemBelajar(kProgress).length,
                     itemBuilder: (context, index) {
+                      final warna = alat.warnaWarnaKotak[index % 5];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 5, top: 5), // jarak antar item
                         child: CardStatis(
@@ -83,7 +84,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                           warnaGambarColor: alat.kotakPutih,
                           tepiRadiusGambar: 20,
                           paddingGambar: 10,
-                          kotakWarna: alat.kotak1,
+                          kotakWarna: warna,
                           pakaiKlik: true,
                           pakaiHover: true,
                           padaHoverAnimasi: padaHoverAnimasi2,
@@ -95,6 +96,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                             kMenu.bukaMenu(1);
                           },
                           padaHoverBayanganGarisLuar: alat.boxShadowHover,
+                          bayanganTeks: alat.teksShadow,
                         ),
                       );
                     },
@@ -144,7 +146,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                     fontFamily: alat.judul,
                                     fontSize: 34,
                                     fontWeight: FontWeight.bold,
-                                    color: alat.teksKuning
+                                    color: alat.teksKuning,
+                                    shadows: alat.teksShadow
                                   ),
                                 ),
                                 alat.bangunTeksGradien(
@@ -176,7 +179,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                     fontFamily: alat.teks,
                                     fontSize: 27,
                                     fontWeight: FontWeight.bold,
-                                    color: alat.teksHitam
+                                    color: alat.teksHitam,
+                                    shadows: alat.teksShadow
                                   ),
                                 ),
                                 alat.bangunTeksGradien(
@@ -199,7 +203,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                     fontFamily: alat.teks,
                                     fontSize: 27,
                                     fontWeight: FontWeight.bold,
-                                    color: alat.teksHitam
+                                    color: alat.teksHitam,
+                                    shadows: alat.teksShadow
                                   ),
                                 ),
                                 alat.bangunTeksGradien(
@@ -222,7 +227,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                     fontFamily: alat.teks,
                                     fontSize: 27,
                                     fontWeight: FontWeight.bold,
-                                    color: alat.teksHitam
+                                    color: alat.teksHitam,
+                                    shadows: alat.teksShadow
                                   ),
                                 ),
                                 alat.bangunTeksGradien(
@@ -250,7 +256,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                               fontFamily: alat.judul,
                               fontSize: 34,
                               fontWeight: FontWeight.bold,
-                              color: alat.teksKuning
+                              color: alat.teksKuning,
+                              shadows: alat.teksShadow
                             ),
                           ),
                           SizedBox(height: 20,),

@@ -131,10 +131,27 @@ class AlatApp {
     end: Alignment.bottomRight,
   );
 
+  // list warna kotak
+  List<Color> get warnaWarnaKotak => [
+    kotak1,
+    kotak3,
+    kotak4,
+    kotak2,
+    kotak5,
+  ];
+
+  List<Color> get warnaWarnaOutline => [
+    outline1,
+    outline2,
+    outline3,
+    outline4,
+    outline5
+  ];
+
   // Font
-  String get judul => "Fredoka";
-  String get teks => "Mulish";
-  String get namaAplikasi => "Quicksand";
+  final String judul = "Fredoka";
+  final String teks = "Mulish";
+  final String namaAplikasi = "Quicksand";
 
   // teks
   String teksAplikasi(KontrolProgress kProgress) => kProgress.bahasaInggris ? "Sign Language" : "Belajar Isyarat";
@@ -275,7 +292,7 @@ class AlatApp {
     spreadRadius: 0.5,                        // sedikit melebar
   );
   
-  List<Shadow> get teksShadow => [
+  List<Shadow> get judulShadow => [
       // Bayangan tajam, kecil, intensitas tinggi
       Shadow(
         color: Colors.black.withValues(alpha: 0.15),
@@ -289,6 +306,22 @@ class AlatApp {
         blurRadius: 7,
       ),
     ];
+  
+  List<Shadow> get teksShadow => [
+    // Bayangan kecil & tajam
+    Shadow(
+      color: Colors.black.withValues(alpha: 0.10),
+      offset: const Offset(1, 1),
+      blurRadius: 2,
+    ),
+
+    // Bayangan lebih lembut & sangat halus
+    Shadow(
+      color: Colors.black.withValues(alpha: 0.03),
+      offset: const Offset(2.2, 2.2),
+      blurRadius: 3.5,
+    ),
+  ];
 
   List<BoxShadow> get boxLightOut => [
       // 1) Intense & small — tajam, dekat (foreground shadow)
@@ -368,6 +401,7 @@ class AlatApp {
           fontWeight: beratFont,
           fontFamily: font,
           color: Colors.white,
+          shadows: teksShadow
         ),
       ),
     );
@@ -782,7 +816,7 @@ class AlatApp {
         judulWarna: teksPutihSedang,
         susunGambarTeksBaris: layout,
         bayanganKotak: boxShadow,
-        bayanganJudul: teksShadow,
+        bayanganJudul: judulShadow,
       ),
     );
   }
@@ -829,4 +863,71 @@ class Pelajaran {
   final String iconPath;
 
   Pelajaran(this.name, this.iconPath);
+}
+
+class ScrollFade extends StatefulWidget {
+  final Widget child;
+  final double fadeSize;
+  final ScrollController controller;
+
+  const ScrollFade({
+    super.key,
+    required this.child,
+    this.fadeSize = 32.0,
+    required this.controller, // aktifkan fade berdasarkan scroll
+  });
+
+  @override
+  State<ScrollFade> createState() => _ScrollFadeState();
+}
+
+class _ScrollFadeState extends State<ScrollFade> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onScroll);
+
+    // initial value will be computed after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) => _onScroll());
+  }
+
+  void _onScroll() {
+    final max = widget.controller.position.maxScrollExtent;
+    final offset = widget.controller.offset;
+
+    setState(() {
+      showTop = offset > 0;
+      showBottom = offset < max;
+    });
+  }
+
+  bool showTop = false;
+  bool showBottom = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      shaderCallback: (Rect rect) {
+
+        return LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent, // fade top
+            Colors.white,
+            Colors.white,
+            Colors.transparent, // fade bottom
+          ],
+          stops: [
+            0.0,
+            showTop ? widget.fadeSize / rect.height : 0.0,          // top fade ends
+            showBottom ?  1 - (widget.fadeSize / rect.height) : 1.0,    // bottom fade starts
+            1.0,
+          ],
+        ).createShader(rect);
+      },
+      blendMode: BlendMode.dstIn,
+      child: widget.child,
+    );
+  }
 }

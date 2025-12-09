@@ -18,6 +18,7 @@ class CardStatis extends StatefulWidget {
   final String fontJudul;
   final String fontTeks;
   final bool garisBawahJudul;
+  final bool teksRataKiriKanan;
 
   final List<String>? gambar;
   final List<Image>? gambarImage;
@@ -117,6 +118,7 @@ class CardStatis extends StatefulWidget {
     this.fontJudul = "Fredoka",
     this.fontTeks = "Mulish",
     this.garisBawahJudul = false,
+    this.teksRataKiriKanan = false,
 
     this.gambar,
     this.gambarImage,
@@ -583,7 +585,7 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
               )
             : Text(
                 widget.teks!,
-                textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
+                textAlign: widget.teksTengah ? TextAlign.center : (widget.teksRataKiriKanan ? TextAlign.justify : TextAlign.left),
                 style: TextStyle(
                   fontFamily: widget.fontTeks,
                   fontSize: widget.teksUkuran ?? 17, 
@@ -601,7 +603,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
                 teks: widget.judul!, 
                 warna: widget.judulGradient!, 
                 font: widget.fontJudul, 
-                ukuranFont: widget.judulUkuran ?? 32
+                ukuranFont: widget.judulUkuran ?? 32,
+                beratFont: FontWeight.bold
               )
             : Text(
               widget.judul!,
@@ -614,7 +617,7 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
                 decorationColor: widget.judulWarna,
                 shadows: widget.bayanganJudul
               ),
-              textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
+              textAlign: widget.teksTengah ? TextAlign.center  : TextAlign.left,
             )
           )
         : null);

@@ -2,7 +2,6 @@ import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
-import 'package:belajar_isyarat/tampilan/menu_kuis_body.dart';
 import 'package:belajar_isyarat/tampilan/soal_model.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_menu.dart';
@@ -59,6 +58,7 @@ class MenuTesMenuBody extends StatelessWidget {
                         color: alat.teksKuning,
                         fontSize: 37,
                         fontWeight: FontWeight.bold,
+                        shadows: alat.teksShadow
                       ),
                     ),
                     SizedBox(height: 20),
@@ -68,7 +68,8 @@ class MenuTesMenuBody extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: alat.teks,
                         fontSize: 20,
-                        color: alat.teksHitam
+                        color: alat.teksHitam,
+                        shadows: alat.teksShadow
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -83,7 +84,8 @@ class MenuTesMenuBody extends StatelessWidget {
                             fontFamily: alat.teks,
                             fontSize: 27,
                             fontWeight: FontWeight.bold,
-                            color: alat.teksKuning
+                            color: alat.teksKuning,
+                            shadows: alat.teksShadow
                           ),
                         ),
                         Text(
@@ -92,7 +94,8 @@ class MenuTesMenuBody extends StatelessWidget {
                             fontFamily: alat.teks,
                             fontSize: 27,
                             fontWeight: FontWeight.bold,
-                            color: kTesNilai < 80 ? alat.salah : alat.benar
+                            color: kTesNilai < 80 ? alat.salah : alat.benar,
+                            shadows: alat.teksShadow
                           ),
                         ),
                       ],
@@ -111,6 +114,7 @@ class MenuTesMenuBody extends StatelessWidget {
                           judul: alat.teksTombolMulai(kProgress),
                           judulUkuran: 32,
                           judulWarna: alat.teksPutihSedang,
+                          bayanganJudul: alat.teksShadow,
                           fontJudul: alat.judul,
                           kotakGradient: alat.terpilih,
                           tepiRadius: 10,
@@ -293,6 +297,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
         ),
         child: Column(
           children: [
+            Expanded(child: SizedBox()),
             Text(
               alat.teksTesSelesaiJudul(kProgress),
               style: TextStyle(
@@ -300,26 +305,31 @@ class MenuTesSelesaiBody extends StatelessWidget {
                 color: alat.teksKuning,
                 fontSize: 37,
                 fontWeight: FontWeight.bold,
+                shadows: alat.teksShadow
               ),
             ),
             SizedBox(height: 20),
             
-            Text(
-              kTesNilai < 60 
-                ? alat.teksTesSelesaiPenjelas1(kProgress)
-              : kTesNilai < 75
-                ? alat.teksTesSelesaiPenjelas2(kProgress)
-              : kTesNilai < 89
-                ? alat.teksTesSelesaiPenjelas3(kProgress)
-              : kTesNilai >= 90
-                ? alat.teksTesSelesaiPenjelas4(kProgress)
-                : "",
-              style: TextStyle(
-                fontFamily: alat.teks,
-                fontSize: 20,
-                color: alat.teksHitam
+            Padding(
+              padding: EdgeInsetsGeometry.only(left: 70, right: 70),
+                child: Text(
+                kTesNilai < 60 
+                  ? alat.teksTesSelesaiPenjelas1(kProgress)
+                : kTesNilai < 75
+                  ? alat.teksTesSelesaiPenjelas2(kProgress)
+                : kTesNilai < 89
+                  ? alat.teksTesSelesaiPenjelas3(kProgress)
+                : kTesNilai >= 90
+                  ? alat.teksTesSelesaiPenjelas4(kProgress)
+                  : "",
+                style: TextStyle(
+                  fontFamily: alat.teks,
+                  fontSize: 20,
+                  color: alat.teksHitam,
+                  shadows: alat.teksShadow
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
 
@@ -332,7 +342,8 @@ class MenuTesSelesaiBody extends StatelessWidget {
                     fontFamily: alat.teks,
                     fontSize: 27,
                     fontWeight: FontWeight.bold,
-                    color: alat.teksKuning
+                    color: alat.teksKuning,
+                    shadows: alat.teksShadow
                   ),
                 ),
                 Text(
@@ -341,13 +352,15 @@ class MenuTesSelesaiBody extends StatelessWidget {
                     fontFamily: alat.teks,
                     fontSize: 27,
                     fontWeight: FontWeight.bold,
-                    color: kTesNilai < 80 ? alat.salah : alat.benar
+                    color: kTesNilai < 80 ? alat.salah : alat.benar,
+                    shadows: alat.teksShadow
                   ),
                 ),
               ],
             ),
             
             Expanded(
+              flex: 2,
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: CardStatis(
@@ -357,6 +370,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
                   isiTengah: true,
                   pemisahGarisLuarUkuran: 7,
                   judul: alat.teksTombolUlang(kProgress),
+                  bayanganJudul: alat.teksShadow,
                   judulUkuran: 32,
                   judulWarna: alat.teksPutihSedang,
                   fontJudul: alat.judul,
@@ -364,13 +378,15 @@ class MenuTesSelesaiBody extends StatelessWidget {
                   tepiRadius: 10,
                   pakaiKlik: true,
                   pakaiHover: true,
-                  padaHoverPemisahGarisLuarWarna: alat.kotakUtama,
+                  padaHoverPemisahGarisLuarWarna: alat.garisLuarHoverAbu,
                   padaHoverAnimasi: padaHoverAnimasi1,
                   padaKlikAnimasi: padaKlikAnimasi1,
                   padaKlik: () {
                     kTes.tutupMenuTes(kBelajar.modulSekarang);
                     kMenu.bukaMenu(3);
                   },
+                  bayanganKotak: alat.boxShadow,
+                  padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
                 ),
               ),
             ),

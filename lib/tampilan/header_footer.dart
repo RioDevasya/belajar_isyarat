@@ -75,7 +75,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                           judulUkuran: 22,
                           judulWarna: menuTentang ? alatApp.teksKuning : alatApp.teksPutihSedang,
                           fontJudul: alatApp.namaAplikasi,
-                          teksTengah: true,
                           garisBawahJudul: true,
                           kotakWarna: menuTentang ? alatApp.kotakPutih : Colors.transparent,
                           pakaiKlik: true,
@@ -87,6 +86,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                           },
                           bayanganKotak: menuTentang ? alatApp.boxShadow : null,
                           padaHoverBayanganKotak: menuTentang ? alatApp.boxShadow : null,
+                          bayanganJudul: alatApp.teksShadow,
                         )
                       ]
                     ),
@@ -117,6 +117,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         },
                         bayanganKotak: menuBelajar ? alatApp.boxShadow : null,
                         padaHoverBayanganKotak: menuBelajar ? alatApp.boxShadow : null,
+                        bayanganJudul: alatApp.teksShadow,
                       ),
                       SizedBox(width: 10),
 
@@ -139,6 +140,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         },
                         bayanganKotak: menuKuis ? alatApp.boxShadow : null,
                         padaHoverBayanganKotak: menuKuis ? alatApp.boxShadow : null,
+                        bayanganJudul: alatApp.teksShadow,
                       ),
                       SizedBox(width: 10),
 
@@ -161,6 +163,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         },
                         bayanganKotak: menuProgres ? alatApp.boxShadow : null,
                         padaHoverBayanganKotak: menuProgres ? alatApp.boxShadow : null,
+                        bayanganJudul: alatApp.teksShadow,
                       ),
                     ],
                   ),
@@ -189,6 +192,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         },
                         bayanganKotak: menuPengaturan ? alatApp.boxShadow : null,
                         padaHoverBayanganKotak: menuPengaturan ? alatApp.boxShadow : null,
+                        bayanganJudul: alatApp.teksShadow,
                       ),
                     ),
                   ),
@@ -325,7 +329,7 @@ class _FooterModel1State extends State<FooterModel1>
                             color: alat.teksPutihSedang,
                             fontSize: 27,
                             fontWeight: FontWeight.bold,
-                            shadows: alat.teksShadow,
+                            shadows: alat.judulShadow,
                             fontFamily: alat.judul
                           ),
                         ),
@@ -370,6 +374,7 @@ class _FooterModel1State extends State<FooterModel1>
             },
             bayanganKotak: alat.boxShadow,
             padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
+            bayanganJudul: alat.teksShadow,
           ),
           SizedBox(width: 10,)
         ],
@@ -489,7 +494,7 @@ class _FooterModel2State extends State<FooterModel2> {
               fontSize: 16, 
               fontWeight: FontWeight.bold,
               color: alat.teksPutihSedang,
-              shadows: alat.teksShadow
+              shadows: alat.judulShadow
             ),
           ),
           const SizedBox(width: 16),
@@ -514,7 +519,8 @@ class _FooterModel2State extends State<FooterModel2> {
             judul: alat.teksFooterSebelumnya(kProgress),
             judulUkuran: 10,
             fontJudul: alat.judul,
-            judulGradient: alat.terpilih,
+            judulWarna: alat.teksHitam,
+            judulGradient: akhirSebelumnya ? null : alat.terpilih,
             kotakWarna: akhirSebelumnya ? alat.tidakAktif : alat.kotakPutih,
             pakaiKlik: true,
             pakaiHover: true,
@@ -526,6 +532,7 @@ class _FooterModel2State extends State<FooterModel2> {
             },
             bayanganKotak: alat.boxShadow,
             padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
+            bayanganJudul: alat.teksShadow,
           ),
           const SizedBox(width: 10),
 
@@ -554,6 +561,7 @@ class _FooterModel2State extends State<FooterModel2> {
             },
             bayanganKotak: alat.boxShadow,
             padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
+            bayanganJudul: alat.teksShadow,
           ),
         ],
       ),
