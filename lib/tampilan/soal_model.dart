@@ -49,31 +49,7 @@ class _SoalModel2State extends State<SoalModel2> {
     
     return Column(
       children: [
-        Expanded(
-          flex: 8,
-          child: CardStatis(
-            padding: 10,
-            tepiRadius: 10,
-            isiTengah: true,
-            kotakWarna: alat.kotakUtama,
-            gambar: gambarSoal,
-            besarGambar: null,
-            paddingGambar: 10,
-            tepiRadiusGambar: 10,
-            warnaGambarColor: alat.kotakPutih,
-            jarakGambarPemisah: 10,
-            pemisahGambar: Icon(
-              Icons.double_arrow_rounded,
-              size: 10,
-            ),
-            besarPemisahGambar: 10,
-            judul: widget.penjelas,
-            fontJudul: alat.judul,
-            judulUkuran: 17,
-            judulWarna: alat.teksPutihSedang,
-            susunGambarTeksBaris: Axis.vertical,
-          ),
-        ),
+        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas),
 
         const SizedBox(height: 10),
 
@@ -96,7 +72,9 @@ class _SoalModel2State extends State<SoalModel2> {
                   children: List.generate(
                     widget.gambarOpsi.length,
                     (i) {
+                      final bukanGambar = widget.gambarOpsi.isNotEmpty ? widget.gambarOpsi.every((g) => g.startsWith("an") || g.startsWith("hu")) : false;
                       return CardStatis(
+                        isiTengah: true,
                         lebar: side,
                         tinggi: side,
                         padding: 10,
@@ -105,7 +83,23 @@ class _SoalModel2State extends State<SoalModel2> {
                         pemisahGarisLuarUkuran: 10,
                         pemisahGarisLuarWarna: alat.outline6,
                         garisLuarUkuran: 10,
-                        gambar: [widget.gambarOpsi[i].toString()],
+                        warnaGambarColor: alat.kotakPutih,
+                        tepiRadiusGambar: 10,
+                        gambar: bukanGambar ? null : [widget.gambarOpsi[i].toString()],
+                        besarGambar: bukanGambar ? null : double.maxFinite,
+                        gambarWidget: bukanGambar ? CardStatis(
+                          kotak: true,
+                          tepiRadius: 10,
+                          kotakWarna: alat.kotakPutih,
+                          gambarWidget: FittedBox(
+                            child: alat.bangunTeksGradien(
+                              teks: widget.gambarOpsi[i].toString().split("_").last.toUpperCase(), 
+                              warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                            )
+                          ),
+                          tanpaProvider: true,
+                          bayanganKotak: alat.boxShadow,
+                        ) : null,
                         pakaiKlik: true,
                         pakaiHover: true,
                         padaHoverAnimasi: padaHoverAnimasi1,
@@ -117,6 +111,10 @@ class _SoalModel2State extends State<SoalModel2> {
                           } : null,
                         dipilih: widget.pilihan == i+1,
                         padaDipilihGradientGarisLuar: alat.terpilih,
+                        susunGambarTeksBaris: Axis.vertical,
+                        bayanganGarisLuar: widget.pilihan == i+1 ? alat.boxShadow : null,
+                        bayanganPemisahGarisLuar: widget.pilihan == i+1 ? null : alat.boxShadow,
+                        padaHoverBayanganGarisLuar: alat.boxShadowHover,
                       );
                     },
                   ),
@@ -125,7 +123,6 @@ class _SoalModel2State extends State<SoalModel2> {
             },
           ),
         ),
-        SizedBox(height: alat.ukuranFooter,)
       ],
     );
   }
@@ -161,6 +158,8 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
   int? objekDiganti;   // index target saat hover
   late AnimationController wiggleController;
   late Animation<double> wiggle;
+  bool dragging = false;
+  bool hovering = false;
 
   @override
   void initState() {
@@ -198,30 +197,7 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        Expanded(
-          flex: 8,
-          child: CardStatis(
-            padding: 10,
-            tepiRadius: 10,
-            isiTengah: true,
-            kotakWarna: alat.kotakUtama,
-            gambar: gambarSoal,
-            paddingGambar: 10,
-            tepiRadiusGambar: 10,
-            warnaGambarColor: alat.kotakPutih,
-            jarakGambarPemisah: 10,
-            pemisahGambar: Icon(
-              Icons.double_arrow_rounded,
-              size: 10,
-            ),
-            besarPemisahGambar: 10,
-            judul: widget.penjelas,
-            fontJudul: alat.judul,
-            judulUkuran: 17,
-            judulWarna: alat.teksPutihSedang,
-            susunGambarTeksBaris: Axis.vertical,
-          ),
-        ),
+        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas),
         const SizedBox(height: 30),
 
         // ============================
@@ -257,86 +233,130 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
                         },
                         builder: (context, candidate, rejected) {
                           final bukanGambar = gambarJawaban[i].startsWith("an") || gambarJawaban[i].startsWith("hu");
-                          return Draggable<int>(
-                            data: i,
-                            feedback: AnimatedBuilder(
-                              animation: wiggle,
-                              builder: (context, child) {
-                                return Transform.scale(
-                                  scale: 1.1, // membesarkan 10%
-                                  child: Transform.rotate(
-                                    angle: wiggle.value * 0.02, // kecil saja biar lembut
-                                    child: child,
-                                  )
-                                );
-                              },
-                              child: Material(
-                                type: MaterialType.transparency,
-                                child: Opacity(
-                                  opacity: 0.7,
-                                  child: CardStatis(
-                                    lebar: side,
-                                    tinggi: side,
-                                    padding: 10,
-                                    tepiRadius: 10,
-                                    kotakWarna: alat.kotak6,
-                                    pemisahGarisLuarUkuran: 10,
-                                    pemisahGarisLuarWarna: alat.outline6,
-                                    garisLuarUkuran: 10,
-                                    garisLuarWarna: alat.garisLuarHoverAbu,
-                                    gambarWidget: bukanGambar ? FittedBox(
-                                      child: alat.bangunTeksGradien(
-                                        teks: gambarJawaban[i].split("_").last, 
-                                        warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                                      )
-                                    ) : null,
-                                    gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(gambarJawaban[i])],
-                                    tanpaProvider: true,
+                          return MouseRegion(
+                            cursor: dragging
+                                ? SystemMouseCursors.move
+                                : hovering
+                                    ? SystemMouseCursors.move
+                                    : SystemMouseCursors.basic,
+
+                            onEnter: (_) => setState(() => hovering = true),
+                            onExit: (_) => setState(() => hovering = false),
+
+                            child: Draggable<int>(
+                              onDragStarted: () => setState(() => dragging = true),
+                              onDragEnd: (_) => setState(() => dragging = false),
+                              onDraggableCanceled: (_, _) => setState(() => dragging = false),
+                              onDragCompleted: () => setState(() => dragging = false),
+                              data: i,
+                              feedback: AnimatedBuilder(
+                                animation: wiggle,
+                                builder: (context, child) {
+                                  return Transform.scale(
+                                    scale: 1.17, // membesarkan 10%
+                                    child: Transform.rotate(
+                                      angle: wiggle.value * 0.02, // kecil saja biar lembut
+                                      child: child,
+                                    )
+                                  );
+                                },
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: Opacity(
+                                    opacity: 0.76,
+                                    child: CardStatis(
+                                      lebar: side,
+                                      tinggi: side,
+                                      padding: 10,
+                                      tepiRadius: 10,
+                                      kotakWarna: alat.kotak6,
+                                      pemisahGarisLuarUkuran: 10,
+                                      pemisahGarisLuarWarna: alat.outline6,
+                                      garisLuarUkuran: 10,
+                                      garisLuarWarna: alat.garisLuarHoverAbu,
+                                      warnaGambarColor: alat.kotakPutih,
+                                      tepiRadiusGambar: 10,
+                                      gambarWidget: bukanGambar ? CardStatis(
+                                        kotak: true,
+                                        tepiRadius: 10,
+                                        kotakWarna: alat.kotakPutih,
+                                        gambarWidget: FittedBox(
+                                          child: alat.bangunTeksGradien(
+                                            teks: gambarJawaban[i].split("_").last.toUpperCase(), 
+                                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                          )
+                                        ),
+                                        tanpaProvider: true,
+                                        bayanganKotak: alat.boxShadow,
+                                      ) : null,
+                                      gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(gambarJawaban[i])],
+                                      tanpaProvider: true,
+                                      bayanganPemisahGarisLuar: alat.boxShadowHover,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            childWhenDragging: Opacity(
-                              opacity: 0.3,
+                              childWhenDragging: Opacity(
+                                opacity: 0.3,
+                                child: CardStatis(
+                                  lebar: side,
+                                  tinggi: side,
+                                  padding: 10,
+                                  tepiRadius: 10,
+                                  kotakWarna: alat.kotak6,
+                                  pemisahGarisLuarUkuran: 10,
+                                  pemisahGarisLuarWarna: alat.outline6,
+                                  garisLuarUkuran: 10,
+                                  warnaGambarColor: alat.kotakPutih,
+                                  tepiRadiusGambar: 10,
+                                  gambarWidget: bukanGambar ? CardStatis(
+                                      kotak: true,
+                                      tepiRadius: 10,
+                                      kotakWarna: alat.kotakPutih,
+                                      gambarWidget: FittedBox(
+                                      child: alat.bangunTeksGradien(
+                                        teks: gambarJawaban[i].split("_").last.toUpperCase(), 
+                                        warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                      ),
+                                    ),
+                                    bayanganKotak: alat.boxShadow,
+                                  ) : null,
+                                  gambar: bukanGambar ? null : [gambarJawaban[i]],
+                                  bayanganPemisahGarisLuar: alat.boxShadow,
+                                ),
+                              ),
                               child: CardStatis(
                                 lebar: side,
                                 tinggi: side,
+                                key: ValueKey(gambarJawaban[i]),
                                 padding: 10,
                                 tepiRadius: 10,
                                 kotakWarna: alat.kotak6,
-                                pemisahGarisLuarUkuran: 10,
                                 pemisahGarisLuarWarna: alat.outline6,
+                                pemisahGarisLuarUkuran: 10,
                                 garisLuarUkuran: 10,
-                                gambarWidget: bukanGambar ? FittedBox(
-                                  child: alat.bangunTeksGradien(
-                                    teks: gambarJawaban[i].split("_").last, 
-                                    warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                                  )
-                                  ) : null,
+                                warnaGambarColor: alat.kotakPutih,
+                                tepiRadiusGambar: 10,
+                                gambarWidget: bukanGambar ? CardStatis(
+                                  kotak: true,
+                                  tepiRadius: 10,
+                                  kotakWarna: alat.kotakPutih,
+                                  gambarWidget: FittedBox(
+                                    child: alat.bangunTeksGradien(
+                                      teks: gambarJawaban[i].split("_").last.toUpperCase(), 
+                                      warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                    )
+                                  ),
+                                  bayanganKotak: alat.boxShadow,
+                                ) : null,
                                 gambar: bukanGambar ? null : [gambarJawaban[i]],
+                                pakaiHover: true,
+                                padaHoverAnimasi: padaHoverAnimasi1,
+                                padaHoverGarisLuarGradient: alat.terpilih,
+                                padaHoverBayanganGarisLuar: alat.boxShadowHover,
+                                bayanganPemisahGarisLuar: alat.boxShadow,
                               ),
-                            ),
-                            child: CardStatis(
-                              lebar: side,
-                              tinggi: side,
-                              key: ValueKey(gambarJawaban[i]),
-                              padding: 10,
-                              tepiRadius: 10,
-                              kotakWarna: alat.kotak6,
-                              pemisahGarisLuarWarna: alat.outline6,
-                              pemisahGarisLuarUkuran: 10,
-                              garisLuarUkuran: 10,
-                              gambarWidget: bukanGambar ? FittedBox(
-                                child: alat.bangunTeksGradien(
-                                  teks: gambarJawaban[i].split("_").last, 
-                                  warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                                )
-                              ) : null,
-                              gambar: bukanGambar ? null : [gambarJawaban[i]],
-                              pakaiHover: true,
-                              padaHoverAnimasi: padaHoverAnimasi1,
-                              padaHoverGarisLuarGradient: alat.terpilih,
-                            ),
+                            )
                           );
                         },
                       );
@@ -347,7 +367,6 @@ class _SoalModel1State extends State<SoalModel1> with TickerProviderStateMixin {
             },
           ),
         ),
-        SizedBox(height: alat.ukuranFooter,)
       ],
     );
   }
@@ -378,6 +397,8 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
   int? objekDiganti;
   late AnimationController wiggleController;
   late Animation<double> wiggle;
+  bool dragging = false;
+  bool hovering = false;
 
   @override
   void initState() {
@@ -421,13 +442,14 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final maxHeight = (constraints.maxHeight - (spacing * (susunanSemua[0].length - 1))) / susunanSemua[0].length;
+                  final maxHeight = (constraints.maxHeight - (spacing * (susunanSemua[0].length - 1))) / susunanSemua[0].length - 10;
 
                   return Center(
                     child: Wrap(
                       direction: Axis.vertical,
                       spacing: spacing,
                       alignment: WrapAlignment.center,
+                      runAlignment: WrapAlignment.center,
                       children: List.generate(
                       susunanSemua[0].length,
                       (i) {
@@ -496,90 +518,147 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
                           },
                           builder: (context, candidate, rejected) {
                             final bukanGambar = susunan[i].startsWith("an") || susunan[i].startsWith("hu");
-                            return Draggable<Map<String, int>>(
-                              data: {"group": indexSusunan, "index": i},
-                              feedback: AnimatedBuilder(
-                                animation: wiggle,
-                                builder: (context, child) {
-                                  return Transform.scale(
-                                    scale: 1.1, // membesarkan 10%
-                                    child: Transform.rotate(
-                                      angle: wiggle.value * 0.02, // kecil saja biar lembut
-                                      child: child,
-                                    )
-                                  );
-                                },
-                                child: Material(
-                                  type: MaterialType.transparency,
-                                  child: Opacity(
-                                    opacity: 0.7,
-                                    child: CardStatis(
-                                      lebar: maxWidth,
-                                      tinggi: tinggi,
-                                      isiTengah: true,
-                                      padding: 10,
-                                      tepiRadius: 10,
-                                      kotakWarna: alat.kotak6,
-                                      pemisahGarisLuarUkuran: 10,
-                                      pemisahGarisLuarWarna: alat.outline6,
-                                      garisLuarUkuran: 10,
-                                      gambarWidget: bukanGambar ? FittedBox(
-                                        child: alat.bangunTeksGradien(
-                                          teks: susunan[i].split("_").last, 
-                                          warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                                        )
-                                        ) : null,
-                                      gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(susunan[i])],
-                                      pakaiHover: true,
-                                      padaHoverAnimasi: padaHoverAnimasi1,
-                                      padaHoverGarisLuarGradient: alat.terpilih,
-                                      tanpaProvider: true,
+                            return MouseRegion(
+                              cursor: dragging
+                                  ? SystemMouseCursors.move
+                                  : hovering
+                                      ? SystemMouseCursors.move
+                                      : SystemMouseCursors.basic,
+
+                              onEnter: (_) => setState(() => hovering = true),
+                              onExit: (_) => setState(() => hovering = false),
+                                
+                              child: Draggable<Map<String, int>>(
+                                onDragStarted: () => setState(() => dragging = true),
+                                onDragEnd: (_) => setState(() => dragging = false),
+                                onDraggableCanceled: (_, _) => setState(() => dragging = false),
+                                onDragCompleted: () => setState(() => dragging = false),
+                                data: {"group": indexSusunan, "index": i},
+                                feedback: AnimatedBuilder(
+                                  animation: wiggle,
+                                  builder: (context, child) {
+                                    return Transform.scale(
+                                      scale: 1.1, // membesarkan 10%
+                                      child: Transform.rotate(
+                                        angle: wiggle.value * 0.02, // kecil saja biar lembut
+                                        child: child,
+                                      )
+                                    );
+                                  },
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: Opacity(
+                                      opacity: 0.7,
+                                      child: CardStatis(
+                                        lebar: maxWidth,
+                                        tinggi: tinggi,
+                                        isiTengah: true,
+                                        padding: 10,
+                                        tepiRadius: 10,
+                                        kotakWarna: alat.kotak6,
+                                        pemisahGarisLuarUkuran: 10,
+                                        pemisahGarisLuarWarna: alat.outline6,
+                                        garisLuarUkuran: 10,
+                                        garisLuarWarna: alat.garisLuarHoverAbu,
+                                        warnaGambarColor: alat.kotakPutih,
+                                        tepiRadiusGambar: 10,
+                                        gambarWidget: Center(
+                                          child: CardStatis(
+                                            isiTengah: true,
+                                            kotak: true,
+                                            tepiRadius: 10,
+                                            kotakWarna: alat.kotakPutih,
+                                            gambarWidget: bukanGambar ? FittedBox(
+                                              child: alat.bangunTeksGradien(
+                                                teks: susunan[i].split("_").last.toUpperCase(), 
+                                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                              )
+                                            ) : null,
+                                            gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(susunan[i])],
+                                            susunGambarTeksBaris: bukanGambar ? Axis.horizontal : Axis.vertical,
+                                            tanpaProvider: true,
+                                            bayanganKotak: alat.boxShadow,
+                                          )
+                                        ),
+                                        pakaiHover: true,
+                                        padaHoverAnimasi: padaHoverAnimasi1,
+                                        padaHoverGarisLuarGradient: alat.terpilih,
+                                        tanpaProvider: true,
+                                        bayanganGarisLuar: alat.boxShadowHover,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              childWhenDragging: Opacity(
-                                opacity: 0.3,
+                                childWhenDragging: Opacity(
+                                  opacity: 0.3,
+                                  child: CardStatis(
+                                    isiTengah: true,
+                                    lebar: maxWidth,
+                                    tinggi: tinggi,
+                                    padding: 10,
+                                    tepiRadius: 10,
+                                    kotakWarna: alat.kotak6,
+                                    pemisahGarisLuarUkuran: 10,
+                                    pemisahGarisLuarWarna: alat.outline6,
+                                    garisLuarUkuran: 10,
+                                    warnaGambarColor: alat.kotakPutih,
+                                    tepiRadiusGambar: 10,
+                                    gambarWidget: Center(
+                                      child: CardStatis(
+                                        isiTengah: true,
+                                        kotak: true,
+                                        tepiRadius: 10,
+                                        kotakWarna: alat.kotakPutih,
+                                        gambarWidget: bukanGambar ? FittedBox(
+                                          child: alat.bangunTeksGradien(
+                                            teks: susunan[i].split("_").last.toUpperCase(), 
+                                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                          )
+                                        ) : null,
+                                        gambar: bukanGambar ? null : [susunan[i]],
+                                        susunGambarTeksBaris: bukanGambar ? Axis.horizontal : Axis.vertical,
+                                        bayanganKotak: alat.boxShadow,
+                                      ) 
+                                    ),
+                                    bayanganPemisahGarisLuar: alat.boxShadow,
+                                  ),
+                                ),
                                 child: CardStatis(
-                                  isiTengah: true,
                                   lebar: maxWidth,
                                   tinggi: tinggi,
+                                  isiTengah: true,
                                   padding: 10,
                                   tepiRadius: 10,
                                   kotakWarna: alat.kotak6,
-                                  pemisahGarisLuarUkuran: 10,
                                   pemisahGarisLuarWarna: alat.outline6,
+                                  pemisahGarisLuarUkuran: 10,
                                   garisLuarUkuran: 10,
-                                  gambarWidget: bukanGambar ? FittedBox(
-                                    child: alat.bangunTeksGradien(
-                                      teks: susunan[i].split("_").last, 
-                                      warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                  warnaGambarColor: alat.kotakPutih,
+                                  tepiRadiusGambar: 10,
+                                  gambarWidget: Center(
+                                    child: CardStatis(
+                                      isiTengah: true,
+                                      kotak: true,
+                                      tepiRadius: 10,
+                                      kotakWarna: alat.kotakPutih,
+                                      gambarWidget:  bukanGambar ? FittedBox(
+                                        child: alat.bangunTeksGradien(
+                                          teks: susunan[i].split("_").last.toUpperCase(), 
+                                          warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                        )
+                                      ) : null,
+                                      gambar: bukanGambar ? null : [susunan[i]],
+                                      susunGambarTeksBaris: bukanGambar ? Axis.horizontal : Axis.vertical,
+                                      bayanganKotak: alat.boxShadow,
                                     )
-                                  ) : null,
-                                  gambar: bukanGambar ? null : [susunan[i]],
+                                  ),
+                                  pakaiHover: true,
+                                  padaHoverAnimasi: padaHoverAnimasi1,
+                                  padaHoverGarisLuarGradient: alat.terpilih,
+                                  padaHoverBayanganGarisLuar: alat.boxShadowHover,
+                                  bayanganPemisahGarisLuar: alat.boxShadow,
                                 ),
-                              ),
-                              child: CardStatis(
-                                lebar: maxWidth,
-                                tinggi: tinggi,
-                                isiTengah: true,
-                                padding: 10,
-                                tepiRadius: 10,
-                                kotakWarna: alat.kotak6,
-                                pemisahGarisLuarWarna: alat.outline6,
-                                pemisahGarisLuarUkuran: 10,
-                                garisLuarUkuran: 10,
-                                gambarWidget: bukanGambar ? FittedBox(
-                                  child: alat.bangunTeksGradien(
-                                    teks: susunan[i].split("_").last, 
-                                    warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                                  )
-                                ) : null,
-                                gambar: bukanGambar ? null : [susunan[i]],
-                                pakaiHover: true,
-                                padaHoverAnimasi: padaHoverAnimasi1,
-                                padaHoverGarisLuarGradient: alat.terpilih,
-                              ),
+                              )
                             );
                           },
                         );
@@ -597,28 +676,15 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
 
     return Column(
       children: [
-        Expanded(
-          flex: 1,
-          child: CardStatis(
-            padding: 10,
-            tepiRadius: 10,
-            isiTengah: true,
-            kotakWarna: alat.kotakUtama,
-            judul: widget.penjelas,
-            fontJudul: alat.judul,
-            judulUkuran: 17,
-            judulWarna: alat.teksPutihSedang,
-            susunGambarTeksBaris: Axis.vertical,
-          ),
-        ),
+        alat.bangunMenuAtasSoal([], widget.penjelas),
         const SizedBox(height: 10),
 
         Expanded(
-          flex: 7,
+          flex: 24,
           child: Row(
             children: [
               bangunSusunan(susunan: susunanSemua[0], indexSusunan: 0),
-              SizedBox(width: 10),
+              SizedBox(width: 30),
               bangunPemisah(),
               SizedBox(width: 10),
               bangunSusunan(susunan: susunanSemua[1], indexSusunan: 1)
@@ -632,15 +698,6 @@ class _SoalModel3State extends State<SoalModel3> with TickerProviderStateMixin {
 
 
 // soal model 4
-class DragContent {
-  final String? text;
-  final String? image;
-
-  DragContent({this.text, this.image});
-
-  bool get isText => text != null;
-}
-
 class SoalModel4 extends StatefulWidget {
   final String penjelas;
   final List<dynamic> susunanAwal;
@@ -667,6 +724,8 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
   late List<String> susunanBawah;
   late AnimationController wiggleController;
   late Animation<double> wiggle;
+  bool dragging = false;
+  bool hovering = false;
 
   @override
   void initState() {
@@ -747,11 +806,29 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                         lebar: side,
                         tinggi: side,
                         tepiRadius: 10,
-                        kotakWarna: alat.kotakPutih,
+                        kotakWarna: alat.kotakHitam,
+                        gambarWidget: Container(
+                            height: double.maxFinite,
+                            width: double.maxFinite,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: alat.kotakHitam,
+                            ),
+                            padding: EdgeInsets.all(20),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: alat.kotakPutih,
+                                boxShadow: alat.boxLightOut,
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                            ),
+                          ),
                         pemisahGarisLuarUkuran: 2,
-                        pemisahGarisLuarWarna: alat.teksHitam,
+                        pemisahGarisLuarWarna: alat.kotakHitam,
                         garisLuarUkuran: 10,
                         garisLuarWarna: alat.outline6,
+                        bayanganPemisahGarisLuar: alat.boxShadowHover,
+                        bayanganGarisLuar: [alat.pendukungBoxShadow],
                       )
                     );
                   }
@@ -766,149 +843,206 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                       pemisahGarisLuarUkuran: 10,
                       pemisahGarisLuarWarna: alat.outline6,
                       garisLuarUkuran: 10,
-                      gambarWidget: bukanGambar ? FittedBox(
-                        child: alat.bangunTeksGradien(
-                          teks: item.split("_").last, 
-                          warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                        )
+                      warnaGambarColor: alat.kotakPutih,
+                      tepiRadiusGambar: 10,
+                      gambarWidget: bukanGambar ?  CardStatis(
+                        kotak: true,
+                        tepiRadius: 10,
+                        kotakWarna: alat.kotakPutih,
+                        gambarWidget: FittedBox(
+                          child: alat.bangunTeksGradien(
+                            teks: item.split("_").last.toUpperCase(), 
+                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                          )
+                        ),
+                        tanpaProvider: true,
+                        bayanganKotak: alat.boxShadow,
                       ) : null,
                       gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(item)],
                       tanpaProvider: true,
+                      bayanganPemisahGarisLuar: alat.boxShadow,
                     );
                   }
                   
-                  return Draggable<Map<String, dynamic>>(
-                    data: {"from": listName, "index": i, "value": item},
-                    feedback: AnimatedBuilder(
-                      animation: wiggle,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: 1.1, // membesarkan 10%
-                          child: Transform.rotate(
-                            angle: wiggle.value * 0.02, // kecil saja biar lembut
-                            child: child,
-                          )
-                        );
-                      },
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: Opacity(
-                          opacity: 0.7,
-                          child: CardStatis(
-                            lebar: side,
-                            tinggi: side,
-                            padding: 10,
-                            tepiRadius: 10,
-                            kotakWarna: alat.kotak6,
-                            pemisahGarisLuarUkuran: 10,
-                            pemisahGarisLuarWarna: alat.outline6,
-                            garisLuarUkuran: 10,
-                            gambarWidget: bukanGambar ? FittedBox(
-                              child: alat.bangunTeksGradien(
-                                teks: item.split("_").last, 
-                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                              )
-                            ) : null,
-                            gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(item)],
-                            pakaiHover: true,
-                            padaHoverAnimasi: padaHoverAnimasi1,
-                            padaHoverGarisLuarGradient: alat.terpilih,
-                            tanpaProvider: true,
+                  return MouseRegion(
+                    cursor: dragging
+                        ? SystemMouseCursors.move
+                        : hovering
+                            ? SystemMouseCursors.move
+                            : SystemMouseCursors.basic,
+
+                    onEnter: (_) => setState(() => hovering = true),
+                    onExit: (_) => setState(() => hovering = false),
+                      
+                    child: Draggable<Map<String, dynamic>>(
+                      onDragStarted: () => setState(() => dragging = true),
+                      onDragEnd: (_) => setState(() => dragging = false),
+                      onDraggableCanceled: (_, _) => setState(() => dragging = false),
+                      onDragCompleted: () => setState(() => dragging = false),
+                      data: {"from": listName, "index": i, "value": item},
+                      feedback: AnimatedBuilder(
+                        animation: wiggle,
+                        builder: (context, child) {
+                          return Transform.scale(
+                            scale: 1.1, // membesarkan 10%
+                            child: Transform.rotate(
+                              angle: wiggle.value * 0.02, // kecil saja biar lembut
+                              child: child,
+                            )
+                          );
+                        },
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Opacity(
+                            opacity: 0.7,
+                            child: CardStatis(
+                              lebar: side,
+                              tinggi: side,
+                              padding: 10,
+                              tepiRadius: 10,
+                              kotakWarna: alat.kotak6,
+                              pemisahGarisLuarUkuran: 10,
+                              pemisahGarisLuarWarna: alat.outline6,
+                              garisLuarUkuran: 10,
+                              garisLuarWarna: alat.garisLuarHoverAbu,
+                              warnaGambarColor: alat.kotakPutih,
+                              tepiRadiusGambar: 10,
+                              gambarWidget: bukanGambar ?  CardStatis(
+                                kotak: true,
+                                tepiRadius: 10,
+                                kotakWarna: alat.kotakPutih,
+                                gambarWidget: FittedBox(
+                                  child: alat.bangunTeksGradien(
+                                    teks: item.split("_").last, 
+                                    warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                                  )
+                                ),
+                                tanpaProvider: true,
+                                bayanganKotak: alat.boxShadow,
+                              ) : null,
+                              gambarImage: bukanGambar ? null : [kDatabase.ambilGambar(item)],
+                              pakaiHover: true,
+                              padaHoverAnimasi: padaHoverAnimasi1,
+                              padaHoverGarisLuarGradient: alat.terpilih,
+                              tanpaProvider: true,
+                              bayanganGarisLuar: alat.boxShadowHover,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    childWhenDragging: Opacity(
-                      opacity: 0.3,
-                      child: CardStatis(
-                        lebar: side,
-                        tinggi: side,
-                        padding: 10,
-                        tepiRadius: 10,
-                        kotakWarna: alat.kotak6,
-                        pemisahGarisLuarUkuran: 10,
-                        pemisahGarisLuarWarna: alat.outline6,
-                        garisLuarUkuran: 10,
-                        gambarWidget: bukanGambar ? FittedBox(
-                          child: alat.bangunTeksGradien(
-                            teks: item.split("_").last, 
-                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                          )
-                          ) : null,
-                        gambar: bukanGambar ? null : [item],
+                      childWhenDragging: Opacity(
+                        opacity: 0.3,
+                        child: CardStatis(
+                          lebar: side,
+                          tinggi: side,
+                          padding: 10,
+                          tepiRadius: 10,
+                          kotakWarna: alat.kotak6,
+                          pemisahGarisLuarUkuran: 10,
+                          pemisahGarisLuarWarna: alat.outline6,
+                          garisLuarUkuran: 10,
+                          warnaGambarColor: alat.kotakPutih,
+                          tepiRadiusGambar: 10,
+                          gambarWidget: bukanGambar ?  CardStatis(
+                            kotak: true,
+                            tepiRadius: 10,
+                            kotakWarna: alat.kotakPutih,
+                            gambarWidget: FittedBox(
+                              child: alat.bangunTeksGradien(
+                                teks: item.split("_").last.toUpperCase(), 
+                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                              )
+                            ),
+                            tanpaProvider: true,
+                            bayanganKotak: alat.boxShadow,
+                          )  : null,
+                          gambar: bukanGambar ? null : [item],
+                          bayanganPemisahGarisLuar: alat.boxShadow,
+                        ),
                       ),
-                    ),
-                    child: DragTarget<Map<String, dynamic>>(
-                      onWillAcceptWithDetails: (details) {
-                        if (adalahSusunanAtas && indexFixed != null) {
-                          if (!indexFixed[i]) {
-                            return true;
-                          } else {
-                            return false;
+                      child: DragTarget<Map<String, dynamic>>(
+                        onWillAcceptWithDetails: (details) {
+                          if (adalahSusunanAtas && indexFixed != null) {
+                            if (!indexFixed[i]) {
+                              return true;
+                            } else {
+                              return false;
+                            }
                           }
-                        }
-                        if (!adalahSusunanAtas) {
-                          return true;  // selalu boleh reorder di bawah
-                        }
-                        return true; 
-                      },
-                      onAcceptWithDetails: (details) {
-                        final fromList = details.data["from"];
-                        final fromIndex = details.data["index"];
-                        final value = details.data["value"];
+                          if (!adalahSusunanAtas) {
+                            return true;  // selalu boleh reorder di bawah
+                          }
+                          return true; 
+                        },
+                        onAcceptWithDetails: (details) {
+                          final fromList = details.data["from"];
+                          final fromIndex = details.data["index"];
+                          final value = details.data["value"];
 
-                        if (adalahSusunanAtas && indexFixed != null) {
-                          if (susunanAtas[i] != null && !indexFixed[i]) {
+                          if (adalahSusunanAtas && indexFixed != null) {
+                            if (susunanAtas[i] != null && !indexFixed[i]) {
+                              if (fromList == listName) {
+                                if (fromIndex != i) {
+                                  setState(() {
+                                    final temp = susunanAtas[fromIndex];
+                                    susunanAtas[fromIndex] = susunanAtas[i];
+                                    susunanAtas[i] = temp;
+                                  });
+                                }
+                              } else {
+                                onAcceptFromOther(fromList, fromIndex, value, i);
+                              }
+                            }
+                          } else {
                             if (fromList == listName) {
                               if (fromIndex != i) {
                                 setState(() {
-                                  final temp = susunanAtas[fromIndex];
-                                  susunanAtas[fromIndex] = susunanAtas[i];
-                                  susunanAtas[i] = temp;
+                                  final temp = susunanBawah[fromIndex];
+                                  susunanBawah[fromIndex] = susunanBawah[i];
+                                  susunanBawah[i] = temp;
                                 });
                               }
                             } else {
                               onAcceptFromOther(fromList, fromIndex, value, i);
                             }
                           }
-                        } else {
-                          if (fromList == listName) {
-                            if (fromIndex != i) {
-                              setState(() {
-                                final temp = susunanBawah[fromIndex];
-                                susunanBawah[fromIndex] = susunanBawah[i];
-                                susunanBawah[i] = temp;
-                              });
-                            }
-                          } else {
-                            onAcceptFromOther(fromList, fromIndex, value, i);
+                          if (widget.padaSelesaiSusun != null) {
+                            widget.padaSelesaiSusun!([susunanAtas, susunanBawah]);
                           }
-                        }
-                        if (widget.padaSelesaiSusun != null) {
-                          widget.padaSelesaiSusun!([susunanAtas, susunanBawah]);
-                        }
-                      },
-                      builder: (context, candidate, rejected) => CardStatis(
-                        lebar: side,
-                        tinggi: side,
-                        padding: 10,
-                        tepiRadius: 10,
-                        kotakWarna: alat.kotak6,
-                        pemisahGarisLuarWarna: alat.outline6,
-                        pemisahGarisLuarUkuran: 10,
-                        garisLuarUkuran: 10,
-                        gambarWidget: bukanGambar ? FittedBox(
-                          child: alat.bangunTeksGradien(
-                            teks: item.split("_").last, 
-                            warna: alat.terpilih, font: alat.judul, ukuranFont: 10
-                          )
-                        ) : null,
-                        gambar: bukanGambar ? null : [item],
-                        pakaiHover: true,
-                        padaHoverAnimasi: padaHoverAnimasi1,
-                        padaHoverGarisLuarGradient: alat.terpilih,
+                        },
+                        builder: (context, candidate, rejected) => CardStatis(
+                          lebar: side,
+                          tinggi: side,
+                          padding: 10,
+                          tepiRadius: 10,
+                          kotakWarna: alat.kotak6,
+                          pemisahGarisLuarWarna: alat.outline6,
+                          pemisahGarisLuarUkuran: 10,
+                          garisLuarUkuran: 10,
+                          warnaGambarColor: alat.kotakPutih,
+                          tepiRadiusGambar: 10,
+                          gambarWidget: bukanGambar ?  CardStatis(
+                            kotak: true,
+                            tepiRadius: 10,
+                            kotakWarna: alat.kotakPutih,
+                            gambarWidget: FittedBox(
+                              child: alat.bangunTeksGradien(
+                                teks: item.split("_").last.toUpperCase(), 
+                                warna: alat.terpilih, font: alat.judul, ukuranFont: 10
+                              )
+                            ),
+                            tanpaProvider: true,
+                            bayanganKotak: alat.boxShadow,
+                          ) : null,
+                          gambar: bukanGambar ? null : [item],
+                          pakaiHover: true,
+                          padaHoverAnimasi: padaHoverAnimasi1,
+                          padaHoverGarisLuarGradient: alat.terpilih,
+                          padaHoverBayanganGarisLuar: alat.boxShadowHover,
+                          bayanganPemisahGarisLuar: alat.boxShadow,
+                        ),
                       ),
-                    ),
+                    )
                   );
                 },
               ),
@@ -927,8 +1061,9 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
             width: double.maxFinite,
             height: double.maxFinite,
             decoration: BoxDecoration(
-              color: alat.kotakUtama,
-              borderRadius: BorderRadius.circular(10),
+              gradient: alat.warnaHeader,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: alat.boxShadow
             ),
             padding: EdgeInsets.all(10),
             alignment: Alignment.center,
@@ -974,7 +1109,9 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
                       style: TextStyle(
                         color: alat.teksPutihSedang,
                         fontFamily: alat.judul,
-                        fontSize: 17
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        shadows: alat.teksShadow
                       ),
                     ),
                   ),
@@ -997,7 +1134,6 @@ class _SoalModel4State extends State<SoalModel4> with TickerProviderStateMixin {
             },
           ),
         ),
-        SizedBox(height: alat.ukuranFooter,)
       ],
     );
   }
@@ -1090,30 +1226,7 @@ class _SoalModel5State extends State<SoalModel5> {
 
     return Column(
       children: [
-        Expanded(
-          flex: 8,
-          child: CardStatis(
-            padding: 10,
-            tepiRadius: 10,
-            isiTengah: true,
-            kotakWarna: alat.kotakUtama,
-            gambar: gambarSoal,
-            paddingGambar: 10,
-            tepiRadiusGambar: 10,
-            warnaGambarColor: alat.kotakPutih,
-            jarakGambarPemisah: 10,
-            pemisahGambar: Icon(
-              Icons.double_arrow_rounded,
-              size: 10,
-            ),
-            besarPemisahGambar: 10,
-            judul: widget.penjelas,
-            fontJudul: alat.judul,
-            judulUkuran: 17,
-            judulWarna: alat.teksPutihSedang,
-            susunGambarTeksBaris: Axis.vertical,
-          ),
-        ),
+        alat.bangunMenuAtasSoal(gambarSoal, widget.penjelas),
         const SizedBox(height: 30),
 
         Expanded(
@@ -1148,6 +1261,7 @@ class _SoalModel5State extends State<SoalModel5> {
                             decoration: BoxDecoration(
                               color: alat.kotakPutih,
                               borderRadius: BorderRadius.circular(10),
+                              boxShadow: alat.boxShadow
                             ),
                             child: Column(
                               children: [
@@ -1215,7 +1329,9 @@ class _SoalModel5State extends State<SoalModel5> {
                           },
                           dipilih: pilihan == i+1,
                           padaDipilihAnimasi: padaPilihAnimasi1,
-                          padaDipilihGradientPemisahGarisLuar: alat.terpilih,
+                          padaDipilihGradientGarisLuar: alat.terpilih,
+                          bayanganGarisLuar: pilihan == i+1 ? alat.boxShadowHover : null,
+                          bayanganPemisahGarisLuar: pilihan == i+1 ? null : alat.boxShadow,
                         );
                     },
                   ),
@@ -1224,11 +1340,9 @@ class _SoalModel5State extends State<SoalModel5> {
             },
           ),
         ),
-        SizedBox(height: alat.ukuranFooter,)
     ]
     );
   }
 }
-
 
 //flutter run -d windows -t lib/main.dart --verbose

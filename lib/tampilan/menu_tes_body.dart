@@ -16,6 +16,7 @@ class MenuTesMenuBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final kTes = context.read<KontrolTes>();
     final kBelajar = context.read<KontrolBelajar>();
+    final kProgress = context.read<KontrolProgress>();
     final kMenu = context.read<KontrolMenu>();
     final alat = context.read<AlatApp>();
     final kTesNilai = context.select<KontrolTes, int> (
@@ -27,17 +28,20 @@ class MenuTesMenuBody extends StatelessWidget {
         children: [
           alat.bangunTombolKembali(
             () {
-              kTes.tutupMenuTes();
+              kTes.tutupMenuTes(kBelajar.modulSekarang);
               kMenu.bukaMenu(1);
             }
           ),
           SizedBox(width: 10),
 
           Expanded(
-            child: Container(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Container(
               decoration: BoxDecoration(
                 color: alat.kotakUtama,
                 borderRadius: BorderRadius.circular(25),
+                boxShadow: alat.boxShadow,
               ),
               padding: EdgeInsets.all(10),
               child: Container(
@@ -47,8 +51,9 @@ class MenuTesMenuBody extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    Expanded(child: SizedBox()),
                     Text(
-                      "Menu Tes",
+                      alat.teksTesJudul(kProgress),
                       style: TextStyle(
                         fontFamily: alat.judul,
                         color: alat.teksKuning,
@@ -59,8 +64,7 @@ class MenuTesMenuBody extends StatelessWidget {
                     SizedBox(height: 20),
                     
                     Text(
-                      "Tes adalah langkah terakhir untuk menyelesaikan progress materi.\n"
-                      "Kemampuan anda akan diuji disini, anda dapat mengerjakan tes berulang-kali",
+                      alat.teksTesPenjelasan(kProgress),
                       style: TextStyle(
                         fontFamily: alat.teks,
                         fontSize: 20,
@@ -74,7 +78,7 @@ class MenuTesMenuBody extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Nilai Anda:   ",
+                          "${alat.teksTesNilai(kProgress)}:   ",
                           style: TextStyle(
                             fontFamily: alat.teks,
                             fontSize: 27,
@@ -95,6 +99,7 @@ class MenuTesMenuBody extends StatelessWidget {
                     ),
                     
                     Expanded(
+                      flex: 2,
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: CardStatis(
@@ -103,7 +108,7 @@ class MenuTesMenuBody extends StatelessWidget {
                           padding: 10,
                           isiTengah: true,
                           pemisahGarisLuarUkuran: 7,
-                          judul: "Mulai",
+                          judul: alat.teksTombolMulai(kProgress),
                           judulUkuran: 32,
                           judulWarna: alat.teksPutihSedang,
                           fontJudul: alat.judul,
@@ -111,12 +116,15 @@ class MenuTesMenuBody extends StatelessWidget {
                           tepiRadius: 10,
                           pakaiKlik: true,
                           pakaiHover: true,
-                          padaHoverPemisahGarisLuarWarna: alat.kotakUtama,
+                          padaHoverPemisahGarisLuarWarna: alat.garisLuarHoverAbu,
                           padaHoverAnimasi: padaHoverAnimasi1,
                           padaKlikAnimasi: padaKlikAnimasi1,
                           padaKlik: () {
+                            kTes.bukaMenuTes(kBelajar.modulSekarang, kProgress);
                             kMenu.bukaMenu(4);
                           },
+                          bayanganKotak: alat.boxShadow,
+                          padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
                         ),
                       ),
                     ),
@@ -125,6 +133,7 @@ class MenuTesMenuBody extends StatelessWidget {
                 ),
               ),
             ),
+          )
           )
         ]
       )
@@ -176,11 +185,13 @@ class MenuTesSoalBody extends StatelessWidget {
     );
     
     final soal = kTes.ambilSoalTes(kTes.modul, kTesSoal);
+    final key = ValueKey(kTesSoal);
 
 
       final body = !kTesMenuSelesai
       ? switch (soal.mode.index) {
           0 => SoalModel1(
+              key: key,
               penjelas: soal.pertanyaan,
               gambarSoal: soal.gambar,
               gambarOpsi: soal.opsi,
@@ -191,6 +202,7 @@ class MenuTesSoalBody extends StatelessWidget {
               susunan: kTesSusunanSatu,
             ),
           1 => SoalModel2(
+              key: key,
               penjelas: soal.pertanyaan,
               gambarSoal: soal.gambar,
               gambarOpsi: soal.opsi,
@@ -201,6 +213,7 @@ class MenuTesSoalBody extends StatelessWidget {
               pilihan: kTesPilihanKotak,
             ),
           2 => SoalModel3(
+              key: key,
               penjelas: soal.pertanyaan,
               susunanSemua: kTesSusunanDua,
               padaSusun: (susunan) {
@@ -209,20 +222,22 @@ class MenuTesSoalBody extends StatelessWidget {
               },
             ),
           3 => SoalModel4(
-            penjelas: soal.pertanyaan, 
-            susunanAwal: soal.gambar, 
-            susunanAtas: kTesSusunanAtas, 
-            opsi: soal.opsi,
-            padaSelesaiSusun: (susunan) {
-              kTes.aturSusunanJawabanListDynamic(susunan[0]);
-            },
+              key: key,
+              penjelas: soal.pertanyaan, 
+              susunanAwal: soal.gambar, 
+              susunanAtas: kTesSusunanAtas, 
+              opsi: soal.opsi,
+              padaSelesaiSusun: (susunan) {
+                kTes.aturSusunanJawabanListDynamic(susunan[0]);
+              },
           ),
           4 => SoalModel5(
-            penjelas: soal.pertanyaan,
-            gambarSoal: soal.gambar, 
-            panjangRangkaian: soal.jawaban.length, 
-            rangkaian: kTesSusunanRangkaian.map((isi) => isi?.toString()).toList(),
-            padaRangkai: (susunan) => kTes.aturSusunanJawabanListDynamic(susunan),
+              key: key,
+              penjelas: soal.pertanyaan,
+              gambarSoal: soal.gambar, 
+              panjangRangkaian: soal.jawaban.length, 
+              rangkaian: kTesSusunanRangkaian.map((isi) => isi?.toString()).toList(),
+              padaRangkai: (susunan) => kTes.aturSusunanJawabanListDynamic(susunan),
           ),
           _ => SizedBox.shrink(),
         }
@@ -255,6 +270,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final kTes = context.read<KontrolTes>();
+    final kBelajar = context.read<KontrolBelajar>();
     final kProgress = context.read<KontrolProgress>();
     final kMenu = context.read<KontrolMenu>();
     final alat = context.read<AlatApp>();
@@ -278,7 +294,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              "Menu Tes",
+              alat.teksTesSelesaiJudul(kProgress),
               style: TextStyle(
                 fontFamily: alat.judul,
                 color: alat.teksKuning,
@@ -289,8 +305,15 @@ class MenuTesSelesaiBody extends StatelessWidget {
             SizedBox(height: 20),
             
             Text(
-              "Tes adalah langkah terakhir untuk menyelesaikan progress materi.\n"
-              "Kemampuan anda akan diuji disini, anda dapat mengerjakan tes berulang-kali",
+              kTesNilai < 60 
+                ? alat.teksTesSelesaiPenjelas1(kProgress)
+              : kTesNilai < 75
+                ? alat.teksTesSelesaiPenjelas2(kProgress)
+              : kTesNilai < 89
+                ? alat.teksTesSelesaiPenjelas3(kProgress)
+              : kTesNilai >= 90
+                ? alat.teksTesSelesaiPenjelas4(kProgress)
+                : "",
               style: TextStyle(
                 fontFamily: alat.teks,
                 fontSize: 20,
@@ -304,7 +327,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Nilai Anda:   ",
+                  "${alat.teksTesNilai(kProgress)}:   ",
                   style: TextStyle(
                     fontFamily: alat.teks,
                     fontSize: 27,
@@ -333,7 +356,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
                   padding: 10,
                   isiTengah: true,
                   pemisahGarisLuarUkuran: 7,
-                  judul: "Ulangi",
+                  judul: alat.teksTombolUlang(kProgress),
                   judulUkuran: 32,
                   judulWarna: alat.teksPutihSedang,
                   fontJudul: alat.judul,
@@ -345,7 +368,7 @@ class MenuTesSelesaiBody extends StatelessWidget {
                   padaHoverAnimasi: padaHoverAnimasi1,
                   padaKlikAnimasi: padaKlikAnimasi1,
                   padaKlik: () {
-                    kTes.tutupMenuTes();
+                    kTes.tutupMenuTes(kBelajar.modulSekarang);
                     kMenu.bukaMenu(3);
                   },
                 ),

@@ -1,6 +1,7 @@
 import 'package:belajar_isyarat/entitas/belajar/e_belajar.dart';
 import 'package:belajar_isyarat/entitas/belajar/e_materi_belajar.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_database.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 
 import 'package:flutter/foundation.dart';
@@ -11,11 +12,14 @@ class KontrolBelajar extends ChangeNotifier {
   int _materi = 0; // 1 sampai n
   late EBelajar _eBelajar; //.modul<String, materi>.materi[EMateriBelajar].suara:String,gambar[String],judul:String,penjelasan:String
 
-  Future<bool> inis(KontrolDatabase kontrolDatabase) async {
-    final data = await kontrolDatabase.ambilJson('belajar_materi');
+  Future<bool> inis(KontrolDatabase kontrolDatabase, KontrolProgress kontrolProgress) async {
+    final data = kontrolProgress.bahasaInggris 
+      ? await kontrolDatabase.ambilJson('belajar_materi_inggris') 
+      : await kontrolDatabase.ambilJson('belajar_materi_indo');
     
     _eBelajar = EBelajar.fromJson(data);
 
+    notifyListeners();
     return true;
   }
 
@@ -27,6 +31,27 @@ class KontrolBelajar extends ChangeNotifier {
     return _eBelajar.modul[indeksModul(_modul)]!.materi.length;
   }
 
+  int totalSemuaMateri() {
+    int totalMateri = 0;
+    for (var i = 0; i < _eBelajar.modul.length; i++) {
+      totalMateri += _eBelajar.modul[indeksModul(i + 1)]!.materi.length;
+    }
+    return totalMateri;
+  }
+
+  int totalSemuaMateriSelesai(KontrolProgress kontrolProgress) {
+    int totalMateriSelesai = 0;
+    for (var i = 0; i < _eBelajar.modul.length; i++) {
+      kontrolProgress.ambilStatusBelajar(i + 1).forEach((isi) => isi ? totalMateriSelesai++ : null);
+    }
+    return totalMateriSelesai;
+  }
+
+  int semuaMateriSelesai(int modul, KontrolProgress kontrolProgress) {
+    final statusBelajar = kontrolProgress.progressBelajar;
+    return statusBelajar[modul - 1];
+  }
+
   int get totalModul => _eBelajar.modul.length;
   int totalMateri(int modul) => _eBelajar.modul[indeksModul(modul)]!.materi.length;
 
@@ -36,19 +61,6 @@ class KontrolBelajar extends ChangeNotifier {
 
   EMateriBelajar ambilMateri(int modul, int materi) { // harusnya getMateriSekarang()
     return _eBelajar.modul[indeksModul(modul)]!.materi[indeksMateri(materi)];
-  }
-
-  double ambilProgressMateri(int modul, KontrolProgress kontrolProgress) {
-    if (modul <= 0) return 0.0;
-
-    final modulData = _eBelajar.modul[indeksModul(modul)];
-    if (modulData == null) return 0.0;
-
-    final statusBelajar = kontrolProgress.progressBelajar;
-
-    if (modul - 1 >= statusBelajar.length) return 0.0;
-
-    return statusBelajar[modul - 1] / modulData.materi.length;
   }
 
   String indeksModul(int modul) => "modul_$modul";
@@ -67,10 +79,11 @@ class KontrolBelajar extends ChangeNotifier {
     notifyListeners();
   }
 
-  void aturMateriSelanjutnya(KontrolProgress kontrolProgress) {
+  void aturMateriSelanjutnya(KontrolProgress kontrolProgress, KontrolLog kontrolLog) {
     if (_materi < _eBelajar.modul[indeksModul(_modul)]!.materi.length) {
       _materi++;
       kontrolProgress.naikkanProgressBelajar(_modul, _materi);
+      kontrolLog.catatLogBelajar(modul: _modul, materi: _materi);
       notifyListeners();
     }
   }

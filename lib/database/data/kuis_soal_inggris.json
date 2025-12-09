@@ -1,0 +1,338 @@
+[
+    {
+        "id": 1,
+        "suara": "tes_1",
+        "gambar": [],
+        "pertanyaan": "Arrange the letters to form the word 'cat'!",
+        "opsi": ["c", "t", "a"],
+        "jawaban": ["c", "a", "t"],
+        "mode": "susun"
+    },
+    {
+        "id": 2,
+        "suara": "tes_2",
+        "gambar": [],
+        "pertanyaan": "Arrange the hand signs below to match the order of numbers 4, 5, and 6!",
+        "opsi": ["6", "4", "5"],
+        "jawaban": ["4", "5", "6"],
+        "mode": "susun"
+    },
+    {
+        "id": 3,
+        "suara": "tes_3",
+        "gambar": ["b"],
+        "pertanyaan": "What letter does the hand sign above represent?",
+        "opsi": ["huruf_a", "huruf_b", "huruf_c"],
+        "jawaban": ["huruf_b"],
+        "mode": "pilih"
+    },
+    {
+        "id": 4,
+        "suara": "tes_4",
+        "gambar": [],
+        "pertanyaan": "Which one is the sign for number 3?",
+        "opsi": ["2", "3", "5"],
+        "jawaban": ["3"],
+        "mode": "pilih"
+    },
+    {
+        "id": 5,
+        "suara": "tes_5",
+        "gambar": ["c", "a", "b"],
+        "pertanyaan": "Match the signs with the correct letters!",
+        "opsi": ["huruf_b", "huruf_c", "huruf_a"],
+        "jawaban": [
+            ["huruf_a", "huruf_b", "huruf_c"],
+            ["a", "b", "c"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 6,
+        "suara": "tes_6",
+        "gambar": ["3", "1", "2"],
+        "pertanyaan": "Match the number signs with the correct numbers!",
+        "opsi": ["angka_3", "angka_1", "angka_2"],
+        "jawaban": [
+            ["angka_1", "angka_2", "angka_3"],
+            ["1", "2", "3"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 7,
+        "suara": "tes_7",
+        "gambar": ["m", null, "m"],
+        "pertanyaan": "Fill in the missing letter to form the word 'mom'!",
+        "opsi": ["a", "o", "e"],
+        "jawaban": ["m", "o", "m"],
+        "mode": "lengkapi"
+    },
+    {
+        "id": 8,
+        "suara": "tes_8",
+        "gambar": [null, null, "n"],
+        "pertanyaan": "Fill in the letters to form the word 'sun'!",
+        "opsi": ["s", "u", "n"],
+        "jawaban": ["s", "u", "n"],
+        "mode": "lengkapi"
+    },
+    {
+        "id": 9,
+        "suara": "tes_9",
+        "gambar": ["c", "a", "t"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["c", "a", "t"],
+        "mode": "artikan"
+    },
+    {
+        "id": 10,
+        "suara": "tes_10",
+        "gambar": ["h", "o", "m", "e"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["h", "o", "m", "e"],
+        "mode": "artikan"
+    },
+    {
+        "id": 11,
+        "suara": "tes_11",
+        "gambar": [],
+        "pertanyaan": "Arrange the letters to form the word 'ibu'!",
+        "opsi": ["b", "u", "i"],
+        "jawaban": ["i", "b", "u"],
+        "mode": "susun"
+    },
+    {
+        "id": 12,
+        "suara": "tes_12",
+        "gambar": [],
+        "pertanyaan": "Arrange the letters to form the word 'rumah'!",
+        "opsi": ["u", "m", "h", "a", "r"],
+        "jawaban": ["r", "u", "m", "a", "h"],
+        "mode": "susun"
+    },
+    {
+        "id": 13,
+        "suara": "tes_13",
+        "gambar": ["m"],
+        "pertanyaan": "What letter does the hand sign above represent?",
+        "opsi": ["huruf_m", "huruf_n", "huruf_o"],
+        "jawaban": ["huruf_m"],
+        "mode": "pilih"
+    },
+    {
+        "id": 14,
+        "suara": "tes_14",
+        "gambar": [],
+        "pertanyaan": "Which one is the sign for number 5?",
+        "opsi": ["5", "3", "2"],
+        "jawaban": ["5"],
+        "mode": "pilih"
+    },
+    {
+        "id": 15,
+        "suara": "tes_15",
+        "gambar": ["u", "k", "b"],
+        "pertanyaan": "Match the signs with the correct letters!",
+        "opsi": ["huruf_k", "huruf_b", "huruf_u"],
+        "jawaban": [
+            ["huruf_b", "huruf_u", "huruf_k"],
+            ["b", "u", "k"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 16,
+        "suara": "tes_16",
+        "gambar": ["2", "1", "3"],
+        "pertanyaan": "Match the number signs with the correct numbers!",
+        "opsi": ["angka_2", "angka_3", "angka_1"],
+        "jawaban": [
+            ["angka_1", "angka_2", "angka_3"],
+            ["1", "2", "3"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 17,
+        "suara": "tes_17",
+        "gambar": ["m", null, null, "a", "n"],
+        "pertanyaan": "Fill in the missing letters to form the word 'makan'!",
+        "opsi": ["a", "i", "o", "u", "k"],
+        "jawaban": ["m", "a", "k", "a", "n"],
+        "mode": "lengkapi"
+    },
+    {
+        "id": 18,
+        "suara": "tes_18",
+        "gambar": ["b", null, null, null],
+        "pertanyaan": "Fill in the letters to form the word 'bola'!",
+        "opsi": ["o", "a", "l", "b"],
+        "jawaban": ["b", "o", "l", "a"],
+        "mode": "lengkapi"
+    },
+    {
+        "id": 19,
+        "suara": "tes_19",
+        "gambar": ["i", "b", "u"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["i", "b", "u"],
+        "mode": "artikan"
+    },
+    {
+        "id": 20,
+        "suara": "tes_20",
+        "gambar": ["m", "e", "j", "a"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["m", "e", "j", "a"],
+        "mode": "artikan"
+    },
+    {
+        "id": 21,
+        "suara": "tes_21",
+        "gambar": [],
+        "pertanyaan": "Arrange the letters to form the word 'kaki'!",
+        "opsi": ["i", "k", "a", "k"],
+        "jawaban": ["k", "a", "k", "i"],
+        "mode": "susun"
+    },
+    {
+        "id": 22,
+        "suara": "tes_22",
+        "gambar": ["t"],
+        "pertanyaan": "What letter does the sign above represent?",
+        "opsi": ["huruf_t", "huruf_i", "huruf_s"],
+        "jawaban": ["huruf_t"],
+        "mode": "pilih"
+    },
+    {
+        "id": 23,
+        "suara": "tes_23",
+        "gambar": ["k", "a", "n", "a"],
+        "pertanyaan": "Match the signs with the correct letters!",
+        "opsi": ["huruf_a", "huruf_k", "huruf_n", "huruf_a"],
+        "jawaban": [
+            ["huruf_a", "huruf_n", "huruf_a", "huruf_k"],
+            ["a", "n", "a", "k"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 24,
+        "suara": "tes_24",
+        "gambar": ["a", null, "g", null, "n"],
+        "pertanyaan": "Fill in the missing letters to form the word 'angin'!",
+        "opsi": ["n", "u", "o", "i"],
+        "jawaban": ["a", "n", "g", "i", "n"],
+        "mode": "lengkapi"
+    },
+    {
+        "id": 25,
+        "suara": "tes_25",
+        "gambar": ["s", "a", "t", "u"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["s", "a", "t", "u"],
+        "mode": "artikan"
+    },
+    {
+        "id": 26,
+        "suara": "tes_26",
+        "gambar": [],
+        "pertanyaan": "Arrange the letters to form the word 'land'!",
+        "opsi": ["a", "l", "d", "n"],
+        "jawaban": ["l", "a", "n", "d"],
+        "mode": "susun"
+    },
+    {
+        "id": 27,
+        "suara": "tes_27",
+        "gambar": ["c"],
+        "pertanyaan": "Which letter does this sign represent?",
+        "opsi": ["huruf_c", "huruf_o", "huruf_e"],
+        "jawaban": ["huruf_c"],
+        "mode": "pilih"
+    },
+    {
+        "id": 28,
+        "suara": "tes_28",
+        "gambar": ["t", "c", "a"],
+        "pertanyaan": "Match each sign with the correct letter!",
+        "opsi": ["huruf_t", "huruf_c", "huruf_a"],
+        "jawaban": [
+            ["huruf_c", "huruf_a", "huruf_t"],
+            ["c", "a", "t"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 29,
+        "suara": "tes_29",
+        "gambar": ["b", null, null, "l"],
+        "pertanyaan": "Fill in the missing letter to form 'ball'!",
+        "opsi": ["o", "a", "e", "l"],
+        "jawaban": ["b", "a", "l", "l"],
+        "mode": "lengkapi"
+    },
+    {
+        "id": 30,
+        "suara": "tes_30",
+        "gambar": ["f", "o", "x"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["f", "o", "x"],
+        "mode": "artikan"
+    },
+    {
+        "id": 31,
+        "suara": "tes_31",
+        "gambar": ["n", "u", "l", "l"],
+        "pertanyaan": "What word do the signs above form?",
+        "opsi": [],
+        "jawaban": ["n", "u", "l", "l"],
+        "mode": "artikan"
+    },
+    {
+        "id": 32,
+        "suara": "tes_32",
+        "gambar": [],
+        "pertanyaan": "Arrange the numbers 1, 2, and 3!",
+        "opsi": ["2", "3", "1"],
+        "jawaban": ["1", "2", "3"],
+        "mode": "susun"
+    },
+    {
+        "id": 33,
+        "suara": "tes_33",
+        "gambar": ["b"],
+        "pertanyaan": "What letter does the hand sign above represent?",
+        "opsi": ["huruf_a", "huruf_b", "huruf_c"],
+        "jawaban": ["huruf_b"],
+        "mode": "pilih"
+    },
+    {
+        "id": 34,
+        "suara": "tes_34",
+        "gambar": ["c", "a", "b"],
+        "pertanyaan": "Match the signs with the correct letters!",
+        "opsi": ["huruf_a", "huruf_c", "huruf_b"],
+        "jawaban": [
+            ["huruf_a", "huruf_b", "huruf_c"],
+            ["a", "b", "c"]
+        ],
+        "mode": "hubungkan"
+    },
+    {
+        "id": 35,
+        "suara": "tes_35",
+        "gambar": ["i", null, "u"],
+        "pertanyaan": "Fill in the missing letter to form the word 'ibu'!",
+        "opsi": ["a", "b", "c"],
+        "jawaban": ["i", "b", "u"],
+        "mode": "lengkapi"
+    }
+]

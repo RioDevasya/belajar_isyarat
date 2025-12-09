@@ -1,0 +1,350 @@
+{
+    "modul_1": [
+        {
+            "suara": "learn_0",
+            "gambar": ["0"],
+            "judul": "number 0",
+            "penjelasan": "Make a circle with your thumb and fingers, like forming the number zero."
+        },
+        {
+            "suara": "learn_1",
+            "gambar": ["1"],
+            "judul": "number 1",
+            "penjelasan": "The index finger stands up while the other fingers make a fist."
+        },
+        {
+            "suara": "learn_2",
+            "gambar": ["2"],
+            "judul": "number 2",
+            "penjelasan": "The index and middle fingers stand up, the other fingers make a fist."
+        },
+        {
+            "suara": "learn_3",
+            "gambar": ["3"],
+            "judul": "number 3",
+            "penjelasan": "Three fingers (thumb, index, and middle) stand up, while the ring finger and pinky bend down."
+        },
+        {
+            "suara": "learn_4",
+            "gambar": ["4"],
+            "judul": "number 4",
+            "penjelasan": "Four fingers (index to pinky) stand up while the thumb bends into the palm."
+        },
+        {
+            "suara": "learn_5",
+            "gambar": ["5"],
+            "judul": "number 5",
+            "penjelasan": "All fingers (thumb to pinky) open wide."
+        },
+        {
+            "suara": "learn_6",
+            "gambar": ["6"],
+            "judul": "number 6",
+            "penjelasan": "The index, middle, and ring fingers stand up. The thumb holds the pinky, which is bent down."
+        },
+        {
+            "suara": "learn_7",
+            "gambar": ["7"],
+            "judul": "number 7",
+            "penjelasan": "The thumb holds the ring finger down, while the index, middle, and pinky stand up."
+        },
+        {
+            "suara": "learn_8",
+            "gambar": ["8"],
+            "judul": "number 8",
+            "penjelasan": "The middle finger bends and touches the thumb, while the index, ring, and pinky stand up."
+        },
+        {
+            "suara": "learn_9",
+            "gambar": ["9"],
+            "judul": "number 9",
+            "penjelasan": "The thumb and index finger make a circle (like the number '9'), and the other three fingers point up."
+        }
+    ],
+    "modul_2": [
+        {
+            "suara": "learn_a",
+            "gambar": ["a"],
+            "judul": "letter a",
+            "penjelasan": "The fingers are curled into a fist, with the thumb resting on the side of the index finger, like a closed hand."
+        },
+        {
+            "suara": "learn_b",
+            "gambar": ["b"],
+            "judul": "letter b",
+            "penjelasan": "Four fingers (index, middle, ring, and pinky) stand straight up while the thumb bends across the palm."
+        },
+        {
+            "suara": "learn_c",
+            "gambar": ["c"],
+            "judul": "letter c",
+            "penjelasan": "The hand forms a curved shape like the letter 'C', with fingers and thumb curved toward each other."
+        },
+        {
+            "suara": "learn_d",
+            "gambar": ["d"],
+            "judul": "letter d",
+            "penjelasan": "The index finger points straight up while the other fingers curl into the palm."
+        },
+        {
+            "suara": "learn_e",
+            "gambar": ["e"],
+            "judul": "letter e",
+            "penjelasan": "The fingers bend into the palm while the thumb rests on top of the curled fingers."
+        },
+        {
+            "suara": "learn_f",
+            "gambar": ["f"],
+            "judul": "letter f",
+            "penjelasan": "The index finger and thumb touch to form a circle (like the 'OK' sign), while the other three fingers stand straight up."
+        },
+        {
+            "suara": "learn_g",
+            "gambar": ["g"],
+            "judul": "letter g",
+            "penjelasan": "The hand faces sideways, with the index finger pointing forward horizontally and the thumb aligned with it, like pointing sideways."
+        },
+        {
+            "suara": "learn_h",
+            "gambar": ["h"],
+            "judul": "letter h",
+            "penjelasan": "The index and middle fingers extend together pointing sideways, while the remaining fingers curl into the palm."
+        },
+        {
+            "suara": "learn_i",
+            "gambar": ["i"],
+            "judul": "letter i",
+            "penjelasan": "The hand forms a fist while the pinky finger stands straight up."
+        },
+        {
+            "suara": "learn_j",
+            "gambar": ["j"],
+            "judul": "letter j",
+            "penjelasan": "Start from the 'I' handshape (pinky up), then move the pinky to trace the shape of the letter 'J' in the air."
+        },
+        {
+            "suara": "learn_k",
+            "gambar": ["k"],
+            "judul": "letter k",
+            "penjelasan": "The index and middle fingers form a 'V' shape upward while the thumb touches between them."
+        },
+        {
+            "suara": "learn_l",
+            "gambar": ["l"],
+            "judul": "letter l",
+            "penjelasan": "The index finger points straight up and the thumb points outward, forming an 'L' shape, while other fingers curl inward."
+        },
+        {
+            "suara": "learn_m",
+            "gambar": ["m"],
+            "judul": "letter m",
+            "penjelasan": "The hand forms a fist with the thumb tucked under three fingers (index, middle, ring), while the pinky wraps outside."
+        },
+        {
+            "suara": "learn_n",
+            "gambar": ["n"],
+            "judul": "letter n",
+            "penjelasan": "Similar to the letter 'M', but the thumb is tucked under only two fingers (index and middle)."
+        },
+        {
+            "suara": "learn_o",
+            "gambar": ["o"],
+            "judul": "letter o",
+            "penjelasan": "The fingers and thumb form a rounded shape like the letter 'O'."
+        },
+        {
+            "suara": "learn_p",
+            "gambar": ["p"],
+            "judul": "letter p",
+            "penjelasan": "Similar to 'K', but the hand tilts downward—index and middle fingers remain open as if pointing downward."
+        },
+        {
+            "suara": "learn_q",
+            "gambar": ["q"],
+            "judul": "letter q",
+            "penjelasan": "Similar to the letter 'G', but the hand points downward and the index finger points down."
+        },
+        {
+            "suara": "learn_r",
+            "gambar": ["r"],
+            "judul": "letter r",
+            "penjelasan": "The index and middle fingers cross each other while the other fingers curl into the palm."
+        },
+        {
+            "suara": "learn_s",
+            "gambar": ["s"],
+            "judul": "letter s",
+            "penjelasan": "The hand makes a fist with the thumb crossing over the front of the fingers (different from 'A', where the thumb is on the side)."
+        },
+        {
+            "suara": "learn_t",
+            "gambar": ["t"],
+            "judul": "letter t",
+            "penjelasan": "The hand forms a fist with the thumb tucked between the index and middle finger."
+        },
+        {
+            "suara": "learn_u",
+            "gambar": ["u"],
+            "judul": "letter u",
+            "penjelasan": "The index and middle fingers extend together straight up, while the other fingers curl into the palm."
+        },
+        {
+            "suara": "learn_v",
+            "gambar": ["v"],
+            "judul": "letter v",
+            "penjelasan": "The index and middle fingers form a 'V' shape, slightly spread apart."
+        },
+        {
+            "suara": "learn_w",
+            "gambar": ["w"],
+            "judul": "letter w",
+            "penjelasan": "Three fingers (index, middle, ring) stand up forming a 'W', while the thumb and pinky curl inward."
+        },
+        {
+            "suara": "learn_x",
+            "gambar": ["x"],
+            "judul": "letter x",
+            "penjelasan": "The hand forms a fist while the index finger bends like a hooked claw."
+        },
+        {
+            "suara": "learn_y",
+            "gambar": ["y"],
+            "judul": "letter y",
+            "penjelasan": "The thumb and pinky extend outward while the three middle fingers curl inward (like a 'phone' gesture)."
+        },
+        {
+            "suara": "learn_z",
+            "gambar": ["z"],
+            "judul": "letter z",
+            "penjelasan": "Use the index finger to trace the shape of the letter 'Z' in the air."
+        }
+    ],
+    "modul_3": [
+        {
+            "suara": "learn_fire",
+            "gambar": ["f", "i", "r", "e"],
+            "judul": "'fire' in sign language",
+            "penjelasan": "fire is something that gives heat and light"
+        },
+        {
+            "suara": "learn_eat",
+            "gambar": ["e", "a", "t"],
+            "judul": "'eat' in sign language",
+            "penjelasan": "eat means to put food in your mouth"
+        },
+        {
+            "suara": "learn_ball",
+            "gambar": ["b", "a", "l", "l"],
+            "judul": "'ball' in sign language",
+            "penjelasan": "a ball is a round toy we can throw or kick"
+        },
+        {
+            "suara": "learn_book",
+            "gambar": ["b", "o", "o", "k"],
+            "judul": "'book' in sign language",
+            "penjelasan": "a book is something we read to learn"
+        },
+        {
+            "suara": "learn_play",
+            "gambar": ["p", "l", "a", "y"],
+            "judul": "'play' in sign language",
+            "penjelasan": "play means to have fun or games"
+        },
+        {
+            "suara": "learn_door",
+            "gambar": ["d", "o", "o", "r"],
+            "judul": "'door' in sign language",
+            "penjelasan": "a door is where we go in or out"
+        },
+        {
+            "suara": "learn_shirt",
+            "gambar": ["s", "h", "i", "r", "t"],
+            "judul": "'shirt' in sign language",
+            "penjelasan": "a shirt is a piece of clothing we wear"
+        },
+        {
+            "suara": "learn_table",
+            "gambar": ["t", "a", "b", "l", "e"],
+            "judul": "'table' in sign language",
+            "penjelasan": "a table is a place to put things on"
+        },
+        {
+            "suara": "learn_chair",
+            "gambar": ["c", "h", "a", "i", "r"],
+            "judul": "'chair' in sign language",
+            "penjelasan": "a chair is something you sit on"
+        },
+        {
+            "suara": "learn_water",
+            "gambar": ["w", "a", "t", "e", "r"],
+            "judul": "'water' in sign language",
+            "penjelasan": "water is what we drink or use to bath"
+        },
+        {
+            "suara": "learn_bath",
+            "gambar": ["b", "a", "t", "h"],
+            "judul": "'bath' in sign language",
+            "penjelasan": "bath means to wash your body"
+        },
+        {
+            "suara": "learn_drink",
+            "gambar": ["d", "r", "i", "n", "k"],
+            "judul": "'drink' in sign language",
+            "penjelasan": "drink means to take liquid into your mouth"
+        },
+        {
+            "suara": "learn_house",
+            "gambar": ["h", "o", "u", "s", "e"],
+            "judul": "'house' in sign language",
+            "penjelasan": "a house is where we live"
+        },
+        {
+            "suara": "learn_sleep",
+            "gambar": ["s", "l", "e", "e", "p"],
+            "judul": "'sleep' in sign language",
+            "penjelasan": "sleep means to rest with your eyes closed"
+        },
+        {
+            "suara": "learn_stop",
+            "gambar": ["s", "t", "o", "p"],
+            "judul": "'stop' in sign language",
+            "penjelasan": "stop means to stop doing something"
+        },
+        {
+            "suara": "learn_come",
+            "gambar": ["c", "o", "m", "e"],
+            "judul": "'come' in sign language",
+            "penjelasan": "come is used to invite someone to come closer"
+        },
+        {
+            "suara": "learn_friend",
+            "gambar": ["f", "r", "i", "e", "n", "d"],
+            "judul": "'friend' in sign language",
+            "penjelasan": "a friend is someone you like to play with"
+        },
+        {
+            "suara": "learn_older",
+            "gambar": ["o", "l", "d", "e", "r"],
+            "judul": "'older' in sign language",
+            "penjelasan": "older means a brother or sister who is bigger"
+        },
+        {
+            "suara": "learn_younger",
+            "gambar": ["y", "o", "u", "n", "g", "e", "r"],
+            "judul": "'younger' in sign language",
+            "penjelasan": "younger means a brother or sister who is small"
+        },
+        {
+            "suara": "learn_father",
+            "gambar": ["f", "a", "t", "h", "e", "r"],
+            "judul": "'father' in sign language",
+            "penjelasan": "father is a male parent"
+        },
+        {
+            "suara": "learn_mother",
+            "gambar": ["m", "o", "t", "h", "e", "r"],
+            "judul": "'mother' in sign language",
+            "penjelasan": "mother is a female parent"
+        }
+    ]
+}

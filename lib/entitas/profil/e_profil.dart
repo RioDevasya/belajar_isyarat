@@ -2,17 +2,25 @@ class EProfil {
   String? nama;
   String? sekolah;
   String? jabatan;
-  List<int> progressBelajar;
-  List<int> nilaiTes;
-  int progressKuis;
+  bool bahasaInggris;
+  List<int> progressBelajarIndo;
+  List<int> nilaiTesIndo;
+  int progressKuisIndo;
+  List<int> progressBelajarInggris;
+  List<int> nilaiTesInggris;
+  int progressKuisInggris;
 
   EProfil({
     this.nama,
     this.sekolah,
     this.jabatan,
-    required this.progressBelajar,
-    required this.progressKuis,
-    required this.nilaiTes,
+    required this.bahasaInggris,
+    required this.progressBelajarIndo,
+    required this.progressKuisIndo,
+    required this.nilaiTesIndo,
+    required this.progressBelajarInggris,
+    required this.progressKuisInggris,
+    required this.nilaiTesInggris,
   });
   
   factory EProfil.fromJson(Map<String, dynamic> json) {
@@ -20,9 +28,13 @@ class EProfil {
       nama: json['nama'],
       sekolah: json['sekolah'],
       jabatan: json['jabatan'],
-      progressBelajar: List<int>.from(json['progress_belajar']),
-      nilaiTes: List<int>.from(json['nilai_tes_modul']),
-      progressKuis: json['progress_kuis'],
+      bahasaInggris: json['bahasa_inggris'],
+      progressBelajarIndo: List<int>.from(json['progress_belajar_indo']),
+      nilaiTesIndo: List<int>.from(json['nilai_tes_modul_indo']),
+      progressKuisIndo: json['progress_kuis_indo'],
+      progressBelajarInggris: List<int>.from(json['progress_belajar_inggris']),
+      nilaiTesInggris: List<int>.from(json['nilai_tes_modul_inggris']),
+      progressKuisInggris: json['progress_kuis_inggris'],
     );
   }
 
@@ -31,9 +43,13 @@ class EProfil {
       'nama': nama,
       'sekolah': sekolah,
       'jabatan': jabatan,
-      'progress_belajar': progressBelajar,
-      'nilai_tes_modul': nilaiTes,
-      'progress_kuis': progressKuis,
+      'bahasaInggris': bahasaInggris,
+      'progress_belajar_indo': progressBelajarIndo,
+      'nilai_tes_modul_indo': nilaiTesIndo,
+      'progress_kuis_indo': progressKuisIndo,
+      'progress_belajar_inggris': progressBelajarInggris,
+      'nilai_tes_modul_inggris': nilaiTesInggris,
+      'progress_kuis_inggris': progressKuisInggris,
     };
   }
 }

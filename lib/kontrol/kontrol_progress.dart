@@ -1,7 +1,10 @@
 import 'package:belajar_isyarat/entitas/profil/e_progress_belajar.dart';
 import 'package:belajar_isyarat/entitas/profil/e_progress_kuis.dart';
 import 'package:belajar_isyarat/entitas/profil/e_profil.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_database.dart'; // jangan masukkan notifyListener. progress hanya dihandle oleh kontrol lain
+import 'package:belajar_isyarat/kontrol/kontrol_kuis.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 
 import 'package:flutter/foundation.dart'; // TODO: persentase. total tes, total belajar.
 
@@ -13,45 +16,67 @@ class KontrolProgress {
   // inisialisasi (anti error)
   Future<bool> inis(KontrolDatabase kontrolDatabase) async {
     final dataProfil = await kontrolDatabase.ambilJson('profil');
-    final dataProgressBelajar = await kontrolDatabase.ambilJson('belajar_progress');
-    final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress');
-
     _eProfil = EProfil.fromJson(dataProfil);
-    _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
-    _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
 
-    _sinkronProgressBelajar(kontrolDatabase);
+    if (_eProfil.bahasaInggris) {
+      final dataProgressBelajar = await kontrolDatabase.ambilJson('belajar_progress_inggris');
+      final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress_inggris');
+      _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
+      _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
+    } else {
+      final dataProgressBelajar = await kontrolDatabase.ambilJson('belajar_progress_indo');
+      final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress_indo');
+      _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
+      _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
+    }
     return true;
   }
 
-  void _sinkronProgressBelajar(KontrolDatabase kontrolDatabase) {
-    List<int> progressBelajar = [];
-
-    for (var modulEntry in _eProgressBelajar.modul.entries) {
-      int jumlahBenar = 0;
-
-      for (var statusEntry in modulEntry.value.status.entries) {
-        if (statusEntry.value == true) jumlahBenar++;
-      }
-
-      progressBelajar.add(jumlahBenar);
+  Future<bool> _inisDataProgress(KontrolDatabase kontrolDatabase) async {
+    if (_eProfil.bahasaInggris) {
+      final dataProgressBelajar = await kontrolDatabase.ambilJson('belajar_progress_inggris');
+      final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress_inggris');
+      _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
+      _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
+      print("objek 2");
+    } else {
+      final dataProgressBelajar = await kontrolDatabase.ambilJson('belajar_progress_indo');
+      final dataProgressKuis = await kontrolDatabase.ambilJson('kuis_progress_indo');
+      _eProgressBelajar = EProgressBelajar.fromJson(dataProgressBelajar);
+      _eProgressKuis = EProgressKuis.fromJson(dataProgressKuis);
+      print("objek 1");
     }
 
-    if (!listEquals(progressBelajar, _eProfil.progressBelajar)) {
-      _eProfil.progressBelajar = progressBelajar;
-      simpanProfil(kontrolDatabase);
-    }
-  } // todo nanti1 (saat program besar (agar tinggal update json soal/materi saja), anti error status/progress): sinkronkan ketiga json ini dengan belajar_materi.json, kuis_soal.json, tes.json.
+    return true;
+  }
+
+  Future<bool> _inisBahasaUlang(
+    KontrolBelajar kontrolBelajar,
+    KontrolKuis kontrolKuis,
+    KontrolTes kontrolTes,
+    KontrolDatabase kDatabase, 
+    KontrolProgress kProgress
+  ) async {
+    bool ok3 = await kontrolBelajar.inis(kDatabase, kProgress);
+
+    bool ok4 = await kontrolTes.inis(kDatabase, kProgress);
+
+    bool ok5 = await kontrolKuis.inis(kDatabase, kProgress);
+
+    return ok3 && ok4 && ok5;
+  }
 
   // getter
+  EProgressBelajar get eProgressBelajar => _eProgressBelajar;
   String? get nama => _eProfil.nama;
   String? get sekolah => _eProfil.sekolah;
   String? get jabatan => _eProfil.jabatan;
-  List<int> get progressBelajar => _eProfil.progressBelajar;
-  List<int> get nilaiTes => _eProfil.nilaiTes;
-  int get progressKuis => _eProfil.progressKuis;
+  bool get bahasaInggris => _eProfil.bahasaInggris;
+  List<int> get progressBelajar => _eProfil.bahasaInggris ? _eProfil.progressBelajarInggris : _eProfil.progressBelajarIndo;
+  List<int> get nilaiTes => _eProfil.bahasaInggris ? _eProfil.nilaiTesInggris : _eProfil.nilaiTesIndo;
+  int get progressKuis => _eProfil.bahasaInggris ? _eProfil.progressKuisInggris : _eProfil.progressKuisIndo;
 
-  int ambilSatuNilaiTes(int modul) => _eProfil.nilaiTes[modul - 1];
+  int ambilSatuNilaiTes(int modul) => _eProfil.bahasaInggris ? _eProfil.nilaiTesInggris[modul - 1] : _eProfil.nilaiTesIndo[modul - 1];
 
   List<bool> ambilStatusBelajar(int modul) {
     if (!_eProgressBelajar.modul.containsKey(indeksModul(modul))) return []; // contain anti error. bisa dihilangkan sebelum todo nanti1 (agar kesalahan json diketahui)
@@ -105,33 +130,54 @@ class KontrolProgress {
   void naikkanProgressBelajar(int modul, int materi) {
     if (!ambilStatusMateri(modul, materi)) {
       _eProgressBelajar.modul[indeksModul(modul)]!.status[materi] = true;
-      _eProfil.progressBelajar[modul - 1]++;
+      _eProfil.bahasaInggris ? _eProfil.progressBelajarInggris[modul - 1]++ : _eProfil.progressBelajarIndo[modul - 1]++;
     }
   }
 
   void naikkanProgressKuis(int kuis, bool benar) {
     if (benar) {
       _eProgressKuis.status[kuis] = true;
-      _eProfil.progressKuis += 100;
+      _eProfil.bahasaInggris ? _eProfil.progressKuisInggris += 100 : _eProfil.progressKuisIndo += 100;
     } else {
-      _eProfil.progressKuis += 25;
+      _eProfil.bahasaInggris ? _eProfil.progressKuisInggris += 25 : _eProfil.progressKuisIndo += 25;
     }
   }
 
   void naikkanNilaiTes(int nomorTes, int nilai) {
-    _eProfil.nilaiTes[nomorTes - 1] = nilai;
+    _eProfil.bahasaInggris ? _eProfil.nilaiTesInggris[nomorTes - 1] = nilai : _eProfil.nilaiTesIndo[nomorTes - 1] = nilai;
   }
 
-  void aturNama(String nama) {
+  void aturNama(String? nama) {
     _eProfil.nama = nama;
   }
 
-  void aturSekolah(String sekolah) {
+  void aturSekolah(String? sekolah) {
     _eProfil.sekolah = sekolah;
   }
 
-  void aturJabatan(String jabatan) {
+  void aturJabatan(String? jabatan) {
     _eProfil.jabatan = jabatan;
+  }
+
+  Future<bool> aturBahasa(
+    bool bahasaInggris,
+    KontrolBelajar kontrolBelajar,
+    KontrolKuis kontrolKuis,
+    KontrolTes kontrolTes,
+    KontrolDatabase kDatabase, 
+    KontrolProgress kProgress
+  ) async {
+    _eProfil.bahasaInggris = bahasaInggris;
+
+    await _inisDataProgress(kDatabase);
+    await _inisBahasaUlang(
+      kontrolBelajar,
+      kontrolKuis,
+      kontrolTes,
+      kDatabase, 
+      kProgress
+    );
+    return true;
   }
 
   //resetProgress...

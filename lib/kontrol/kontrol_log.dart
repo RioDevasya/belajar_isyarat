@@ -1,6 +1,8 @@
 import 'package:belajar_isyarat/entitas/profil/e_log.dart';
 import 'package:belajar_isyarat/entitas/profil/e_log_detail.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_database.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
+import 'package:intl/intl.dart';
 
 class KontrolLog {
   static final KontrolLog _instansi = KontrolLog._isi();
@@ -8,6 +10,117 @@ class KontrolLog {
   KontrolLog._isi();
 
   final String namaFile = "log_aktivitas";
+
+  // in-memory storage
+  late ELog _eLog;
+
+  /// Inisialisasi: baca dari KontrolDatabase dan simpan di memori
+  Future<bool> inis(KontrolDatabase kontrolDatabase) async {
+    final dataLog = await kontrolDatabase.ambilJson(namaFile);
+
+    // jika file belum ada atau kosong, pastikan ELog kosong
+    if (dataLog == null) {
+      _eLog = ELog(list: []);
+      return true;
+    }
+
+    // ELog.fromJson harus toleran pada List atau Map; jika tidak, atasi di sini:
+    if (dataLog is List) {
+      _eLog = ELog.fromJson(dataLog);
+    } else if (dataLog is Map) {
+      // jika format lama berupa object, coba ambil list di field 'list' atau ubah jadi kosong
+      if (dataLog.containsKey('list') && dataLog['list'] is List) {
+        _eLog = ELog.fromJson(dataLog['list']);
+      } else {
+        // defensif: convert Map->List jika mungkin: bila object represent single log
+        // kita bungkus jadi list
+        try {
+          _eLog = ELog.fromJson([dataLog]);
+        } catch (_) {
+          _eLog = ELog(list: []);
+        }
+      }
+    } else {
+      _eLog = ELog(list: []);
+    }
+
+    return true;
+  }
+
+  // Ambil semua ELog (in-memory)
+  ELog get eLog => _eLog;
+
+  // Ambil list detail
+  List<ELogDetail> ambilListLogSync() => _eLog.list;
+
+  // Ambil 50 log terakhir (urut terbaru dulu)
+  List<ELogDetail> ambil50Terakhir() {
+    final all = List<ELogDetail>.from(_eLog.list);
+    if (all.isEmpty) return [];
+    final rev = all.reversed.toList(); // terbaru -> lama
+    final take = rev.length <= 50 ? rev : rev.sublist(0, 50);
+    return take;
+  }
+
+  // Format waktu: contoh "08-12 20:34" atau sesuai kebutuhan
+  String _fmtDate(DateTime dt) {
+    final df = DateFormat('dd-MM HH:mm');
+    return df.format(dt);
+  }
+
+  // Map nomor modul -> nama modul sesuai permintaan
+  String _namaModul(int modul, KontrolProgress kProgress) {
+    switch (modul) {
+      case 1:
+        return kProgress.bahasaInggris ? 'learning numbers' : 'belajar angka';
+      case 2:
+        return kProgress.bahasaInggris ? 'learning letters' : 'belajar huruf';
+      case 3:
+        return kProgress.bahasaInggris ? 'learning words' : 'belajar kata';
+      default:
+        return 'modul_$modul';
+    }
+  }
+
+  /// Mengembalikan list pesan (terformat) untuk 50 log terakhir
+  List<String> ambil50TerakhirBerformat(KontrolProgress kProgress) {
+    final list = ambil50Terakhir();
+    final out = <String>[];
+
+    for (final e in list) {
+      final waktu = _fmtDate(e.waktu);
+      String pesan;
+
+      if (e.tipe == 'kuis') {
+        final benar = kProgress.bahasaInggris 
+          ? ((e.jawabanBenar == true) ? 'right' : 'wrong') 
+          : ((e.jawabanBenar == true) ? 'benar' : 'salah');
+        final skor = e.skor ?? 0;
+        pesan = kProgress.bahasaInggris 
+          ? '[$waktu] Completed a quiz, answer was $benar and score +$skor' 
+          : '[$waktu] Menyelesaikan kuis, jawaban $benar dan skor +$skor';
+      } else if (e.tipe == 'tes') {
+        final nilai = e.skor ?? 0;
+        final hasil = kProgress.bahasaInggris 
+          ? ((nilai >= 75) ? 'passed (above=75)' : 'failed (under 75)') 
+          : ((nilai >= 75) ? 'lulus (diatas=75)' : 'tidak lulus (dibawah 75)');
+        pesan = kProgress.bahasaInggris 
+          ? '[$waktu] MCompleted a test, $hasil with a grade of $nilai' 
+          : '[$waktu] Menyelesaikan tes, hasil $hasil dengan nilai $nilai';
+      } else { // belajar
+        final modul = e.modul ?? 0;
+        final materi = e.materi?.toString() ?? '-';
+        final namaModul = _namaModul(modul, kProgress);
+        pesan = kProgress.bahasaInggris 
+          ? '[$waktu] Reading material $materi in module $namaModul'
+          : '[$waktu] Membaca materi $materi pada modul $namaModul';
+      }
+
+      out.add(pesan);
+    }
+
+    return out;
+  }
 
   // =====================================================
   // =============== GETTER: AMBIL SEMUA LOG =============
@@ -27,9 +140,15 @@ class KontrolLog {
 
   /// Internal function untuk menambah log
   Future<void> _tambahLog(ELogDetail data) async {
-    final logs = await ambilLog();
-    logs.list.add(data);
-    await KontrolDatabase().simpanJson(namaFile, logs.toJson());
+    _eLog.list.add(data);
+    await _simpanKeDisk();
+  }
+
+  Future<void> _simpanKeDisk() async {
+    // KontrolDatabase.simpanJson menerima Map or List (sesuaikan implementasimu)
+    // log harus disimpan sebagai LIST
+    final data = _eLog.toJson(); // returns List<Map<String,dynamic>>
+    await KontrolDatabase().simpanJson(namaFile, data);
   }
 
   // ------------------ BELAJAR -------------------------

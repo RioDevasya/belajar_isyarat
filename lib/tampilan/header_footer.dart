@@ -2,6 +2,7 @@ import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_database.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_kuis.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_tes.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
@@ -17,6 +18,18 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     final kontrolMenu = context.watch<KontrolMenu>();
     final kontrolDatabase = context.read<KontrolDatabase>();
     final alatApp = context.read<AlatApp>();
+    final kProgress = context.read<KontrolProgress>();
+
+    final menuTentang = kontrolMenu.halaman == 8;
+    final menuBelajar = kontrolMenu.halaman == 0 
+                          || kontrolMenu.halaman == 1 
+                          || kontrolMenu.halaman == 2 
+                          || kontrolMenu.halaman == 3 
+                          || kontrolMenu.halaman == 4;
+
+    final menuKuis = kontrolMenu.halaman == 5 || kontrolMenu.halaman == 6;
+    final menuProgres = kontrolMenu.halaman == 7;
+    final menuPengaturan = kontrolMenu.halaman == 9;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
@@ -47,13 +60,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                           decoration: BoxDecoration(
                             color: alatApp.kotakPutih,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.10),
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
+                            boxShadow: alatApp.boxShadow,
                           ),
                           child: kontrolDatabase.ambilGambar("placeholder"),
                         ),
@@ -64,13 +71,13 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                           tinggi: 40,
                           tepiRadius: 5,
                           isiTengah: true,
-                          judul: "Belajar Isyarat",
-                          judulUkuran: 20,
-                          judulWarna: kontrolMenu.halaman == 8 ? alatApp.teksKuning : alatApp.teksPutihSedang,
+                          judul: alatApp.teksAplikasi(kProgress),
+                          judulUkuran: 22,
+                          judulWarna: menuTentang ? alatApp.teksKuning : alatApp.teksPutihSedang,
                           fontJudul: alatApp.namaAplikasi,
                           teksTengah: true,
                           garisBawahJudul: true,
-                          kotakWarna: kontrolMenu.halaman == 8 ? alatApp.kotakPutih : Colors.transparent,
+                          kotakWarna: menuTentang ? alatApp.kotakPutih : Colors.transparent,
                           pakaiKlik: true,
                           pakaiHover: true,
                           padaHoverAnimasi: padaHoverAnimasi2,
@@ -78,6 +85,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                           padaKlik: () {
                             kontrolMenu.bukaMenu(8);
                           },
+                          bayanganKotak: menuTentang ? alatApp.boxShadow : null,
+                          padaHoverBayanganKotak: menuTentang ? alatApp.boxShadow : null,
                         )
                       ]
                     ),
@@ -94,19 +103,11 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         tinggi: 40,
                         tepiRadius: 5,
                         isiTengah: true,
-                        judul: "Belajar",
+                        judul: alatApp.teksHeaderBelajar(kProgress),
                         judulUkuran: 20,
-                        judulWarna: kontrolMenu.halaman == 0 
-                          || kontrolMenu.halaman == 1 
-                          || kontrolMenu.halaman == 2 
-                          || kontrolMenu.halaman == 3 
-                          || kontrolMenu.halaman == 4 ? alatApp.teksKuning : alatApp.teksPutihSedang,
+                        judulWarna: menuBelajar ? alatApp.teksKuning : alatApp.teksPutihSedang,
                         fontJudul: alatApp.judul,
-                        kotakWarna: kontrolMenu.halaman == 0 
-                          || kontrolMenu.halaman == 1 
-                          || kontrolMenu.halaman == 2 
-                          || kontrolMenu.halaman == 3 
-                          || kontrolMenu.halaman == 4 ? alatApp.kotakPutih : Colors.transparent,
+                        kotakWarna: menuBelajar ? alatApp.kotakPutih : Colors.transparent,
                         pakaiKlik: true,
                         pakaiHover: true,
                         padaHoverAnimasi: padaHoverAnimasi2,
@@ -114,6 +115,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         padaKlik: () {
                           kontrolMenu.bukaMenu(0);
                         },
+                        bayanganKotak: menuBelajar ? alatApp.boxShadow : null,
+                        padaHoverBayanganKotak: menuBelajar ? alatApp.boxShadow : null,
                       ),
                       SizedBox(width: 10),
 
@@ -122,11 +125,11 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         tinggi: 40,
                         tepiRadius: 5,
                         isiTengah: true,
-                        judul: "Kuis",
+                        judul: alatApp.teksHeaderKuis(kProgress),
                         judulUkuran: 20,
-                        judulWarna: kontrolMenu.halaman == 5 || kontrolMenu.halaman == 6 ? alatApp.teksKuning : alatApp.teksPutihSedang,
+                        judulWarna: menuKuis ? alatApp.teksKuning : alatApp.teksPutihSedang,
                         fontJudul: alatApp.judul,
-                        kotakWarna: kontrolMenu.halaman == 5 || kontrolMenu.halaman == 6 ? alatApp.kotakPutih : Colors.transparent,
+                        kotakWarna: menuKuis ? alatApp.kotakPutih : Colors.transparent,
                         pakaiKlik: true,
                         pakaiHover: true,
                         padaHoverAnimasi: padaHoverAnimasi2,
@@ -134,6 +137,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         padaKlik: () {
                           kontrolMenu.bukaMenu(5);
                         },
+                        bayanganKotak: menuKuis ? alatApp.boxShadow : null,
+                        padaHoverBayanganKotak: menuKuis ? alatApp.boxShadow : null,
                       ),
                       SizedBox(width: 10),
 
@@ -142,11 +147,11 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         tinggi: 40,
                         tepiRadius: 5,
                         isiTengah: true,
-                        judul: "Progress",
+                        judul: alatApp.teksHeaderProgres(kProgress),
                         judulUkuran: 20,
-                        judulWarna: kontrolMenu.halaman == 7 ? alatApp.teksKuning : alatApp.teksPutihSedang,
+                        judulWarna: menuProgres ? alatApp.teksKuning : alatApp.teksPutihSedang,
                         fontJudul: alatApp.judul,
-                        kotakWarna: kontrolMenu.halaman == 7 ? alatApp.kotakPutih : Colors.transparent,
+                        kotakWarna: menuProgres ? alatApp.kotakPutih : Colors.transparent,
                         pakaiKlik: true,
                         pakaiHover: true,
                         padaHoverAnimasi: padaHoverAnimasi2,
@@ -154,6 +159,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         padaKlik: () {
                           kontrolMenu.bukaMenu(7);
                         },
+                        bayanganKotak: menuProgres ? alatApp.boxShadow : null,
+                        padaHoverBayanganKotak: menuProgres ? alatApp.boxShadow : null,
                       ),
                     ],
                   ),
@@ -164,15 +171,15 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                   child: Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: CardStatis(
-                        lebar: 100,
+                        lebar: 140,
                         tinggi: 40,
                         tepiRadius: 5,
                         isiTengah: true,
-                        judul: "Bantuan",
+                        judul: alatApp.teksHeaderPengaturan(kProgress),
                         judulUkuran: 20,
-                        judulWarna: kontrolMenu.halaman == 9 ? alatApp.teksKuning : alatApp.teksPutihSedang,
+                        judulWarna: menuPengaturan ? alatApp.teksKuning : alatApp.teksPutihSedang,
                         fontJudul: alatApp.judul,
-                        kotakWarna: kontrolMenu.halaman == 9 ? alatApp.kotakPutih : Colors.transparent,
+                        kotakWarna: menuPengaturan ? alatApp.kotakPutih : Colors.transparent,
                         pakaiKlik: true,
                         pakaiHover: true,
                         padaHoverAnimasi: padaHoverAnimasi2,
@@ -180,6 +187,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         padaKlik: () {
                           kontrolMenu.bukaMenu(9);
                         },
+                        bayanganKotak: menuPengaturan ? alatApp.boxShadow : null,
+                        padaHoverBayanganKotak: menuPengaturan ? alatApp.boxShadow : null,
                       ),
                     ),
                   ),
@@ -249,15 +258,17 @@ class _FooterModel1State extends State<FooterModel1>
     final kKuisSoalKuis = context.select<KontrolKuis, int>(
       (k) => k.ambilAwalAntrianKuis
     );
+    final kLog = context.read<KontrolLog>();
     final kKuis = context.read<KontrolKuis>();
-    final kontrolProgress = context.read<KontrolProgress>();
+    final kProgress = context.read<KontrolProgress>();
     final alat = context.read<AlatApp>();
+    final kDatabase = context.read<KontrolDatabase>();
 
     padaJawab = () {
       if (kKuis.cekSatuKuisSelesai()) {
-        nilaiJawaban = kKuis.ajukanKuis(kontrolProgress);
+        nilaiJawaban = kKuis.ajukanKuis(kProgress, kLog);
         animasikanSkor();
-        kKuis.aturSoalSelanjutnya(kontrolProgress);
+        kKuis.aturSoalSelanjutnya(kProgress);
         print(kKuis.susunanJawabanListDynamic);
         print(kKuisSkorKuis);
       } else {
@@ -275,51 +286,76 @@ class _FooterModel1State extends State<FooterModel1>
     );
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      height: alat.ukuranFooter,
+      width: double.maxFinite,
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
-        gradient: alat.warnaFooter,
+        gradient: alat.warnaHeader,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Foto + skor animasi
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              border: Border.all(),
-              borderRadius: BorderRadius.circular(40),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Animasi skor
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Text(
-                "Skor: ${_scoreAnimation.value}${animasiSkor ? " + $nilaiJawaban" : ""}",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+          Expanded(
+            child: Row(
+              children: [
+                SizedBox(width: 10,),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: alat.kotakPutih,
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(40),
+                    boxShadow: alat.boxShadow
+                  ),
+                  child: kDatabase.ambilGambar("trophy.png"),
                 ),
-              );
-            },
+                const SizedBox(width: 16),
+
+                // Animasi skorr
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return Row(
+                      children: [
+                        Text(
+                          "${alat.teksFooterSkor(kProgress)}: ",
+                          style: TextStyle(
+                            color: alat.teksPutihSedang,
+                            fontSize: 27,
+                            fontWeight: FontWeight.bold,
+                            shadows: alat.teksShadow,
+                            fontFamily: alat.judul
+                          ),
+                        ),
+                        alat.bangunTeksGradien(
+                          teks: "${_scoreAnimation.value}${animasiSkor ? " + $nilaiJawaban" : ""}", 
+                          warna: alat.progress, 
+                          font: alat.judul, 
+                          ukuranFont: 27,
+                          beratFont: FontWeight.bold
+                        )
+                      ],
+                    );
+                  },
+                ),
+              ]
+            )
           ),
 
           // Tombol Jawab
           CardStatis(
-            lebar: 100, 
-            tinggi: 40,
+            lebar: 140,
+            tinggi: 55,
             isiTengah: true,
             padding: 10,
             tepiRadius: 10,
-            pemisahGarisLuarUkuran: 3,
+            pemisahGarisLuarUkuran: 4,
             pemisahGarisLuarWarna: gagal ? alat.salah : null,
-            garisLuarUkuran: 10,
-            judul: "Jawab",
-            judulUkuran: 10,
+            garisLuarUkuran: 4,
+            judul: alat.teksFooterJawab(kProgress),
+            judulUkuran: 14,
             fontJudul: alat.judul,
             judulWarna: alat.teksPutihSedang,
             kotakGradient: alat.terpilih,
@@ -332,7 +368,10 @@ class _FooterModel1State extends State<FooterModel1>
             padaKlik: () {
               padaJawab();
             },
+            bayanganKotak: alat.boxShadow,
+            padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
           ),
+          SizedBox(width: 10,)
         ],
       ),
     );
@@ -363,7 +402,12 @@ class _FooterModel2State extends State<FooterModel2> {
 
   @override
   Widget build(BuildContext context) {
-    final kontrolProgress = context.read<KontrolProgress>();
+    final kBelajar = context.read<KontrolBelajar>();
+    final kMenu = context.read<KontrolMenu>();
+    final kLog = context.read<KontrolLog>();
+    final kProgress = context.read<KontrolProgress>();
+    final alat = context.read<AlatApp>();
+    final kTes = context.read<KontrolTes>();
 
     late int sekarang;
     late int total;
@@ -375,8 +419,6 @@ class _FooterModel2State extends State<FooterModel2> {
     late String teksAkhirSelanjutnya;
 
     if (widget.belajar) {
-      final kBelajar = context.read<KontrolBelajar>();
-      final kMenu = context.read<KontrolMenu>();
       sekarang = context.select<KontrolBelajar, int>((k) => k.materiSekarang);
       total = kBelajar.totalMateriSekarang;
       progress = sekarang / total;
@@ -388,14 +430,13 @@ class _FooterModel2State extends State<FooterModel2> {
           kMenu.bukaMenu(1);
           return;
         }
-        kBelajar.aturMateriSelanjutnya(kontrolProgress);
+        kBelajar.aturMateriSelanjutnya(kProgress, kLog);
       };
 
       akhirSebelumnya = sekarang == 1 ? true : false;
       akhirSelanjutnya = sekarang == 0 ? true : false;
-      teksAkhirSelanjutnya = sekarang == total ? "Keluar" : "Selanjutnya";
+      teksAkhirSelanjutnya = sekarang == total ? alat.teksFooterKeluar(kProgress) : alat.teksFooterSelanjutnya(kProgress);
     } else {
-      final kTes = context.read<KontrolTes>();
       sekarang = context.select<KontrolTes, int>((k) => k.soal);
       total = kTes.totalSoal;
       progress = sekarang / total;
@@ -411,7 +452,7 @@ class _FooterModel2State extends State<FooterModel2> {
         if (!kTes.tesSelesai && sekarang == total) {
           kTes.jawabSoal(notify: true);
           if (kTes.cekSemuaTesSelesai()) {
-            kTes.ajukanTes(kontrolProgress);
+            kTes.ajukanTes(kProgress, kLog);
             return;
           } else {
             trigger();
@@ -427,16 +468,16 @@ class _FooterModel2State extends State<FooterModel2> {
 
       akhirSebelumnya = sekarang == 1 ? true : false;
       akhirSelanjutnya = sekarang > total ? true : false;
-      teksAkhirSelanjutnya = sekarang >= total ? "Kumpul Tes" : "Selanjutnya";
+      teksAkhirSelanjutnya = sekarang >= total ? alat.teksFooterKumpul(kProgress) : alat.teksFooterSelanjutnya(kProgress);
     }
 
-    final alat = context.read<AlatApp>();
-
     return Container(
+      height: alat.ukuranFooter,
+      width: double.maxFinite,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
-        gradient: alat.warnaFooter,
+        gradient: alat.warnaHeader,
       ),
       child: Row(
         children: [
@@ -448,6 +489,7 @@ class _FooterModel2State extends State<FooterModel2> {
               fontSize: 16, 
               fontWeight: FontWeight.bold,
               color: alat.teksPutihSedang,
+              shadows: alat.teksShadow
             ),
           ),
           const SizedBox(width: 16),
@@ -456,7 +498,7 @@ class _FooterModel2State extends State<FooterModel2> {
           Expanded(
             child: alat.bangunProgressBar(
               context: context,
-              progress: progress, 
+              progresss: progress, 
               tinggi: 20
             )
           ),
@@ -467,10 +509,9 @@ class _FooterModel2State extends State<FooterModel2> {
             lebar: 100, 
             tinggi: 40,
             isiTengah: true,
-            padding: 10,
             tepiRadius: 10,
-            pemisahGarisLuarUkuran: 3,
-            judul: "Sebelumnya",
+            pemisahGarisLuarUkuran: 4,
+            judul: alat.teksFooterSebelumnya(kProgress),
             judulUkuran: 10,
             fontJudul: alat.judul,
             judulGradient: alat.terpilih,
@@ -483,6 +524,8 @@ class _FooterModel2State extends State<FooterModel2> {
             padaKlik: () {
               padaSebelumnya();
             },
+            bayanganKotak: alat.boxShadow,
+            padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
           ),
           const SizedBox(width: 10),
 
@@ -491,9 +534,8 @@ class _FooterModel2State extends State<FooterModel2> {
             lebar: 100, 
             tinggi: 40,
             isiTengah: true,
-            padding: 10,
             tepiRadius: 10,
-            pemisahGarisLuarUkuran: 3,
+            pemisahGarisLuarUkuran: 4,
             pemisahGarisLuarWarna: gagal ? alat.salah : null,
             judul: teksAkhirSelanjutnya,
             judulUkuran: 10,
@@ -510,6 +552,8 @@ class _FooterModel2State extends State<FooterModel2> {
             padaKlik: () {
               padaSelanjutnya();
             },
+            bayanganKotak: alat.boxShadow,
+            padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
           ),
         ],
       ),

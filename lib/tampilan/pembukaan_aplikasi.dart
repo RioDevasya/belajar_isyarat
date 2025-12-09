@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -116,16 +117,17 @@ class _PembukaanAplikasiState extends State<PembukaanAplikasi> {
             providers: [
               Provider.value(value: init.kontrolDatabase),
               Provider.value(value: init.kontrolProgress),
+              Provider.value(value: init.kontrolLog),
               Provider.value(value: init.alatApp),
               ChangeNotifierProvider.value(value: init.kontrolBelajar),
               ChangeNotifierProvider.value(value: init.kontrolMenu),
               ChangeNotifierProvider.value(value: init.kontrolTes),
               ChangeNotifierProvider.value(value: init.kontrolKuis),
             ],
-            child: const MenuRoot(),
+            child: MenuRoot(),
+            ),
           ),
-        ),
-      );
+        );
     });
   }
 

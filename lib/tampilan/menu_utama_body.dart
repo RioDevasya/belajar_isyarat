@@ -1,22 +1,11 @@
 import 'package:belajar_isyarat/alat/alat_app.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_belajar.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_kuis.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_menu.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:belajar_isyarat/tampilan/card_statis.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-class Pelajaran {
-  final String name;
-  final String iconPath;
-
-  Pelajaran(this.name, this.iconPath);
-}
-
-final List<Pelajaran> items = [
-  Pelajaran("Angka", "numbers"),
-  Pelajaran("Huruf", "abc-block"),
-];
 
 class MenuUtamaBody extends StatefulWidget {
   const MenuUtamaBody({super.key});
@@ -42,20 +31,20 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
 
   @override
   Widget build(BuildContext context) {
-    final kProgressProgressKuis = context.select<KontrolProgress, int>(
-      (k) => k.progressKuis
-    );
-    final kProgressProgressMateri = context.select<KontrolProgress, double>(
-      (k) => k.ambilProgressStatusSemuaMateri()
-    );
+    
     final kProgress = context.read<KontrolProgress>();
     final kBelajar = context.read<KontrolBelajar>();
     final kMenu = context.read<KontrolMenu>();
     final alat = context.read<AlatApp>();
+    final kKuisProgressKuis = context.select<KontrolKuis, int>(
+      (k) => k.skorKuis
+    );
+    final kBelajarProgressMateri = context.select<KontrolBelajar, int>(
+      (k) => k.totalSemuaMateriSelesai(kProgress)
+    );
+    final totalMateri = kBelajar.totalSemuaMateri();
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
+    return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // === KOLOM KIRI: Daftar Pelajaran ===
@@ -72,26 +61,28 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                 child: Center(
                   child: ListView.builder(
                     controller: controller,
-                    itemCount: items.length,
+                    itemCount: alat.itemBelajar(kProgress).length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 5, top: 5), // jarak antar item
                         child: CardStatis(
                           lebar: null,
-                          tinggi: 90,
+                          tinggi: 110,
                           padding: 5,
-                          tepiRadius: 12.5,
+                          tepiRadius: 25,
                           pemisahGarisLuarUkuran: 3,
+                          bayanganKotak: alat.boxShadow,
                           garisLuarUkuran: 5,
-                          judul: items[index].name,
-                          judulUkuran: 27,
+                          judul: alat.itemBelajar(kProgress)[index].name,
+                          judulUkuran: 34,
                           judulWarna: alat.teksPutihSedang,
                           fontJudul: alat.judul,
                           isiTengah: true,
-                          gambar: [items[index].iconPath],
+                          gambar: [alat.itemBelajar(kProgress)[index].iconPath],
                           besarGambar: null,
                           warnaGambarColor: alat.kotakPutih,
                           tepiRadiusGambar: 20,
+                          paddingGambar: 10,
                           kotakWarna: alat.kotak1,
                           pakaiKlik: true,
                           pakaiHover: true,
@@ -103,6 +94,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                             kBelajar.aturModulSekarang(index + 1);
                             kMenu.bukaMenu(1);
                           },
+                          padaHoverBayanganGarisLuar: alat.boxShadowHover,
                         ),
                       );
                     },
@@ -121,7 +113,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 color: alat.kotakUtama,
-                borderRadius: BorderRadius.circular(12.5)
+                borderRadius: BorderRadius.circular(12.5),
+                boxShadow: alat.boxShadow
               ),
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -133,7 +126,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 30),
                     Expanded(
                       child: Align(
                         alignment: Alignment.topCenter,
@@ -146,19 +139,20 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Progress Anda: ",
+                                  "${alat.teksUtamaProgress(kProgress)}: ",
                                   style: TextStyle(
                                     fontFamily: alat.judul,
-                                    fontSize: 27,
+                                    fontSize: 34,
                                     fontWeight: FontWeight.bold,
                                     color: alat.teksKuning
                                   ),
                                 ),
                                 alat.bangunTeksGradien(
-                                  teks: kProgressProgressKuis.toString(),
+                                  teks: kKuisProgressKuis.toString(),
                                   warna: alat.progress, 
                                   font: alat.judul, 
-                                  ukuranFont: 27
+                                  ukuranFont: 34,
+                                  beratFont: FontWeight.bold
                                 )
                               ],
                             ),
@@ -170,16 +164,17 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                     
                     Expanded(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (kProgress.nama != null)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Nama: ",
+                                  "${alat.teksUtamaNama(kProgress)}: ",
                                   style: TextStyle(
                                     fontFamily: alat.teks,
-                                    fontSize: 16,
+                                    fontSize: 27,
                                     fontWeight: FontWeight.bold,
                                     color: alat.teksHitam
                                   ),
@@ -188,7 +183,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                   teks: kProgress.nama!,
                                   warna: alat.progress, 
                                   font: alat.judul, 
-                                  ukuranFont: 16
+                                  ukuranFont: 27,
+                                  beratFont: FontWeight.bold
                                 ),
                               ],
                             ),
@@ -198,10 +194,10 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Sekolah: ",
+                                  "${alat.teksUtamaSekolah(kProgress)}: ",
                                   style: TextStyle(
                                     fontFamily: alat.teks,
-                                    fontSize: 16,
+                                    fontSize: 27,
                                     fontWeight: FontWeight.bold,
                                     color: alat.teksHitam
                                   ),
@@ -210,7 +206,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                   teks: kProgress.sekolah!,
                                   warna: alat.progress, 
                                   font: alat.judul, 
-                                  ukuranFont: 16
+                                  ukuranFont: 27,
+                                  beratFont: FontWeight.bold
                                 )
                               ],
                             ),
@@ -220,10 +217,10 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Jabatan: ",
+                                  "${alat.teksUtamaJabatan(kProgress)}: ",
                                   style: TextStyle(
                                     fontFamily: alat.teks,
-                                    fontSize: 16,
+                                    fontSize: 27,
                                     fontWeight: FontWeight.bold,
                                     color: alat.teksHitam
                                   ),
@@ -232,7 +229,8 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                                   teks: kProgress.jabatan!,
                                   warna: alat.progress, 
                                   font: alat.judul, 
-                                  ukuranFont: 16
+                                  ukuranFont: 27,
+                                  beratFont: FontWeight.bold
                                 )
                               ],
                             ),
@@ -247,31 +245,32 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            "Total progress belajar: ",
+                            "${alat.teksUtamaProgressBar(kProgress)}: ",
                             style: TextStyle(
                               fontFamily: alat.judul,
-                              fontSize: 27,
+                              fontSize: 34,
                               fontWeight: FontWeight.bold,
                               color: alat.teksKuning
                             ),
                           ),
-
+                          SizedBox(height: 20,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "${kProgressProgressMateri * 100}%",
+                                "${(kBelajarProgressMateri / totalMateri * 100).toStringAsFixed(1)}%",
                                 style: TextStyle(
                                   fontFamily: alat.teks,
-                                  fontSize: 16,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: alat.teksHitam
                                 ),
                               ),
+                              SizedBox(width: 20,),
                               Expanded(
                                 child: alat.bangunProgressBar(
                                   context: context, 
-                                  progress: kProgressProgressMateri,
+                                  progresss: kBelajarProgressMateri / totalMateri,
                                   tinggi: 20
                                 )
                               )
@@ -286,7 +285,7 @@ class _MenuUtamaBodyState extends State<MenuUtamaBody> {
             ),
           ),
         ],
-      ),
+      
     );
   }
 }

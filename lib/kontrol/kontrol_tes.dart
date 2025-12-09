@@ -1,4 +1,5 @@
 import 'package:belajar_isyarat/entitas/tes/e_soal_tes.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 import 'package:flutter/foundation.dart';
 // ======================== BELUM CEK, CEK DULU ===================
@@ -22,10 +23,14 @@ class KontrolTes extends ChangeNotifier {
   late ETes _eTes; //.modul<String,semuaSoal>.semuaSoal[ESoalTes].suara:String?,gambar:dynamic,pertanyaan:String,opsi[String]?,jawaban:dynamic,mode:ModeTes{"susun", "pilih", "hubungkan", "lengkapi", "artikan"}
 
   // ==== inisialisasi ====
-  Future<bool> inis(KontrolDatabase kontrolDatabase) async {
-    final data = await kontrolDatabase.ambilJson('tes');
+  Future<bool> inis(KontrolDatabase kontrolDatabase, KontrolProgress kontrolProgress) async {
+    final data = kontrolProgress.bahasaInggris
+      ? await kontrolDatabase.ambilJson('tes_inggris')
+      : await kontrolDatabase.ambilJson('tes_indo');
+
     _eTes = ETes.fromJson(data);
 
+    notifyListeners();
     return true;
   }
 
@@ -82,6 +87,7 @@ class KontrolTes extends ChangeNotifier {
   int get totalSoal => _totalSoal;
   bool get menuSelesai => _menuSelesai;
   int get nilaiTes => _nilaiTes;
+  List<int> semuaNilaiTes(KontrolProgress kontrolProgress) => kontrolProgress.nilaiTes;
 
   int get pilihanKotak => _pilihanKotak;
   String get susunanJawabanString => _susunanJawaban.first == false ? "0" : _susunanJawaban.first;
@@ -295,30 +301,54 @@ class KontrolTes extends ChangeNotifier {
     notifyListeners();
   }
 
-  void jawabSoal({bool? notify}) {
+  void jawabSoal({bool notify = false}) {
     final soal = _eTes.modul[indeksModul(_modul)]!.semuaSoal[indeksSoal(_soal)];
+
+    // --- khusus mode 'pilih' --- 
     if (soal.mode.name == 'pilih') {
-      if (pilihanKotak == 0) {
-          _susunanJawaban = [false];
-      }
-      else if (soal.opsi[pilihanKotak - 1] != _susunanJawaban) {
-        _susunanJawaban = [soal.opsi[pilihanKotak - 1]];
-      }
-    }
-    if (_susunanJawaban != _simpananJawaban[indeksSoal(_soal)]) {
-      if (soal.mode.name == "pilih") {
-        _simpananJawaban[indeksSoal(_soal)] = _susunanJawaban[0] != false ? [_susunanJawaban[0]] : false;
+      // pastikan pilihanKotak valid (0 = tidak pilih)
+      if (_pilihanKotak == 0) {
+        _susunanJawaban = [false];
       } else {
-        _simpananJawaban[indeksSoal(_soal)] = _susunanJawaban;
+        final pilihan = (soal.opsi.length >= _pilihanKotak)
+            ? soal.opsi[_pilihanKotak - 1]
+            : null;
+
+        if (pilihan != null) {
+          // bandingkan dengan elemen pertama _susunanJawaban (bukan dengan list)
+          final current =
+              (_susunanJawaban.isNotEmpty) ? _susunanJawaban[0] : false;
+          if (current != pilihan) {
+            _susunanJawaban = [pilihan];
+          }
+        }
       }
     }
-    if (notify != null) {
-      _menuSelesai = true;
+
+    // --- jika ada perubahan dibanding simpanan, update simpanan ---
+    final idx = indeksSoal(_soal);
+    final sebelumnya = _simpananJawaban[idx];
+
+    // bandingkan secara sederhana: jika berbeda, lakukan update
+    // untuk mode 'pilih' simpan sebagai list atau false sesuai aturan
+    if (!deepEquals(_susunanJawaban, sebelumnya)) {
+      if (soal.mode.name == "pilih") {
+        _simpananJawaban[idx] =
+            (_susunanJawaban.isNotEmpty && _susunanJawaban[0] != false)
+                ? [_susunanJawaban[0]]
+                : false;
+      } else {
+        _simpananJawaban[idx] = _susunanJawaban;
+      }
+    }
+
+    // --- notify hanya jika diminta eksplisit ---
+    if (notify) {
       notifyListeners();
     }
   }
 
-  void ajukanTes(KontrolProgress kontrolProgress) {
+  void ajukanTes(KontrolProgress kontrolProgress, KontrolLog kontrolLog) {
     if (!cekSemuaTesSelesai()) {
       return;
     }
@@ -338,19 +368,20 @@ class KontrolTes extends ChangeNotifier {
     final nilai = cekHasilNilai().round();
     _nilaiTes = nilai;
     kontrolProgress.naikkanNilaiTes(_modul, nilai);
-    print("${kontrolProgress.nilaiTes}");
-    print("$jawabanBenar");
+    kontrolLog.catatLogTes(modul: _modul, skor: nilai);
     _menuSelesai = true;
     notifyListeners();
   }
 
   void aturSoalSelanjutnya() {
-    print("$_susunanJawaban || $_simpananJawaban");
     if (_soal < _eTes.modul[indeksModul(_modul)]!.semuaSoal.length) {
       jawabSoal();
       _soal++;
+      final soal = _eTes.modul[indeksModul(_modul)]!.semuaSoal[indeksSoal(_soal)];
       _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
+      _pilihanKotak = soal.mode.name == "pilih" ? (_susunanJawaban[0] != false ? soal.opsi.indexOf(_susunanJawaban[0]) + 1 : 0) : 0;
       notifyListeners();
+      print("$_susunanJawaban || $_simpananJawaban || $_pilihanKotak");
     }
   }
 
@@ -358,8 +389,11 @@ class KontrolTes extends ChangeNotifier {
     if (_soal > 1) {
       jawabSoal();
       _soal--;
+      final soal = _eTes.modul[indeksModul(_modul)]!.semuaSoal[indeksSoal(_soal)];
       _susunanJawaban = _simpananJawaban[_soal - 1] is List ? _simpananJawaban[_soal - 1] : [_simpananJawaban[_soal - 1]];
+      _pilihanKotak = soal.mode.name == "pilih" ? (_susunanJawaban[0] != false ? soal.opsi.indexOf(_susunanJawaban[0]) + 1 : 0) : 0;
       notifyListeners();
+      print("$_susunanJawaban || $_simpananJawaban || $_pilihanKotak");
     }
   }
 
@@ -374,15 +408,16 @@ class KontrolTes extends ChangeNotifier {
   }
 
   // tutup apk || tutup menu
-  void tutupMenuTes() {
-    _modul = 0;
-    _soal = 0;
+  void tutupMenuTes(int modul) {
+    _modul = modul;
+    _soal = 1;
     _tesSelesai = false;
     _menuSelesai = false;
     _jawabanBenar = 0;
-    _totalSoal = 0;
+    _totalSoal = 1;
     _susunanJawaban = [false];
     _simpananJawaban = [];
     _pilihanKotak = 0;
+    notifyListeners();
   }
 }

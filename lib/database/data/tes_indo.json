@@ -1,0 +1,215 @@
+{
+    "modul_1": [
+        {
+            "suara": "tes_angka_pilih_1",
+            "gambar": ["5"],
+            "pertanyaan": "Isyarat di atas menunjukkan angka berapa?",
+            "opsi": ["3", "5", "7"],
+            "jawaban": ["5"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_angka_pilih_1",
+            "gambar": ["4"],
+            "pertanyaan": "Isyarat tangan di atas menunjukkan angka berapa?",
+            "opsi": ["2", "4", "7"],
+            "jawaban": ["4"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_angka_pilih_2",
+            "gambar": [],
+            "pertanyaan": "Manakah isyarat untuk angka 8?",
+            "opsi": ["8", "6", "4"],
+            "jawaban": ["8"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_angka_hubungkan_1",
+            "gambar": ["3", "1", "2"],
+            "pertanyaan": "Hubungkan isyarat angka dengan angka yang benar!",
+            "opsi": ["angka_1", "angka_3", "angka_2"],
+            "jawaban": [
+                ["angka_1", "angka_2", "angka_3"],
+                ["1", "2", "3"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_angka_hubungkan_2",
+            "gambar": ["9", "7", "8"],
+            "pertanyaan": "Cocokkan setiap isyarat angka dengan angka yang sesuai!",
+            "opsi": ["angka_7", "angka_9", "angka_8"],
+            "jawaban": [
+                ["angka_7", "angka_8", "angka_9"],
+                ["7", "8", "9"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_angka_artikan_1",
+            "gambar": ["4", "2"],
+            "pertanyaan": "Susunan gambar di atas membentuk angka-angka berapa?",
+            "opsi": [],
+            "jawaban": ["4", "2"],
+            "mode": "artikan"
+        },
+        {
+            "suara": "tes_angka_artikan_1",
+            "gambar": ["1", "0"],
+            "pertanyaan": "Susunan gambar di atas membentuk angka berapa?",
+            "opsi": [],
+            "jawaban": ["1", "0"],
+            "mode": "artikan"
+        }
+    ],
+    "modul_2": [
+        {
+            "suara": "tes_huruf_pilih_1",
+            "gambar": ["c"],
+            "pertanyaan": "Isyarat tangan di atas menunjukkan huruf apa?",
+            "opsi": ["huruf_a", "huruf_c", "huruf_f"],
+            "jawaban": ["huruf_c"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_huruf_pilih_2",
+            "gambar": [],
+            "pertanyaan": "Manakah isyarat yang melambangkan huruf 'm'?",
+            "opsi": ["n", "m", "w"],
+            "jawaban": ["m"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_huruf_hubungkan_1",
+            "gambar": ["b", "a", "d"],
+            "pertanyaan": "Hubungkan isyarat dengan huruf yang sesuai!",
+            "opsi": ["huruf_d", "huruf_a", "huruf_b"],
+            "jawaban": [
+                ["huruf_a", "huruf_b", "huruf_d"],
+                ["a", "b", "d"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_huruf_hubungkan_2",
+            "gambar": ["t", "s", "p"],
+            "pertanyaan": "Cocokkan isyarat dengan huruf yang benar!",
+            "opsi": ["huruf_p", "huruf_s", "huruf_t"],
+            "jawaban": [
+                ["huruf_t", "huruf_s", "huruf_p"],
+                ["t", "s", "p"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_huruf_artikan_1",
+            "gambar": ["a", "n", "a", "k"],
+            "pertanyaan": "Susunan gambar di atas membentuk kata apa?",
+            "opsi": [],
+            "jawaban": ["a", "n", "a", "k"],
+            "mode": "artikan"
+        },
+        {
+            "suara": "tes_huruf_artikan_2",
+            "gambar": ["b", "o", "o", "k"],
+            "pertanyaan": "Susunan gambar di atas membentuk kata apa?",
+            "opsi": [],
+            "jawaban": ["b", "o", "o", "k"],
+            "mode": "artikan"
+        },
+        {
+            "suara": "tes_huruf_pilih_3",
+            "gambar": ["h"],
+            "pertanyaan": "Huruf apakah yang ditunjukkan oleh isyarat tersebut?",
+            "opsi": ["huruf_h", "huruf_i", "huruf_n"],
+            "jawaban": ["huruf_h"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_lengkapi_huruf_1",
+            "gambar": [null],
+            "pertanyaan": "Isi kotak di atas dengan huruf 'u'!",
+            "opsi": ["a", "u", "o"],
+            "jawaban": ["u"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_pilih_huruf_1",
+            "gambar": [null],
+            "pertanyaan": "Isi kotak di atas dengan huruf 'p'!",
+            "opsi": ["p", "n", "u"],
+            "jawaban": ["u"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_pilih_huruf_2",
+            "gambar": ["r"],
+            "pertanyaan": "Huruf apakah yang diwakili oleh isyarat di atas?",
+            "opsi": ["huruf_f", "huruf_r", "huruf_l"],
+            "jawaban": ["huruf_r"],
+            "mode": "pilih"
+        }
+    ],
+    "modul_3": [
+        {
+            "suara": "tes_api_1",
+            "gambar": [],
+            "pertanyaan": "Susun huruf agar membentuk kata 'api'!",
+            "opsi": ["p", "a", "i"],
+            "jawaban": ["a", "p", "i"],
+            "mode": "susun"
+        },
+        {
+            "suara": "tes_air_1",
+            "gambar": ["a", null, "r"],
+            "pertanyaan": "Isi huruf yang hilang agar menjadi kata 'air'!",
+            "opsi": ["i", "u", "e"],
+            "jawaban": ["a", "i", "r"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_ayah_1",
+            "gambar": ["a", null, "a", null],
+            "pertanyaan": "Isi huruf yang hilang agar menjadi kata 'ayah'!",
+            "opsi": ["y", "u", "i", "h"],
+            "jawaban": ["a", "y", "a", "h"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_baju_1",
+            "gambar": ["j", "b", "a"],
+            "pertanyaan": "Hubungkan isyarat dengan huruf yang sesuai!",
+            "opsi": ["huruf_a", "huruf_b", "huruf_j"],
+            "jawaban": [
+                ["huruf_b", "huruf_a", "huruf_j"],
+                ["b", "a", "j"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_meja_1",
+            "gambar": [],
+            "pertanyaan": "Susun huruf agar membentuk kata 'meja'!",
+            "opsi": ["j", "m", "a", "e"],
+            "jawaban": ["m", "e", "j", "a"],
+            "mode": "susun"
+        },
+        {
+            "suara": "tes_kursi_1",
+            "gambar": ["k", "u", null, null, "i"],
+            "pertanyaan": "Isi huruf agar membentuk kata 'kursi'!",
+            "opsi": ["r", "l", "a", "s"],
+            "jawaban": ["k", "u", "r", "s", "i"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_pintu_1",
+            "gambar": ["p", "i", "n", "t", "u"],
+            "pertanyaan": "Susunan gambar di atas membentuk kata apa?",
+            "opsi": [],
+            "jawaban": ["p", "i", "n", "t", "u"],
+            "mode": "artikan"
+        }
+    ]
+}

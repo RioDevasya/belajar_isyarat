@@ -221,7 +221,127 @@
     ],
     "modul_3": [
         {
-            "suara": "belajar_oke",
+            "suara": "belajar_api",
+            "gambar": ["a", "p", "i"],
+            "judul": "'api' dalam bahasa isyarat",
+            "penjelasan": "api adalah sumber panas dan cahaya"
+        },
+        {
+            "suara": "belajar_air",
+            "gambar": ["a", "i", "r"],
+            "judul": "'air' dalam bahasa isyarat",
+            "penjelasan": "air adalah cairan yang kita minum setiap hari"
+        },
+        {
+            "suara": "belajar_bola",
+            "gambar": ["b", "o", "l", "a"],
+            "judul": "'bola' dalam bahasa isyarat",
+            "penjelasan": "bola adalah mainan berbentuk bulat yang bisa dilempar atau ditendang"
+        },
+        {
+            "suara": "belajar_baju",
+            "gambar": ["b", "a", "j", "u"],
+            "judul": "'baju' dalam bahasa isyarat",
+            "penjelasan": "baju adalah pakaian yang dipakai di tubuh"
+        },
+        {
+            "suara": "belajar_buku",
+            "gambar": ["b", "u", "k", "u"],
+            "judul": "'buku' dalam bahasa isyarat",
+            "penjelasan": "buku adalah benda untuk membaca dan belajar"
+        },
+        {
+            "suara": "belajar_meja",
+            "gambar": ["m", "e", "j", "a"],
+            "judul": "'meja' dalam bahasa isyarat",
+            "penjelasan": "meja adalah tempat untuk menaruh barang"
+        },
+        {
+            "suara": "belajar_kursi",
+            "gambar": ["k", "u", "r", "s", "i"],
+            "judul": "'kursi' dalam bahasa isyarat",
+            "penjelasan": "kursi adalah tempat untuk duduk"
+        },
+        {
+            "suara": "belajar_pintu",
+            "gambar": ["p", "i", "n", "t", "u"],
+            "judul": "'pintu' dalam bahasa isyarat",
+            "penjelasan": "pintu adalah bagian rumah untuk keluar atau masuk"
+        },
+        {
+            "suara": "belajar_main",
+            "gambar": ["m", "a", "i", "n"],
+            "judul": "'main' dalam bahasa isyarat",
+            "penjelasan": "main adalah kegiatan bermain atau bersenang-senang"
+        },
+        {
+            "suara": "belajar_makan",
+            "gambar": ["m", "a", "k", "a", "n"],
+            "judul": "'makan' dalam bahasa isyarat",
+            "penjelasan": "makan adalah kegiatan memasukkan makanan ke mulut"
+        },
+        {
+            "suara": "belajar_minum",
+            "gambar": ["m", "i", "n", "u", "m"],
+            "judul": "'minum' dalam bahasa isyarat",
+            "penjelasan": "minum adalah kegiatan memasukkan cairan ke mulut"
+        },
+        {
+            "suara": "belajar_mandi",
+            "gambar": ["m", "a", "n", "d", "i"],
+            "judul": "'mandi' dalam bahasa isyarat",
+            "penjelasan": "mandi adalah kegiatan membersihkan tubuh"
+        },
+        {
+            "suara": "belajar_tidur",
+            "gambar": ["t", "i", "d", "u", "r"],
+            "judul": "'tidur' dalam bahasa isyarat",
+            "penjelasan": "tidur adalah kegiatan beristirahat"
+        },
+        {
+            "suara": "belajar_rumah",
+            "gambar": ["r", "u", "m", "a", "h"],
+            "judul": "'rumah' dalam bahasa isyarat",
+            "penjelasan": "rumah adalah tempat tinggal kita"
+        },
+        {
+            "suara": "belajar_teman",
+            "gambar": ["t", "e", "m", "a", "n"],
+            "judul": "'teman' dalam bahasa isyarat",
+            "penjelasan": "teman adalah orang yang kita kenal dan ajak bermain"
+        },
+        {
+            "suara": "belajar_ayo",
+            "gambar": ["a", "y", "o"],
+            "judul": "'ayo' dalam bahasa isyarat",
+            "penjelasan": "ayo digunakan untuk mengajak seseorang melakukan sesuatu"
+        },
+        {
+            "suara": "belajar_stop",
+            "gambar": ["s", "t", "o", "p"],
+            "judul": "'stop' dalam bahasa isyarat",
+            "penjelasan": "stop berarti berhenti melakukan sesuatu"
+        },
+        {
+            "suara": "belajar_adik",
+            "gambar": ["a", "d", "i", "k"],
+            "judul": "'adik' dalam bahasa isyarat",
+            "penjelasan": "adik adalah saudara yang lebih muda"
+        },
+        {
+            "suara": "belajar_kakak",
+            "gambar": ["k", "a", "k", "a", "k"],
+            "judul": "'kakak' dalam bahasa isyarat",
+            "penjelasan": "kakak adalah saudara yang lebih tua"
+        },
+        {
+            "suara": "belajar_ayah",
+            "gambar": ["a", "y", "a", "h"],
+            "judul": "'ayah' dalam bahasa isyarat",
+            "penjelasan": "ayah adalah orang tua laki-laki"
+        },
+        {
+            "suara": "belajar_ibu",
             "gambar": ["i", "b", "u"],
             "judul": "'ibu' dalam bahasa isyarat",
             "penjelasan": "ibu adalah orang tua perempuan"

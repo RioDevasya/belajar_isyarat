@@ -1,4 +1,5 @@
 import 'package:belajar_isyarat/alat/alat_app.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:flutter/material.dart';
 
 import 'kontrol_database.dart';
@@ -11,6 +12,7 @@ import 'kontrol_menu.dart';
 class InisialisasiApp with ChangeNotifier {
   late final KontrolDatabase kontrolDatabase;
   late final KontrolProgress kontrolProgress;
+  late final KontrolLog kontrolLog;
   late final KontrolBelajar kontrolBelajar;
   late final KontrolTes kontrolTes;
   late final KontrolKuis kontrolKuis;
@@ -19,7 +21,7 @@ class InisialisasiApp with ChangeNotifier {
 
   String status = "Memulai...";
   int langkah = 0;
-  int total = 4; // jumlah kontrol
+  int total = 5; // jumlah kontrol
 
   void _update(String pesan) {
     status = pesan;
@@ -31,6 +33,7 @@ class InisialisasiApp with ChangeNotifier {
     print("Masuk inisialisasi");
     kontrolDatabase = KontrolDatabase();
     kontrolProgress = KontrolProgress();
+    kontrolLog = KontrolLog();
     kontrolBelajar = KontrolBelajar();
     kontrolTes = KontrolTes();
     kontrolKuis = KontrolKuis();
@@ -38,15 +41,20 @@ class InisialisasiApp with ChangeNotifier {
     alatApp = AlatApp();
     print("Masuk inisialisasi 2: init");
 
+    bool ok1 = await kontrolLog.inis(kontrolDatabase);
+    _update("siap Log...");
+    print("Masuk inisialisasi log selesai");
+
     bool ok2 = await kontrolProgress.inis(kontrolDatabase);
     _update("siap Progress...");
 
     print("Masuk inisialisasi progress selesai");
-    bool ok3 = await kontrolBelajar.inis(kontrolDatabase);
-    _update("siap Progress...");
+    bool ok3 = await kontrolBelajar.inis(kontrolDatabase, kontrolProgress);
+ 
+ 
     print("Masuk inisialisasi belajar selesai");
 
-    bool ok4 = await kontrolTes.inis(kontrolDatabase);
+    bool ok4 = await kontrolTes.inis(kontrolDatabase, kontrolProgress);
     _update("siap Progress...");
     print("Masuk inisialisasi tes selesai");
 
@@ -54,6 +62,6 @@ class InisialisasiApp with ChangeNotifier {
     _update("siap Progress...");
     print("Masuk inisialisasi kuis selesai");
 
-  return ok2 && ok3 && ok4 && ok5;
+  return ok1 && ok2 && ok3 && ok4 && ok5;
   }
 }

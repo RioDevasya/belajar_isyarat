@@ -2,9 +2,13 @@
     "nama": "Rio",
     "sekolah": "Universitas",
     "jabatan": "guru",
-    "progress_belajar": [0, 0, 0],
-    "progress_kuis": 0,
-    "nilai_tes_modul": [0, 0],
+    "bahasa_inggris": false,
+    "progress_belajar_indo": [0, 0, 0],
+    "progress_kuis_indo": 0,
+    "nilai_tes_modul_indo": [0, 0, 0],
+    "progress_belajar_inggris": [0, 0, 0],
+    "progress_kuis_inggris": 0,
+    "nilai_tes_modul_inggris": [0, 0, 0],
     "pengaturan": [
         "nilai"
     ]

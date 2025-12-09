@@ -65,10 +65,8 @@ class KontrolDatabase {
       final pathFile = "lib/database/data/$namaFile.json";
       final targetFile = File(pathFile);
 
-      // Pastikan folder tersedia
       await targetFile.parent.create(recursive: true);
 
-      // Hanya boleh menyimpan Map atau List
       if (data is! Map && data is! List) {
         throw FlutterError(
           "simpanJson hanya menerima Map<String, dynamic> atau List. "
@@ -76,9 +74,12 @@ class KontrolDatabase {
         );
       }
 
-      // encode dan simpan
+      // ==== Pretty JSON here ====
+      const encoder = JsonEncoder.withIndent('  '); // indent dua spasi
+      final pretty = encoder.convert(data);
+
       await targetFile.writeAsString(
-        jsonEncode(data),
+        pretty,
         flush: true,
       );
 
@@ -88,5 +89,4 @@ class KontrolDatabase {
       return e;
     }
   }
-
 }

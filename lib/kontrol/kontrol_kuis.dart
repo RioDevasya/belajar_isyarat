@@ -1,6 +1,7 @@
 import 'package:belajar_isyarat/entitas/kuis/e_kuis.dart';
 import 'package:belajar_isyarat/entitas/kuis/e_soal_kuis.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_database.dart';
+import 'package:belajar_isyarat/kontrol/kontrol_log.dart';
 import 'package:belajar_isyarat/kontrol/kontrol_progress.dart';
 // ====================================== WOI, BELUM CEK ULANG ========================
 import 'dart:math';
@@ -19,12 +20,16 @@ class KontrolKuis extends ChangeNotifier {
 
   // ==== inisialisasi ====
   Future<bool> inis(KontrolDatabase kontrolDatabase, KontrolProgress kontrolProgress) async {
-    final dataSoal = await kontrolDatabase.ambilJson('kuis_soal');
+    final dataSoal = kontrolProgress.bahasaInggris
+      ? await kontrolDatabase.ambilJson('kuis_soal_inggris')
+      : await kontrolDatabase.ambilJson('kuis_soal_indo');
+      
     _eKuis = EKuis.fromJson(dataSoal);
 
     inisSoalKuis(kontrolProgress);
     _skorKuis = kontrolProgress.progressKuis;
 
+    notifyListeners();
     return true;
   }
   void inisSoalKuis(KontrolProgress kontrolProgress) {
@@ -295,7 +300,7 @@ class KontrolKuis extends ChangeNotifier {
     notifyListeners();
   }
 
-  int ajukanKuis(KontrolProgress kontrolProgress) {
+  int ajukanKuis(KontrolProgress kontrolProgress, KontrolLog kontrolLog) {
     if (!cekSatuKuisSelesai()) {
       return 0;
     }
@@ -305,10 +310,12 @@ class KontrolKuis extends ChangeNotifier {
       ? cekListListPasangan(keListListString(_susunanJawaban), keListListString(soalSekarang.jawaban)) 
       : cekJawaban(_susunanJawaban);
     
+    kontrolLog.catatLogKuis(idKuis: ambilAwalAntrianKuis, jawabanBenar: benar);
     kontrolProgress.naikkanProgressKuis(ambilAwalAntrianKuis, benar);
     _skorKuis = kontrolProgress.progressKuis;
 
     print("$benar");
+    print(ambilAntrianKuis);
     notifyListeners();
     return cekNilaiKuis(benar);
   } // TODO: kembangkan pengecekkan soal

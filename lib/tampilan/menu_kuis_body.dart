@@ -20,12 +20,11 @@ class MenuKuisMenuBody extends StatelessWidget {
     final kKuis = context.read<KontrolKuis>();
     final alat = context.read<AlatApp>();
 
-    return Padding (
-      padding: const EdgeInsets.all(20),
-      child: Container(
+    return Container(
           decoration: BoxDecoration(
             color: alat.kotakUtama,
             borderRadius: BorderRadius.circular(25),
+            boxShadow: alat.boxShadow
           ),
           padding: EdgeInsets.all(10),
           child: Container(
@@ -34,9 +33,11 @@ class MenuKuisMenuBody extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Expanded(child: SizedBox()),
                 Text(
-                  "Menu Kuis",
+                  alat.teksKuisJudul(kProgress),
                   style: TextStyle(
                     fontFamily: alat.judul,
                     color: alat.teksKuning,
@@ -47,8 +48,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                 SizedBox(height: 20),
                 
                 Text(
-                  "Kuis ini opsional dan tidak akan mempengaruhi progress belajar anda,\n "
-                  "tetapi akan menambah skor kuis anda. Sangat disarankan untuk menguji kemampuan!",
+                  alat.teksKuisPenjelasan(kProgress),
                   style: TextStyle(
                     fontFamily: alat.teks,
                     fontSize: 20,
@@ -62,7 +62,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Skor Anda:   ",
+                      "${alat.teksFooterSkor(kProgress)}:   ",
                       style: TextStyle(
                         fontFamily: alat.teks,
                         fontSize: 27,
@@ -81,6 +81,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                 ),
                 
                 Expanded(
+                  flex: 2,
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: CardStatis(
@@ -89,7 +90,7 @@ class MenuKuisMenuBody extends StatelessWidget {
                       padding: 10,
                       isiTengah: true,
                       pemisahGarisLuarUkuran: 7,
-                      judul: "Mulai",
+                      judul: alat.teksTombolMulai(kProgress),
                       judulUkuran: 32,
                       judulWarna: alat.teksPutihSedang,
                       fontJudul: alat.judul,
@@ -97,13 +98,15 @@ class MenuKuisMenuBody extends StatelessWidget {
                       tepiRadius: 10,
                       pakaiKlik: true,
                       pakaiHover: true,
-                      padaHoverPemisahGarisLuarWarna: alat.kotakUtama,
+                      padaHoverPemisahGarisLuarWarna: alat.garisLuarHoverAbu,
                       padaHoverAnimasi: padaHoverAnimasi1,
                       padaKlikAnimasi: padaKlikAnimasi1,
                       padaKlik: () {
                         kKuis.bukaMenuKuis(kProgress);
                         kMenu.bukaMenu(6);
                       },
+                      bayanganKotak: alat.boxShadow,
+                      padaHoverBayanganPemisahGarisLuar: alat.boxShadowHover,
                     ),
                   ),
                 ),
@@ -111,7 +114,6 @@ class MenuKuisMenuBody extends StatelessWidget {
               ]
             ),
           ),
-        ),
     );
   }
 }
@@ -140,12 +142,14 @@ class MenuKuisSoalBody extends StatelessWidget {
     final kKuisSusunanRangkaian = context.select<KontrolKuis, List<dynamic>>(
       (k) => kKuis.susunanJawabanListDynamic
     );
+    final key = ValueKey(kKuisSoal);
 
     final soal = kKuis.ambilKuis(kKuisSoal + 1);
 
     switch (soal.mode.index) {
       case 0:
         return SoalModel1(
+          key: key,
           penjelas: soal.pertanyaan,
           gambarSoal: soal.gambar,
           gambarOpsi: soal.opsi,
@@ -157,6 +161,7 @@ class MenuKuisSoalBody extends StatelessWidget {
         );
       case 1:
         return SoalModel2(
+          key: key,
           penjelas: soal.pertanyaan,
           gambarSoal: soal.gambar,
           gambarOpsi: soal.opsi,
@@ -168,6 +173,7 @@ class MenuKuisSoalBody extends StatelessWidget {
         );
       case 2:
         return SoalModel3(
+          key: key,
           penjelas: soal.pertanyaan,
           susunanSemua: kKuisSusunanDua,
           padaSusun: (susunan) {
@@ -177,6 +183,7 @@ class MenuKuisSoalBody extends StatelessWidget {
         );
       case 3:
         return SoalModel4(
+          key: key,
           penjelas: soal.pertanyaan, 
           susunanAwal: soal.gambar, 
           susunanAtas: kKuisSusunanAtas, 
@@ -187,6 +194,7 @@ class MenuKuisSoalBody extends StatelessWidget {
         );
       case 4:
         return SoalModel5(
+            key: key,
             penjelas: soal.pertanyaan,
             gambarSoal: soal.gambar, 
             panjangRangkaian: soal.jawaban.length, 

@@ -1,0 +1,215 @@
+{
+    "modul_1": [
+        {
+            "suara": "tes_angka_pilih_1",
+            "gambar": ["5"],
+            "pertanyaan": "What number does the sign above represent?",
+            "opsi": ["3", "5", "7"],
+            "jawaban": ["5"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_angka_pilih_1",
+            "gambar": ["4"],
+            "pertanyaan": "What number does the hand sign above show?",
+            "opsi": ["2", "4", "7"],
+            "jawaban": ["4"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_angka_pilih_2",
+            "gambar": [],
+            "pertanyaan": "Which sign represents the number 8?",
+            "opsi": ["8", "6", "4"],
+            "jawaban": ["8"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_angka_hubungkan_1",
+            "gambar": ["3", "1", "2"],
+            "pertanyaan": "Match the number signs with the correct numbers!",
+            "opsi": ["angka_1", "angka_3", "angka_2"],
+            "jawaban": [
+                ["angka_1", "angka_2", "angka_3"],
+                ["1", "2", "3"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_angka_hubungkan_2",
+            "gambar": ["9", "7", "8"],
+            "pertanyaan": "Match each number sign with the correct number!",
+            "opsi": ["angka_7", "angka_9", "angka_8"],
+            "jawaban": [
+                ["angka_7", "angka_8", "angka_9"],
+                ["7", "8", "9"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_angka_artikan_1",
+            "gambar": ["4", "2"],
+            "pertanyaan": "What numbers do the signs above form?",
+            "opsi": [],
+            "jawaban": ["4", "2"],
+            "mode": "artikan"
+        },
+        {
+            "suara": "tes_angka_artikan_1",
+            "gambar": ["1", "0"],
+            "pertanyaan": "What number do the signs above form?",
+            "opsi": [],
+            "jawaban": ["1", "0"],
+            "mode": "artikan"
+        }
+    ],
+    "modul_2": [
+        {
+            "suara": "tes_huruf_pilih_1",
+            "gambar": ["c"],
+            "pertanyaan": "Which letter does the hand sign above represent?",
+            "opsi": ["huruf_a", "huruf_c", "huruf_f"],
+            "jawaban": ["huruf_c"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_huruf_pilih_2",
+            "gambar": [],
+            "pertanyaan": "Which sign represents the letter 'm'?",
+            "opsi": ["n", "m", "w"],
+            "jawaban": ["m"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_huruf_hubungkan_1",
+            "gambar": ["b", "a", "d"],
+            "pertanyaan": "Match the signs with the correct letters!",
+            "opsi": ["huruf_d", "huruf_a", "huruf_b"],
+            "jawaban": [
+                ["huruf_a", "huruf_b", "huruf_d"],
+                ["a", "b", "d"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_huruf_hubungkan_2",
+            "gambar": ["t", "s", "p"],
+            "pertanyaan": "Match each sign with the correct letter!",
+            "opsi": ["huruf_p", "huruf_s", "huruf_t"],
+            "jawaban": [
+                ["huruf_t", "huruf_s", "huruf_p"],
+                ["t", "s", "p"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_huruf_artikan_1",
+            "gambar": ["a", "n", "a", "k"],
+            "pertanyaan": "What word do the signs above form?",
+            "opsi": [],
+            "jawaban": ["a", "n", "a", "k"],
+            "mode": "artikan"
+        },
+        {
+            "suara": "tes_huruf_artikan_2",
+            "gambar": ["b", "o", "o", "k"],
+            "pertanyaan": "What word do the signs above form?",
+            "opsi": [],
+            "jawaban": ["b", "o", "o", "k"],
+            "mode": "artikan"
+        },
+        {
+            "suara": "tes_huruf_pilih_3",
+            "gambar": ["h"],
+            "pertanyaan": "Which letter is shown by the sign above?",
+            "opsi": ["huruf_h", "huruf_i", "huruf_n"],
+            "jawaban": ["huruf_h"],
+            "mode": "pilih"
+        },
+        {
+            "suara": "tes_lengkapi_huruf_1",
+            "gambar": [null],
+            "pertanyaan": "Fill the box above with the letter 'u'!",
+            "opsi": ["a", "u", "o"],
+            "jawaban": ["u"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_pilih_huruf_1",
+            "gambar": [null],
+            "pertanyaan": "Fill the box above with the letter 'p'!",
+            "opsi": ["p", "n", "u"],
+            "jawaban": ["u"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_pilih_huruf_2",
+            "gambar": ["r"],
+            "pertanyaan": "Which letter does the sign above represent?",
+            "opsi": ["huruf_f", "huruf_r", "huruf_l"],
+            "jawaban": ["huruf_r"],
+            "mode": "pilih"
+        }
+    ],
+    "modul_3": [
+        {
+            "suara": "tes_api_1",
+            "gambar": [],
+            "pertanyaan": "Arrange the letters to form the word 'fire'!",
+            "opsi": ["i", "f", "r", "e"],
+            "jawaban": ["f", "i", "r", "e"],
+            "mode": "susun"
+        },
+        {
+            "suara": "tes_air_1",
+            "gambar": ["w", null, "t", "e", "r"],
+            "pertanyaan": "Fill in the missing letter to make the word 'water'!",
+            "opsi": ["a", "u", "o"],
+            "jawaban": ["w", "a", "t", "e", "r"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_ayah_1",
+            "gambar": ["f", null, "t", null, "e", "r"],
+            "pertanyaan": "Fill in the missing letters to make the word 'father'!",
+            "opsi": ["a", "h", "o"],
+            "jawaban": ["f", "a", "t", "h", "e", "r"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_baju_1",
+            "gambar": ["h", "i"],
+            "pertanyaan": "Match the signs with the correct letters!",
+            "opsi": ["huruf_h", "huruf_i"],
+            "jawaban": [
+                ["huruf_h", "huruf_i"],
+                ["h", "i"]
+            ],
+            "mode": "hubungkan"
+        },
+        {
+            "suara": "tes_meja_1",
+            "gambar": [],
+            "pertanyaan": "Arrange the letters to form the word 'table'!",
+            "opsi": ["l", "t", "e", "b", "a"],
+            "jawaban": ["t", "a", "b", "l", "e"],
+            "mode": "susun"
+        },
+        {
+            "suara": "tes_kursi_1",
+            "gambar": ["c", "h", null, null, "r"],
+            "pertanyaan": "Fill in the missing letters to make the word 'chair'!",
+            "opsi": ["a", "i", "u"],
+            "jawaban": ["c", "h", "a", "i", "r"],
+            "mode": "lengkapi"
+        },
+        {
+            "suara": "tes_pintu_1",
+            "gambar": ["d", "o", "o", "r"],
+            "pertanyaan": "What word do these signs form?",
+            "opsi": [],
+            "jawaban": ["d", "o", "o", "r"],
+            "mode": "artikan"
+        }
+    ]
+}

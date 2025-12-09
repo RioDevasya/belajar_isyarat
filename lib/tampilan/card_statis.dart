@@ -60,12 +60,21 @@ class CardStatis extends StatefulWidget {
   final Color? padaHoverPemisahGarisLuarWarna;
   final LinearGradient? padaHoverPemisahGarisLuarGradient;
 
-  final bool padaHoverPakaiBayangan;
+  final List<bool>? clipEdgeKotak;
+
+  final List<BoxShadow>? bayanganKotak;
+  final List<BoxShadow>? bayanganPemisahGarisLuar;
+  final List<BoxShadow>? bayanganGarisLuar;
+
+  final List<BoxShadow>? padaHoverBayanganKotak;
+  final List<BoxShadow>? padaHoverBayanganPemisahGarisLuar;
+  final List<BoxShadow>? padaHoverBayanganGarisLuar;
+  final List<Shadow>? bayanganJudul;
+  final List<Shadow>? bayanganTeks;
 
   final Widget? tanda;
 
   final bool pakaiHover;
-  //final bool pakaiDrag;
   final bool pakaiKlik;
 
   final VoidCallback? padaKlik;
@@ -133,6 +142,7 @@ class CardStatis extends StatefulWidget {
 
     this.tepiRadius = 0.0,
     this.susunGambarTeksBaris = Axis.horizontal,
+    this.clipEdgeKotak,
 
     this.kotakWarna,
     this.kotakGradient,
@@ -148,13 +158,22 @@ class CardStatis extends StatefulWidget {
     this.padaHoverPemisahGarisLuarWarna,
     this.padaHoverPemisahGarisLuarGradient,
 
+    this.bayanganGarisLuar,
+    this.bayanganPemisahGarisLuar,
+    this.bayanganKotak,
+
+    this.padaHoverBayanganGarisLuar,
+    this.padaHoverBayanganPemisahGarisLuar,
+    this.padaHoverBayanganKotak,
+
+    this.bayanganJudul,
+    this.bayanganTeks,
+
     this.tanda,
 
     this.padaHoverkotakWarna,
-    this.padaHoverPakaiBayangan = false,
 
     this.pakaiHover = false,
-    //this.pakaiDrag = false,
     this.pakaiKlik = false,
 
     this.padaKlik,
@@ -250,6 +269,13 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Widget bangunClipEdge(Widget child, double borderRadius) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(borderRadius),   // radius sama!
+      child: child
+    );
+  }
+
   Widget _bangunPemisahGarisLuar(Widget child) {
     final pemisahGarisLuarColor = widget.dipilih && widget.padaDipilihWarnaPemisahGarisLuar != null
         ? widget.padaDipilihWarnaPemisahGarisLuar
@@ -261,6 +287,9 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
         : _hover && widget.pakaiHover
         ? (widget.padaHoverPemisahGarisLuarGradient ?? widget.pemisahGarisLuarGradient)
         : widget.pemisahGarisLuarGradient;
+    final bayangan = _hover
+        ? widget.padaHoverBayanganPemisahGarisLuar
+        : widget.bayanganPemisahGarisLuar;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
@@ -268,7 +297,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: pemisahGarisLuarColor,
         gradient: pemisahGarisLuarGradient,
-        borderRadius: BorderRadius.circular(widget.tepiRadius + widget.pemisahGarisLuarUkuran/2)
+        borderRadius: BorderRadius.circular(widget.tepiRadius + widget.pemisahGarisLuarUkuran/2),
+        boxShadow: bayangan
       ),
       child: child,
     );
@@ -285,6 +315,9 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
         : _hover && widget.pakaiHover
         ? (widget.padaHoverGarisLuarGradient ?? widget.garisLuarGradient)
         : widget.garisLuarGradient;
+    final bayangan = _hover
+        ? widget.padaHoverBayanganGarisLuar
+        : widget.bayanganGarisLuar;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
@@ -296,16 +329,20 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
           widget.tepiRadius 
           + widget.pemisahGarisLuarUkuran/2
           + widget.garisLuarUkuran/2
-        )
+        ),
+        boxShadow: bayangan
       ),
       child: child,
     );
   }
 
-  Widget _bangunContainerUtama(BuildContext context, Color? color, double blurRadius, double width, double height) {
+  Widget _bangunContainerUtama(BuildContext context, Color? color, double width, double height) {
     final KontrolDatabase? kontrolDatabase = widget.tanpaProvider ? null : context.read<KontrolDatabase>();
     final ukuranPadding = widget.padding ?? 0;
     final padding = ukuranPadding == 0 ? null : EdgeInsets.all(ukuranPadding);
+    final bayangan = _hover
+        ? widget.padaHoverBayanganKotak
+        : widget.bayanganKotak;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
@@ -315,7 +352,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(widget.tepiRadius),
-        gradient: widget.kotakGradient
+        gradient: widget.kotakGradient,
+        boxShadow: bayangan
       ),
       child: _isiKonten(kontrolDatabase)
     );
@@ -325,24 +363,6 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
     final boxColor = _hover && widget.pakaiHover
         ? (widget.padaHoverkotakWarna ?? widget.kotakWarna)
         : widget.kotakWarna;
-
-    final bayangan = (_hover && widget.pakaiHover && widget.padaHoverPakaiBayangan)
-        ? 10.0
-        : 2.0;
-
-    /*Offset dragOffset = Offset.zero;
-    if (_drag && widget.pakaiDrag && widget.padaDragAnimasi != null) {
-      // Batasi input ke padaDragAnimasi supaya selalu di [0,1]
-      final t = _dragController.value.clamp(0.0, 1.0);
-      final rawOffset = widget.padaDragAnimasi!(t);
-
-      // Batasi offset agar tidak melontarkan widget keluar layar
-      const maxDx = 24.0;
-      const maxDy = 24.0;
-      final dx = rawOffset.dx.clamp(-maxDx, maxDx);
-      final dy = rawOffset.dy.clamp(-maxDy, maxDy);
-      dragOffset = Offset(dx, dy);
-    }*/
 
     // klik scale (tetap aman)
     final scaleKlik = 1.0 - (_klikController.value * 0.08); // kurangi dampak klik sedikit
@@ -356,6 +376,10 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
     }
 
     return MouseRegion(
+      cursor: widget.pakaiKlik 
+          ? SystemMouseCursors.click
+          : MouseCursor.defer,
+                  
       onEnter: (_) {
         if (widget.pakaiHover) {
           setState(() => _hover = true);
@@ -372,16 +396,16 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
       },
       child: GestureDetector(
         onTapDown: widget.pakaiKlik ? (_) {
-          setState(() => _klik = true);
+          setState(() {_klik = true;});
           widget.padaKlikAnimasi?.call(_klikController);
         } : null,
 
         onTapUp: widget.pakaiKlik ? (_) {
-          setState(() => _klik = false);
+          setState(() {_klik = false;});
           if (widget.padaKlik != null) {widget.padaKlik!();}
         } : null,
 
-        onTapCancel: widget.pakaiKlik ? () => setState(() => _klik = false) : null,
+        onTapCancel: widget.pakaiKlik ? () => setState(() {_klik = false;}) : null,
 
         /*onPanStart: widget.pakaiDrag ? (_) {
           setState(() => _drag = true);
@@ -434,14 +458,31 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
                 lebar = tinggi = terendah;
               }
 
-              Widget inner = _bangunContainerUtama(context, boxColor, bayangan, lebar, tinggi);
+              Widget inner = _bangunContainerUtama(context, boxColor, lebar, tinggi);
+
+              if (widget.clipEdgeKotak != null && widget.clipEdgeKotak![0]) {
+                inner = bangunClipEdge(inner, widget.tepiRadius);
+              }
 
               if (widget.pemisahGarisLuarUkuran > 0) {
                 inner = _bangunPemisahGarisLuar(inner);
               }
 
+              if (widget.clipEdgeKotak != null && widget.clipEdgeKotak![1]) {
+                inner = bangunClipEdge(inner, widget.tepiRadius + widget.pemisahGarisLuarUkuran/2);
+              }
+
               if (widget.garisLuarUkuran > 0) {
                 inner = _bangunGarisLuar(inner);
+              }
+
+              if (widget.clipEdgeKotak != null && widget.clipEdgeKotak![2]) {
+                inner = bangunClipEdge(
+                  inner, 
+                  widget.tepiRadius 
+                    + widget.pemisahGarisLuarUkuran/2
+                    + widget.garisLuarUkuran/2
+                );
               }
 
               return Stack(
@@ -478,6 +519,23 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
             color:widget.warnaGambarColor,
             borderRadius: BorderRadius.circular(widget.tepiRadiusGambar),
             gradient: widget.warnaGambarGradient,
+            boxShadow: [
+              // 1) Intense & small — tajam, dekat (foreground shadow)
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1), // intensitas tinggi
+                offset: const Offset(1.5, 1.5),             // kanan-bawah kecil
+                blurRadius: 3,                          // blur kecil = tajam
+                spreadRadius: 0.5,                        // sedikit melebar
+              ),
+
+              // 2) Low intensity & large — lembut, menyebar (ambient shadow)
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04), // intensitas rendah
+                offset: const Offset(5.5, 5.5),          // kanan-bawah lebih jauh
+                blurRadius: 7,                        // blur besar = lembut
+                spreadRadius: 0,                       // atau sedikit negatif jika mau
+              ),
+            ]
           ),
           padding: EdgeInsets.all(widget.paddingGambar),
           child: widget.tanpaProvider 
@@ -491,10 +549,9 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
       List<Widget> gambarFinal = [];
       if (gambarWidgets != null && gambarWidgets.length > 1) {
         if (widget.pemisahGambar != null) {
-          final gambarPemisah = Container(
+          final gambarPemisah = SizedBox(
             width: widget.besarPemisahGambar,
             height: widget.besarPemisahGambar,
-            color: Colors.transparent,
             child: FittedBox(
               fit: BoxFit.contain,
               child: widget.pemisahGambar
@@ -530,7 +587,8 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
                 style: TextStyle(
                   fontFamily: widget.fontTeks,
                   fontSize: widget.teksUkuran ?? 17, 
-                  color: widget.teksWarna
+                  color: widget.teksWarna,
+                  shadows: widget.bayanganTeks
                 ),
               )
             )
@@ -554,6 +612,7 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
                 color: widget.judulWarna,
                 decoration: widget.garisBawahJudul ? TextDecoration.underline : null,
                 decorationColor: widget.judulWarna,
+                shadows: widget.bayanganJudul
               ),
               textAlign: widget.teksTengah ? TextAlign.center : TextAlign.left,
             )
@@ -587,16 +646,17 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
         else if (pakaiBanyakGambar)
           Expanded(
             flex: widget.susunGambarTeksBaris == Axis.vertical ? 3 : 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              alignment: widget.isiTengah ? Alignment.center : Alignment.centerLeft,
-              child: Row(
-                mainAxisAlignment: widget.isiTengah ? MainAxisAlignment.center : MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...bangunGambarFinal(bangunGambarWidgets()),
-                ],
-              ),
+            child: Center(
+              child:FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: widget.isiTengah ? Alignment.center : Alignment.centerLeft,
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  alignment: widget.isiTengah ? WrapAlignment.center : WrapAlignment.start,
+                  runAlignment: widget.isiTengah ? WrapAlignment.center : WrapAlignment.start,
+                  children: [...bangunGambarFinal(bangunGambarWidgets())],
+                ),
+              )
             ),
           )
         else if (pakaiSatuGambar)
@@ -605,7 +665,7 @@ class _CardStatisState extends State<CardStatis> with TickerProviderStateMixin {
               flex: 3,
               child: Align(
                 alignment: widget.isiTengah ? Alignment.center : Alignment.centerLeft,
-                child:bangunGambarWidgets()!.first,
+                child: bangunGambarWidgets()!.first,
               )
             )
             : bangunGambarWidgets()!.first,
